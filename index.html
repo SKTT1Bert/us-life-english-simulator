@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Daily English Lab - 美国日常生活英语随机场景模拟器。" />
+  <title>Daily English Lab · US Life English Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">E</div>
+      <div>
+        <h1>Daily English Lab</h1>
+        <p>美国日常生活英语随机场景模拟器 · 本地优先 · GitHub Pages 可部署</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn" type="button">深色模式</button>
+      <button id="exportBtn" class="ghost-btn" type="button">导出进度</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar" aria-label="学习导航">
+      <button class="nav-btn active" data-view="today">今日学习</button>
+      <button class="nav-btn" data-view="library">表达库</button>
+      <button class="nav-btn" data-view="scenarios">场景模拟</button>
+      <button class="nav-btn" data-view="quiz">口语测验</button>
+      <button class="nav-btn" data-view="favorites">收藏</button>
+      <button class="nav-btn" data-view="progress">学习进度</button>
+      <div class="side-card">
+        <span class="side-label">本地记录</span>
+        <strong id="sideLearned">0</strong>
+        <span>已掌握表达</span>
+      </div>
+    </aside>
+
+    <section class="content">
+      <section id="view-today" class="view active">
+        <div class="hero-card">
+          <div>
+            <span class="eyebrow">Today's Practice</span>
+            <h2>今天先掌握 5 个高频表达</h2>
+            <p>适合每天 5–10 分钟练习：看表达、听发音、跟读例句、标记掌握。</p>
+          </div>
+          <div class="hero-stats">
+            <div><strong id="totalCount">0</strong><span>总表达</span></div>
+            <div><strong id="streakCount">0</strong><span>连续天数</span></div>
+            <div><strong id="todayDone">0/5</strong><span>今日完成</span></div>
+          </div>
+        </div>
+        <div id="todayList" class="card-grid"></div>
+      </section>
+
+      <section id="view-library" class="view">
+        <div class="toolbar">
+          <input id="searchInput" class="search" type="search" placeholder="搜索英文、中文、场景，例如：怎么说、餐厅、I mean" />
+          <select id="categoryFilter" class="select" aria-label="分类筛选"></select>
+          <select id="levelFilter" class="select" aria-label="难度筛选">
+            <option value="all">全部难度</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+          </select>
+        </div>
+        <div class="library-meta"><span id="resultCount">0</span> 条结果</div>
+        <div id="libraryList" class="card-grid"></div>
+      </section>
+
+
+      <section id="view-scenarios" class="view">
+        <div class="scenario-hero">
+          <div>
+            <span class="eyebrow">Scenario Mode</span>
+            <h2>沉浸式随机日常对话模拟</h2>
+            <p>像真实办事一样练：选择场所和今天要办的事，系统随机生成时间、背景、工作人员态度、突发情况和多轮分支。</p>
+          </div>
+          <div class="scenario-stats">
+            <div><strong id="scenarioPlaceCount">0</strong><span>场所</span></div>
+            <div><strong id="scenarioTaskCount">0</strong><span>目的</span></div>
+            <div><strong id="scenarioRunCount">0</strong><span>已练习</span></div>
+          </div>
+        </div>
+
+        <div class="scenario-layout">
+          <section class="scenario-panel setup-panel">
+            <h3>开始一次模拟</h3>
+            <label class="field-label" for="placeSelect">选择生活场所 Choose a place</label>
+            <select id="placeSelect" class="select"></select>
+
+            <div class="task-picker-head">
+              <div>
+                <span class="eyebrow">Today’s errand</span>
+                <h3>你今天来这里想办什么？</h3>
+                <p>不要像下拉菜单背句子；选一个真实目的，系统会生成不同背景和后续分支。</p>
+              </div>
+            </div>
+
+            <div class="task-tools">
+              <input id="taskSearch" class="search task-search" type="search" placeholder="搜索目的，例如：lost, fee, 地址, 退款" />
+              <select id="taskCategoryFilter" class="select" aria-label="目的类型筛选"></select>
+            </div>
+            <select id="taskSelect" class="visually-hidden" aria-label="Selected purpose"></select>
+            <div id="taskCardGrid" class="task-card-grid"></div>
+
+            <label class="field-label" for="challengeMode">练习模式 Mode</label>
+            <select id="challengeMode" class="select">
+              <option value="guided">Guided / 选择目的后随机背景</option>
+              <option value="random">Random / 本场所随机目的</option>
+              <option value="challenge">Challenge / 随机目的 + 高概率突发</option>
+            </select>
+
+            <div class="inline-actions scenario-actions">
+              <button id="startScenarioBtn" class="primary-btn" type="button">生成情景并开始</button>
+              <button id="randomScenarioBtn" class="ghost-btn" type="button">完全随机</button>
+            </div>
+
+            <div id="missionCard" class="mission-card empty">
+              还没有开始模拟。选择场所和今天要办的事后点击开始。
+            </div>
+          </section>
+
+          <section class="scenario-panel dialogue-panel">
+            <div class="dialogue-topbar">
+              <div>
+                <span class="eyebrow">Live Dialogue</span>
+                <h3 id="dialogueTitle">等待开始</h3>
+              </div>
+              <button id="speakCurrentBtn" class="small-btn" type="button">朗读当前句</button>
+            </div>
+            <div id="dialogueBox" class="dialogue-box empty-state">点击“生成情景并开始”后，这里会出现情景、工作人员问题和你的可选回答。</div>
+            <div id="choiceBox" class="choice-box"></div>
+            <div id="outcomeBox" class="outcome-box"></div>
+          </section>
+        </div>
+
+        <section class="scenario-panel transcript-panel">
+          <div class="transcript-heading">
+            <h3>对话记录 Transcript</h3>
+            <button id="resetScenarioBtn" class="ghost-btn" type="button">重置本次模拟</button>
+          </div>
+          <div id="transcriptList" class="transcript-list empty-state">暂无记录。</div>
+        </section>
+      </section>
+
+      <section id="view-quiz" class="view">
+        <div class="quiz-card">
+          <span class="eyebrow">Quick Quiz</span>
+          <h2 id="quizQuestion">点击开始生成题目</h2>
+          <div id="quizOptions" class="quiz-options"></div>
+          <div class="quiz-actions">
+            <button id="newQuizBtn" class="primary-btn" type="button">下一题</button>
+            <span id="quizFeedback" class="feedback"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-favorites" class="view">
+        <div class="section-heading">
+          <h2>收藏表达</h2>
+          <p>你收藏的表达保存在当前浏览器。</p>
+        </div>
+        <div id="favoriteList" class="card-grid"></div>
+      </section>
+
+      <section id="view-progress" class="view">
+        <div class="progress-grid">
+          <div class="metric-card"><strong id="learnedMetric">0</strong><span>已掌握</span></div>
+          <div class="metric-card"><strong id="favoriteMetric">0</strong><span>已收藏</span></div>
+          <div class="metric-card"><strong id="completionMetric">0%</strong><span>完成度</span></div>
+        </div>
+        <div class="panel">
+          <h2>按场景统计</h2>
+          <div id="categoryProgress" class="progress-list"></div>
+        </div>
+        <div class="panel">
+          <h2>进度管理</h2>
+          <p>学习记录只存在你的浏览器 localStorage，不上传、不登录。</p>
+          <div class="inline-actions">
+            <button id="resetBtn" class="danger-btn" type="button">清空本地进度</button>
+            <label class="import-label">
+              导入进度
+              <input id="importInput" type="file" accept="application/json" />
+            </label>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <template id="expressionCardTemplate">
+    <article class="expr-card">
+      <div class="expr-topline">
+        <span class="badge category"></span>
+        <span class="badge level"></span>
+      </div>
+      <h3 class="phrase"></h3>
+      <p class="meaning"></p>
+      <p class="example"></p>
+      <p class="example-cn"></p>
+      <div class="card-actions">
+        <button class="small-btn speak-btn" type="button">朗读</button>
+        <button class="small-btn learned-btn" type="button">标记掌握</button>
+        <button class="small-btn fav-btn" type="button">收藏</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="data/expressions.js"></script>
+  <script src="data/scenarios.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
