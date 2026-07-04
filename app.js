@@ -562,6 +562,7 @@ function setView(viewName) {
   $$('.nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === viewName));
   $$('.view').forEach((view) => view.classList.remove('active'));
   $(`#view-${viewName}`).classList.add('active');
+  document.body.classList.toggle('scenario-focus', viewName === 'scenarios');
   if (viewName === 'library') renderLibrary();
   if (viewName === 'favorites') renderFavorites();
   if (viewName === 'progress') renderProgress();
@@ -569,9 +570,22 @@ function setView(viewName) {
   if (viewName === 'scenarios') renderScenarioStats();
 }
 
+function getNextTheme(theme) {
+  const themes = ['light', 'dark', 'pink'];
+  const index = themes.indexOf(theme);
+  return themes[(index + 1) % themes.length];
+}
+
 function applyTheme() {
-  document.documentElement.dataset.theme = state.theme;
-  $('#themeToggle').textContent = state.theme === 'dark' ? '浅色模式' : '深色模式';
+  const safeTheme = ['light', 'dark', 'pink'].includes(state.theme) ? state.theme : 'light';
+  state.theme = safeTheme;
+  document.documentElement.dataset.theme = safeTheme;
+  const labels = {
+    light: '深色模式',
+    dark: '粉色模式',
+    pink: '浅色模式',
+  };
+  $('#themeToggle').textContent = labels[safeTheme];
 }
 
 function exportProgress() {
@@ -583,6 +597,7 @@ function exportProgress() {
     sessions: state.sessions,
     quiz: state.quiz,
     scenarios: state.scenarios,
+    theme: state.theme,
   }, null, 2);
   const blob = new Blob([payload], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -603,6 +618,7 @@ function importProgress(file) {
       state.sessions = data.sessions || {};
       state.quiz = data.quiz || { correct: 0, total: 0 };
       state.scenarios = data.scenarios || { runs: 0, completed: 0, success: 0 };
+      if (['light', 'dark', 'pink'].includes(data.theme)) state.theme = data.theme;
       saveState();
       renderAll();
       alert('进度已导入。');
@@ -626,7 +642,7 @@ function bindEvents() {
   $$('.nav-btn').forEach((btn) => btn.addEventListener('click', () => setView(btn.dataset.view)));
   $('#newQuizBtn').addEventListener('click', renderQuiz);
   $('#themeToggle').addEventListener('click', () => {
-    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    state.theme = getNextTheme(state.theme);
     saveState();
     applyTheme();
   });
@@ -644,6 +660,7 @@ function bindEvents() {
   });
   if ($('#startScenarioBtn')) $('#startScenarioBtn').addEventListener('click', () => startScenario());
   if ($('#randomScenarioBtn')) $('#randomScenarioBtn').addEventListener('click', () => startScenario({ fullyRandom: true }));
+  if ($('#scenarioBackBtn')) $('#scenarioBackBtn').addEventListener('click', () => setView('today'));
   if ($('#resetScenarioBtn')) $('#resetScenarioBtn').addEventListener('click', resetScenario);
   if ($('#speakCurrentBtn')) $('#speakCurrentBtn').addEventListener('click', () => {
     const node = getCurrentScenarioNode();

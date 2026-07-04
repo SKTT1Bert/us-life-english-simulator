@@ -73,10 +73,11 @@
 
       <section id="view-scenarios" class="view">
         <div class="scenario-hero">
-          <div>
+          <div class="scenario-hero-copy">
             <span class="eyebrow">Scenario Mode</span>
             <h2>沉浸式随机日常对话模拟</h2>
             <p>像真实办事一样练：选择场所和今天要办的事，系统随机生成时间、背景、工作人员态度、突发情况和多轮分支。</p>
+            <button id="scenarioBackBtn" class="ghost-btn scenario-back-btn" type="button">返回主页</button>
           </div>
           <div class="scenario-stats">
             <div><strong id="scenarioPlaceCount">0</strong><span>场所</span></div>
@@ -87,7 +88,8 @@
 
         <div class="scenario-layout">
           <section class="scenario-panel setup-panel">
-            <h3>开始一次模拟</h3>
+            <div class="setup-controls">
+              <h3>开始一次模拟</h3>
             <label class="field-label" for="placeSelect">选择生活场所 Choose a place</label>
             <select id="placeSelect" class="select"></select>
 
@@ -116,6 +118,8 @@
             <div class="inline-actions scenario-actions">
               <button id="startScenarioBtn" class="primary-btn" type="button">生成情景并开始</button>
               <button id="randomScenarioBtn" class="ghost-btn" type="button">完全随机</button>
+            </div>
+
             </div>
 
             <div id="missionCard" class="mission-card empty">

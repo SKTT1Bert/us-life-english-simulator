@@ -2,62 +2,68 @@
 
 A local-first English learning website for real-life U.S. daily situations. It can be deployed directly to GitHub Pages and does not require a backend, login, database, or paid API.
 
-## V3 Highlights
+## V6 Highlights
 
-- Scenario Mode upgraded from dropdown selection to immersive task cards.
-- 10 real-life places: DMV, Bank, Clinic, Restaurant, Supermarket, Gym, Pharmacy, Apartment Office, Airport, Post Office, and Customer Service.
-- 145+ practical purposes/errands, such as replacing a lost license, disputing a bank charge, asking about copay, returning an item, canceling a gym membership, and reporting a missing package.
-- Randomized Situation Card: time, place, arrival context, staff mood, task type, random background, and complication.
-- Branching dialogue choices with bilingual English/Chinese lines.
-- Local progress tracking with `localStorage`.
-- Expression library, daily practice, quiz, favorites, dark mode, import/export progress.
+- Expanded Scenario Mode from 11 places / 160 errands to **22 places / 311 errands**.
+- Added more daily-life simulations: Hotel, Cafe, Hair Salon, Gas Station / Auto Service, Campus Office, Library, Public Transit, Phone / Internet Provider, Vet / Pet Clinic, Dentist Office, and Insurance Office.
+- Kept the V5 desktop flow: setup, Situation Card, Live Dialogue, Transcript.
+- Kept the softer low-saturation Pink Mode.
+- Fully static and GitHub Pages compatible.
 
-## How to run locally
+## Existing Features
 
-Open `index.html` directly in a browser.
+- Daily Practice / 今日学习
+- Expression Library / 表达库
+- Scenario Mode / 场景模拟
+- Quick Quiz / 口语测验
+- Favorites / 收藏
+- Progress tracking / 学习进度
+- LocalStorage-based progress
+- Export/import progress JSON
 
-For a simple local server:
+## Scenario Coverage
 
-```bash
-python -m http.server 8000
-```
+The V6 scenario data includes 22 real-life places and 311 errands:
 
-Then open:
+- DMV / 车管所
+- Bank / 银行
+- Clinic / 诊所/医院前台
+- Restaurant / 餐馆
+- Supermarket / 超市
+- Gym / 健身房
+- Pharmacy / 药店
+- Apartment Office / 公寓/租房办公室
+- Airport / 机场
+- Post Office / 邮局
+- Customer Service / 客服电话/客服柜台
+- Hotel / 酒店
+- Cafe / 咖啡店
+- Hair Salon / 理发店/美发店
+- Gas Station / Auto Service / 加油站/汽车服务
+- Campus Office / 学校办公室
+- Library / 图书馆
+- Public Transit / 公共交通
+- Phone / Internet Provider / 手机/网络运营商
+- Vet / Pet Clinic / 兽医/宠物医院
+- Dentist Office / 牙科诊所
+- Insurance Office / 保险公司/保险经纪
 
-```text
-http://localhost:8000
-```
+## Deploy to GitHub Pages
 
-## GitHub Pages deployment
-
-1. Create a GitHub repository.
-2. Upload all files in this folder to the repository root.
-3. Go to `Settings -> Pages`.
-4. Choose `Deploy from a branch`.
-5. Select `main` and `/root`.
-6. Save and wait for GitHub Pages to publish the site.
-
-## Suggested commit message
-
-```bash
-git add .
-git commit -m "Add immersive randomized scenario mode"
-git push origin main
-```
-
-## File structure
+Upload the project files to the repository root:
 
 ```text
 index.html
 styles.css
 app.js
 data/
-  expressions.js
-  scenarios.js
+README.md
 .nojekyll
 .gitignore
 ```
 
-## Notes
+Then use either:
 
-This project is intentionally static and local-first. It uses browser speech synthesis for reading English text aloud and stores user progress only in the current browser.
+1. **Settings → Pages → Deploy from a branch → main / root**, or
+2. A GitHub Actions Pages workflow.
+

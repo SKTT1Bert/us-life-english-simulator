@@ -650,3 +650,303 @@ h1 { margin-bottom: 2px; font-size: 24px; letter-spacing: -0.03em; }
     grid-template-columns: 1fr;
   }
 }
+
+/* V4 desktop immersion and pink theme */
+[data-theme="pink"] {
+  --bg: #fff5f8;
+  --panel: #ffffff;
+  --text: #28151f;
+  --muted: #8a6374;
+  --border: #f2c9d8;
+  --primary: #ec4899;
+  --primary-dark: #be185d;
+  --soft: #ffe4ee;
+  --danger: #be123c;
+  --shadow: 0 18px 45px rgba(190, 24, 93, 0.12);
+  color-scheme: light;
+}
+
+[data-theme="pink"] body {
+  background:
+    radial-gradient(circle at top left, rgba(244, 114, 182, 0.28), transparent 32%),
+    radial-gradient(circle at top right, rgba(251, 207, 232, 0.65), transparent 34%),
+    var(--bg);
+}
+
+[data-theme="pink"] .logo,
+[data-theme="pink"] .nav-btn.active,
+[data-theme="pink"] .primary-btn {
+  background: linear-gradient(135deg, #f472b6, #ec4899 55%, #db2777);
+  border-color: transparent;
+}
+
+[data-theme="pink"] .task-picker-head,
+[data-theme="pink"] .task-card.selected {
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.18), rgba(251, 207, 232, 0.18));
+}
+
+[data-theme="pink"] .situation-head {
+  background: linear-gradient(135deg, #831843, #be185d 58%, #f472b6);
+}
+
+/* Keep the navigation closer to the left edge on wide desktop screens. */
+@media (min-width: 1200px) {
+  .layout {
+    max-width: none;
+    margin: 0;
+    padding-left: 32px;
+    padding-right: 32px;
+    grid-template-columns: 270px minmax(0, 1fr);
+  }
+
+  .sidebar {
+    top: 108px;
+  }
+}
+
+/* Avoid cramped controls in the setup panel. */
+.setup-panel,
+.dialogue-panel {
+  min-width: 0;
+}
+
+.task-tools {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#taskCategoryFilter {
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+/* Scenario view becomes a focused workspace on desktop. */
+.scenario-back-btn {
+  margin-top: 14px;
+  width: fit-content;
+}
+
+.scenario-hero-copy {
+  min-width: 0;
+}
+
+@media (min-width: 921px) {
+  body.scenario-focus .layout {
+    display: block;
+    max-width: none;
+    margin: 0;
+    padding: 24px 32px 44px;
+  }
+
+  body.scenario-focus .sidebar {
+    display: none;
+  }
+
+  body.scenario-focus .content {
+    width: 100%;
+  }
+
+  body.scenario-focus #view-scenarios {
+    width: 100%;
+  }
+
+  body.scenario-focus .scenario-layout {
+    grid-template-columns: minmax(440px, 0.48fr) minmax(560px, 1fr);
+    gap: 18px;
+  }
+
+  body.scenario-focus .task-tools {
+    grid-template-columns: minmax(220px, 1fr) minmax(220px, 270px);
+  }
+
+  body.scenario-focus .task-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    max-height: 520px;
+  }
+
+  body.scenario-focus .dialogue-panel {
+    min-height: 540px;
+  }
+
+  body.scenario-focus .transcript-panel {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 1500px) {
+  body.scenario-focus .scenario-layout {
+    grid-template-columns: minmax(520px, 0.45fr) minmax(720px, 1fr);
+  }
+
+  body.scenario-focus .task-tools {
+    grid-template-columns: minmax(260px, 1fr) minmax(260px, 320px);
+  }
+}
+
+@media (max-width: 920px) {
+  .scenario-back-btn {
+    display: none;
+  }
+}
+
+/* V5 desktop scenario flow refinements */
+.setup-controls {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Lower-saturation pink theme */
+[data-theme="pink"] {
+  --bg: #fff8fb;
+  --panel: #ffffff;
+  --text: #251720;
+  --muted: #826b75;
+  --border: #edd6df;
+  --primary: #cc6f98;
+  --primary-dark: #a94f78;
+  --soft: #fae8f1;
+  --danger: #a83f5f;
+  --shadow: 0 18px 45px rgba(169, 79, 120, 0.10);
+}
+
+[data-theme="pink"] body {
+  background:
+    radial-gradient(circle at top left, rgba(204, 111, 152, 0.16), transparent 32%),
+    radial-gradient(circle at top right, rgba(237, 214, 223, 0.50), transparent 34%),
+    var(--bg);
+}
+
+[data-theme="pink"] .logo,
+[data-theme="pink"] .nav-btn.active,
+[data-theme="pink"] .primary-btn {
+  background: linear-gradient(135deg, #dd93b3, #cc6f98 58%, #b45d86);
+  border-color: transparent;
+}
+
+[data-theme="pink"] .task-picker-head,
+[data-theme="pink"] .task-card.selected {
+  background: linear-gradient(135deg, rgba(204, 111, 152, 0.12), rgba(237, 214, 223, 0.18));
+}
+
+[data-theme="pink"] .situation-head {
+  background: linear-gradient(135deg, #6f4058, #9f5d7d 58%, #c982a4);
+}
+
+/* Make the back button intentionally distinct from regular ghost buttons. */
+.scenario-back-btn {
+  margin-top: 16px;
+  width: fit-content;
+  font-weight: 850;
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.scenario-back-btn:hover {
+  background: var(--primary-dark);
+  color: #fff;
+  border-color: var(--primary-dark);
+}
+
+[data-theme="dark"] .scenario-back-btn {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #f8fafc;
+  box-shadow: 0 10px 24px rgba(248, 250, 252, 0.12);
+}
+
+[data-theme="dark"] .scenario-back-btn:hover {
+  background: #dbeafe;
+  border-color: #dbeafe;
+  color: #0f172a;
+}
+
+[data-theme="pink"] .scenario-back-btn {
+  background: #b45d86;
+  color: #fff;
+  border-color: #b45d86;
+  box-shadow: 0 10px 24px rgba(180, 93, 134, 0.16);
+}
+
+[data-theme="pink"] .scenario-back-btn:hover {
+  background: #9f4f75;
+  border-color: #9f4f75;
+}
+
+/* Desktop scenario page now follows the same learning order as mobile:
+   setup -> situation card -> live dialogue -> transcript. */
+@media (min-width: 921px) {
+  body.scenario-focus .scenario-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  body.scenario-focus .setup-panel {
+    display: grid;
+    grid-template-columns: minmax(420px, 0.92fr) minmax(460px, 1.08fr);
+    grid-template-areas: "controls mission";
+    gap: 18px;
+    align-items: start;
+    overflow: hidden;
+  }
+
+  body.scenario-focus .setup-controls {
+    grid-area: controls;
+  }
+
+  body.scenario-focus #missionCard {
+    grid-area: mission;
+    margin-top: 0;
+    min-width: 0;
+    align-self: start;
+  }
+
+  body.scenario-focus .task-tools {
+    grid-template-columns: minmax(220px, 1fr) minmax(240px, 320px);
+    gap: 12px;
+  }
+
+  body.scenario-focus .task-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+    max-height: 360px;
+    padding-right: 8px;
+  }
+
+  body.scenario-focus .dialogue-panel {
+    min-height: 0;
+  }
+
+  body.scenario-focus .dialogue-box {
+    margin-bottom: 16px;
+  }
+
+  body.scenario-focus .choice-box {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    align-items: stretch;
+  }
+
+  body.scenario-focus .choice-btn {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1500px) {
+  body.scenario-focus .setup-panel {
+    grid-template-columns: minmax(520px, 0.82fr) minmax(620px, 1.18fr);
+  }
+
+  body.scenario-focus .task-card-grid {
+    max-height: 390px;
+  }
+}
+
+@media (max-width: 920px) {
+  .setup-controls {
+    display: grid;
+    gap: 10px;
+  }
+}
