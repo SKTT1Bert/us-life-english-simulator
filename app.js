@@ -1,11 +1,16 @@
 const EXPRESSIONS = window.EXPRESSIONS || [];
 const SCENARIO_PACKS = window.SCENARIO_PACKS || [];
+const MARKET_VOCAB = window.MARKET_VOCAB || [];
+const MARKET_SCENARIOS = window.MARKET_SCENARIOS || [];
 const STORAGE_KEY = 'daily-english-lab-state-v1';
 
 const state = loadState();
 let currentQuizAnswer = null;
 let activeScenario = null;
 let selectedTaskId = null;
+let selectedMarketScenarioId = null;
+let activeMarketScenario = null;
+let currentMarketQuizAnswer = null;
 
 const SCENARIO_MOODS = [
   { id: 'friendly', en: 'Friendly', cn: '友好', note: 'The staff member is patient and willing to explain.' },
@@ -36,9 +41,13 @@ function loadState() {
       theme: saved?.theme || 'light',
       quiz: saved?.quiz || { correct: 0, total: 0 },
       scenarios: saved?.scenarios || { runs: 0, completed: 0, success: 0 },
+      marketLearned: new Set(saved?.marketLearned || []),
+      marketFavorites: new Set(saved?.marketFavorites || []),
+      marketQuiz: saved?.marketQuiz || { correct: 0, total: 0 },
+      marketScenarios: saved?.marketScenarios || { runs: 0, completed: 0, success: 0 },
     };
   } catch {
-    return { learned: new Set(), favorites: new Set(), sessions: {}, theme: 'light', quiz: { correct: 0, total: 0 }, scenarios: { runs: 0, completed: 0, success: 0 } };
+    return { learned: new Set(), favorites: new Set(), sessions: {}, theme: 'light', quiz: { correct: 0, total: 0 }, scenarios: { runs: 0, completed: 0, success: 0 }, marketLearned: new Set(), marketFavorites: new Set(), marketQuiz: { correct: 0, total: 0 }, marketScenarios: { runs: 0, completed: 0, success: 0 } };
   }
 }
 
@@ -50,6 +59,10 @@ function saveState() {
     theme: state.theme,
     quiz: state.quiz,
     scenarios: state.scenarios,
+    marketLearned: [...state.marketLearned],
+    marketFavorites: [...state.marketFavorites],
+    marketQuiz: state.marketQuiz,
+    marketScenarios: state.marketScenarios,
   }));
 }
 
@@ -247,6 +260,9 @@ function setupScenarioSelectors() {
   if ($('#taskCategoryFilter')) $('#taskCategoryFilter').addEventListener('change', renderTaskCards);
   populateTaskSelect();
   renderScenarioStats();
+  renderMarketVocabulary();
+  renderMarketScenarioCards();
+  renderMarketStats();
 }
 
 function populateTaskSelect() {
@@ -520,6 +536,290 @@ function renderOutcome(node) {
   `;
 }
 
+
+function renderMarketStats() {
+  if (!$('#marketTermCount')) return;
+  $('#marketTermCount').textContent = MARKET_VOCAB.length;
+  $('#marketScenarioCount').textContent = MARKET_SCENARIOS.length;
+  $('#marketLearnedCount').textContent = state.marketLearned.size;
+  if ($('#marketQuizScore')) $('#marketQuizScore').textContent = `${state.marketQuiz.correct} / ${state.marketQuiz.total}`;
+}
+
+function setupMarketModule() {
+  if (!$('#marketCategoryFilter')) return;
+  const vocabCategories = ['all', ...new Set(MARKET_VOCAB.map((item) => item.category))];
+  $('#marketCategoryFilter').innerHTML = vocabCategories.map((category) => (
+    `<option value="${escapeHTML(category)}">${category === 'all' ? '全部类别 / All categories' : escapeHTML(category)}</option>`
+  )).join('');
+  const scenarioCategories = ['all', ...new Set(MARKET_SCENARIOS.map((item) => item.category))];
+  $('#marketScenarioCategory').innerHTML = scenarioCategories.map((category) => (
+    `<option value="${escapeHTML(category)}">${category === 'all' ? '全部场景类型 / All scenarios' : escapeHTML(category)}</option>`
+  )).join('');
+  if (!selectedMarketScenarioId && MARKET_SCENARIOS.length) selectedMarketScenarioId = MARKET_SCENARIOS[0].id;
+  ['#marketSearch', '#marketCategoryFilter', '#marketLevelFilter', '#marketStatusFilter'].forEach((selector) => {
+    const element = $(selector);
+    if (element) element.addEventListener(element.tagName === 'INPUT' ? 'input' : 'change', renderMarketVocabulary);
+  });
+  if ($('#marketScenarioSearch')) $('#marketScenarioSearch').addEventListener('input', renderMarketScenarioCards);
+  if ($('#marketScenarioCategory')) $('#marketScenarioCategory').addEventListener('change', renderMarketScenarioCards);
+  $$('.market-tab').forEach((button) => button.addEventListener('click', () => setMarketTab(button.dataset.marketTab)));
+  renderMarketVocabulary();
+  renderMarketScenarioCards();
+  renderMarketStats();
+}
+
+function setMarketTab(tabName) {
+  $$('.market-tab').forEach((button) => button.classList.toggle('active', button.dataset.marketTab === tabName));
+  $$('.market-tab-panel').forEach((panel) => panel.classList.toggle('active', panel.id === `market-tab-${tabName}`));
+  if (tabName === 'vocabulary') renderMarketVocabulary();
+  if (tabName === 'situations') renderMarketScenarioCards();
+  if (tabName === 'quiz' && !currentMarketQuizAnswer) renderMarketQuiz();
+}
+
+function getFilteredMarketVocabulary() {
+  const query = ($('#marketSearch')?.value || '').trim().toLowerCase();
+  const category = $('#marketCategoryFilter')?.value || 'all';
+  const level = $('#marketLevelFilter')?.value || 'all';
+  const status = $('#marketStatusFilter')?.value || 'all';
+  return MARKET_VOCAB.filter((item) => {
+    const text = [item.term, item.termCn, item.definition, item.definitionCn, item.example, item.exampleCn, item.category, ...(item.tags || [])].join(' ').toLowerCase();
+    const matchesQuery = !query || text.includes(query);
+    const matchesCategory = category === 'all' || item.category === category;
+    const matchesLevel = level === 'all' || item.level === level;
+    const matchesStatus = status === 'all'
+      || (status === 'learned' && state.marketLearned.has(item.id))
+      || (status === 'favorite' && state.marketFavorites.has(item.id))
+      || (status === 'unlearned' && !state.marketLearned.has(item.id));
+    return matchesQuery && matchesCategory && matchesLevel && matchesStatus;
+  });
+}
+
+function renderMarketVocabulary() {
+  const grid = $('#marketVocabGrid');
+  if (!grid) return;
+  const list = getFilteredMarketVocabulary();
+  $('#marketResultCount').textContent = list.length;
+  grid.innerHTML = list.length ? list.map((item) => {
+    const learned = state.marketLearned.has(item.id);
+    const favorite = state.marketFavorites.has(item.id);
+    return `
+      <article class="market-term-card" data-market-term-id="${escapeHTML(item.id)}">
+        <div class="expr-topline"><span class="badge category">${escapeHTML(item.category)}</span><span class="badge level">${escapeHTML(item.level)}</span></div>
+        <h3>${escapeHTML(item.term)}</h3>
+        <p class="market-term-cn">${escapeHTML(item.termCn)}</p>
+        <p class="market-definition">${escapeHTML(item.definition)}</p>
+        <p class="market-definition-cn">${escapeHTML(item.definitionCn)}</p>
+        <div class="market-example"><strong>Example</strong><p>${escapeHTML(item.example)}</p><span>${escapeHTML(item.exampleCn)}</span></div>
+        <div class="card-actions">
+          <button class="small-btn market-speak-term" type="button">朗读</button>
+          <button class="small-btn market-learn-btn ${learned ? 'active' : ''}" type="button">${learned ? '已掌握' : '标记掌握'}</button>
+          <button class="small-btn market-fav-btn ${favorite ? 'active' : ''}" type="button">${favorite ? '已收藏' : '收藏'}</button>
+        </div>
+      </article>`;
+  }).join('') : '<div class="empty-state">没有找到匹配的市场术语。</div>';
+  $$('.market-term-card').forEach((card) => {
+    const item = MARKET_VOCAB.find((entry) => entry.id === card.dataset.marketTermId);
+    card.querySelector('.market-speak-term').addEventListener('click', () => speak(`${item.term}. ${item.definition}. ${item.example}`));
+    card.querySelector('.market-learn-btn').addEventListener('click', () => {
+      if (state.marketLearned.has(item.id)) state.marketLearned.delete(item.id); else state.marketLearned.add(item.id);
+      saveState(); renderMarketVocabulary(); renderMarketStats();
+    });
+    card.querySelector('.market-fav-btn').addEventListener('click', () => {
+      if (state.marketFavorites.has(item.id)) state.marketFavorites.delete(item.id); else state.marketFavorites.add(item.id);
+      saveState(); renderMarketVocabulary();
+    });
+  });
+}
+
+function getFilteredMarketScenarios() {
+  const query = ($('#marketScenarioSearch')?.value || '').trim().toLowerCase();
+  const category = $('#marketScenarioCategory')?.value || 'all';
+  return MARKET_SCENARIOS.filter((item) => {
+    const text = [item.title, item.titleCn, item.category, item.setup, item.setupCn, item.objective, item.objectiveCn, ...(item.keywords || [])].join(' ').toLowerCase();
+    return (!query || text.includes(query)) && (category === 'all' || item.category === category);
+  });
+}
+
+function renderMarketScenarioCards() {
+  const grid = $('#marketScenarioGrid');
+  if (!grid) return;
+  const list = getFilteredMarketScenarios();
+  if (!list.some((item) => item.id === selectedMarketScenarioId) && list.length) selectedMarketScenarioId = list[0].id;
+  grid.innerHTML = list.length ? list.map((item) => `
+    <button class="market-scenario-card ${item.id === selectedMarketScenarioId ? 'selected' : ''}" data-market-scenario-id="${escapeHTML(item.id)}" type="button">
+      <span>${escapeHTML(item.category)}</span>
+      <strong>${escapeHTML(item.title)}</strong>
+      <em>${escapeHTML(item.titleCn)}</em>
+      <small>${escapeHTML(item.keywords.slice(0, 3).join(' · '))}</small>
+    </button>
+  `).join('') : '<div class="empty-state">没有找到匹配场景。</div>';
+  $$('.market-scenario-card').forEach((card) => card.addEventListener('click', () => {
+    selectedMarketScenarioId = card.dataset.marketScenarioId;
+    renderMarketScenarioCards();
+    previewMarketMission();
+  }));
+  previewMarketMission();
+}
+
+function getSelectedMarketScenario() {
+  return MARKET_SCENARIOS.find((item) => item.id === selectedMarketScenarioId) || MARKET_SCENARIOS[0];
+}
+
+function previewMarketMission() {
+  const item = getSelectedMarketScenario();
+  if (!item || !$('#marketMissionCard') || activeMarketScenario) return;
+  $('#marketMissionCard').className = 'market-mission-card';
+  $('#marketMissionCard').innerHTML = `
+    <span class="eyebrow">Selected Practice</span>
+    <h3>${escapeHTML(item.title)}</h3>
+    <p>${escapeHTML(item.titleCn)}</p>
+    <div class="market-mission-grid">
+      <div><span>Role</span><strong>${escapeHTML(item.role)}</strong><em>${escapeHTML(item.roleCn)}</em></div>
+      <div><span>Category</span><strong>${escapeHTML(item.category)}</strong><em>${escapeHTML(item.level)}</em></div>
+    </div>
+    <div class="mission-context"><strong>Situation</strong><p>${escapeHTML(item.setup)}</p><p>${escapeHTML(item.setupCn)}</p></div>
+    <div class="mission-context phrase-preview"><strong>Communication goal</strong><p>${escapeHTML(item.objective)}</p><p>${escapeHTML(item.objectiveCn)}</p></div>`;
+}
+
+function startMarketScenario({ random = false } = {}) {
+  if (!MARKET_SCENARIOS.length) return;
+  const item = random ? sample(MARKET_SCENARIOS) : getSelectedMarketScenario();
+  selectedMarketScenarioId = item.id;
+  const complication = sample(item.complications || []);
+  activeMarketScenario = {
+    item,
+    complication,
+    nodeId: item.startNode || 'start',
+    transcript: [],
+    score: 0,
+    maxScore: 0,
+    outcomeMarked: false,
+  };
+  state.marketScenarios.runs += 1;
+  saveState();
+  renderMarketScenarioCards();
+  renderMarketScenario();
+  renderMarketStats();
+}
+
+function materializeMarketNode(node) {
+  if (!node || !activeMarketScenario) return node;
+  const complication = activeMarketScenario.complication || { en: 'The available information is incomplete.', cn: '现有信息并不完整。' };
+  return {
+    ...node,
+    en: String(node.en || '').replaceAll('{complication}', complication.en),
+    cn: String(node.cn || '').replaceAll('{complicationCn}', complication.cn),
+  };
+}
+
+function getCurrentMarketNode() {
+  if (!activeMarketScenario) return null;
+  return materializeMarketNode(activeMarketScenario.item.nodes[activeMarketScenario.nodeId]);
+}
+
+function renderMarketScenario() {
+  if (!activeMarketScenario) return;
+  const { item, complication } = activeMarketScenario;
+  $('#marketMissionCard').className = 'market-mission-card active';
+  $('#marketMissionCard').innerHTML = `
+    <div class="situation-head market-situation-head"><span class="eyebrow">Market Situation</span><h3>${escapeHTML(item.title)}</h3><p>${escapeHTML(item.titleCn)}</p></div>
+    <div class="mission-context"><strong>Context</strong><p>${escapeHTML(item.setup)}</p><p>${escapeHTML(item.setupCn)}</p></div>
+    <div class="mission-context"><strong>Your communication goal</strong><p>${escapeHTML(item.objective)}</p><p>${escapeHTML(item.objectiveCn)}</p></div>
+    <div class="mission-context complication"><strong>Random complication</strong><p>${escapeHTML(complication?.en || '')}</p><p>${escapeHTML(complication?.cn || '')}</p></div>
+    <div class="market-keywords"><strong>Key terms</strong>${item.keywords.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div>`;
+  const node = getCurrentMarketNode();
+  $('#marketDialogueBox').className = 'dialogue-box';
+  $('#marketDialogueBox').innerHTML = `<div class="speaker-chip">${escapeHTML(node.speaker)}</div><p class="dialogue-en">${escapeHTML(node.en)}</p><p class="dialogue-cn">${escapeHTML(node.cn)}</p>`;
+  if (node.outcome) {
+    $('#marketChoiceBox').innerHTML = '';
+    renderMarketOutcome(node);
+  } else {
+    $('#marketOutcomeBox').innerHTML = '';
+    $('#marketChoiceBox').innerHTML = (node.choices || []).map((choice,index) => `
+      <button class="choice-btn market-choice" data-market-choice-index="${index}" type="button"><span class="choice-key">${String.fromCharCode(65+index)}</span><span><strong>${escapeHTML(choice.en)}</strong><em>${escapeHTML(choice.cn)}</em></span></button>`).join('');
+    $$('.market-choice').forEach((button) => button.addEventListener('click', () => chooseMarketReply(Number(button.dataset.marketChoiceIndex))));
+  }
+  renderMarketTranscript();
+}
+
+function chooseMarketReply(index) {
+  const node = getCurrentMarketNode();
+  const choice = node?.choices?.[index];
+  if (!choice) return;
+  activeMarketScenario.transcript.push({ speaker: node.speaker, en: node.en, cn: node.cn });
+  activeMarketScenario.transcript.push({ speaker: 'You', en: choice.en, cn: choice.cn });
+  activeMarketScenario.score += choice.score || 0;
+  activeMarketScenario.maxScore += 2;
+  activeMarketScenario.nodeId = choice.next;
+  renderMarketScenario();
+}
+
+function renderMarketTranscript() {
+  const box = $('#marketTranscript');
+  if (!box) return;
+  if (!activeMarketScenario?.transcript.length) {
+    box.className = 'transcript-list empty-state';
+    box.textContent = '暂无记录。';
+    return;
+  }
+  box.className = 'transcript-list';
+  box.innerHTML = activeMarketScenario.transcript.map((line) => `<div class="transcript-item ${line.speaker === 'You' ? 'user-line' : ''}"><strong>${escapeHTML(line.speaker)}</strong><p>${escapeHTML(line.en)}</p><span>${escapeHTML(line.cn)}</span></div>`).join('');
+}
+
+function renderMarketOutcome(node) {
+  if (!activeMarketScenario.outcomeMarked) {
+    activeMarketScenario.outcomeMarked = true;
+    state.marketScenarios.completed += 1;
+    if (node.outcome === 'success') state.marketScenarios.success += 1;
+    saveState();
+  }
+  const pct = activeMarketScenario.maxScore ? Math.round(activeMarketScenario.score / activeMarketScenario.maxScore * 100) : 0;
+  $('#marketOutcomeBox').innerHTML = `<div class="result-card ${node.outcome}"><span class="result-label">${node.outcome === 'success' ? '完成成功' : '部分完成'}</span><h3>${escapeHTML(node.cn)}</h3><p>${escapeHTML(node.en)}</p><div class="score-pill">Communication score: ${pct}%</div><p class="market-outcome-note">重点：区分事实、解释和不确定性；本模块仅用于英语学习。</p></div>`;
+  renderMarketStats();
+}
+
+function resetMarketScenario() {
+  activeMarketScenario = null;
+  $('#marketDialogueBox').className = 'dialogue-box empty-state';
+  $('#marketDialogueBox').textContent = '尚未开始。';
+  $('#marketChoiceBox').innerHTML = '';
+  $('#marketOutcomeBox').innerHTML = '';
+  $('#marketTranscript').className = 'transcript-list empty-state';
+  $('#marketTranscript').textContent = '暂无记录。';
+  previewMarketMission();
+}
+
+function renderMarketQuiz() {
+  if (!MARKET_VOCAB.length) return;
+  const answer = sample(MARKET_VOCAB);
+  currentMarketQuizAnswer = answer;
+  const distractors = MARKET_VOCAB.filter((item) => item.id !== answer.id && item.category !== answer.category).sort(() => Math.random() - 0.5).slice(0,3);
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  $('#marketQuizQuestion').textContent = `“${answer.definitionCn}” 对应哪个英文术语？`;
+  $('#marketQuizFeedback').textContent = '';
+  $('#marketQuizOptions').innerHTML = options.map((item) => `<button class="quiz-option market-quiz-option" data-market-id="${escapeHTML(item.id)}" type="button">${escapeHTML(item.term)}<br><small>${escapeHTML(item.termCn)}</small></button>`).join('');
+  $$('.market-quiz-option').forEach((button) => button.addEventListener('click', handleMarketQuizAnswer));
+  renderMarketStats();
+}
+
+function handleMarketQuizAnswer(event) {
+  const button = event.currentTarget;
+  const correct = button.dataset.marketId === currentMarketQuizAnswer.id;
+  state.marketQuiz.total += 1;
+  if (correct) {
+    state.marketQuiz.correct += 1;
+    state.marketLearned.add(currentMarketQuizAnswer.id);
+  }
+  $$('.market-quiz-option').forEach((option) => {
+    option.disabled = true;
+    if (option.dataset.marketId === currentMarketQuizAnswer.id) option.classList.add('correct');
+  });
+  if (!correct) button.classList.add('wrong');
+  $('#marketQuizFeedback').textContent = correct ? '正确，已标记为掌握。' : `答案是：${currentMarketQuizAnswer.term} / ${currentMarketQuizAnswer.termCn}`;
+  saveState();
+  renderMarketStats();
+}
+
 function renderQuiz() {
   const answer = EXPRESSIONS[Math.floor(Math.random() * EXPRESSIONS.length)];
   currentQuizAnswer = answer;
@@ -568,6 +868,7 @@ function setView(viewName) {
   if (viewName === 'progress') renderProgress();
   if (viewName === 'quiz' && !currentQuizAnswer) renderQuiz();
   if (viewName === 'scenarios') renderScenarioStats();
+  if (viewName === 'market') { renderMarketVocabulary(); renderMarketScenarioCards(); renderMarketStats(); }
 }
 
 function getNextTheme(theme) {
@@ -597,6 +898,10 @@ function exportProgress() {
     sessions: state.sessions,
     quiz: state.quiz,
     scenarios: state.scenarios,
+    marketLearned: [...state.marketLearned],
+    marketFavorites: [...state.marketFavorites],
+    marketQuiz: state.marketQuiz,
+    marketScenarios: state.marketScenarios,
     theme: state.theme,
   }, null, 2);
   const blob = new Blob([payload], { type: 'application/json' });
@@ -618,6 +923,10 @@ function importProgress(file) {
       state.sessions = data.sessions || {};
       state.quiz = data.quiz || { correct: 0, total: 0 };
       state.scenarios = data.scenarios || { runs: 0, completed: 0, success: 0 };
+      state.marketLearned = new Set(data.marketLearned || []);
+      state.marketFavorites = new Set(data.marketFavorites || []);
+      state.marketQuiz = data.marketQuiz || { correct: 0, total: 0 };
+      state.marketScenarios = data.marketScenarios || { runs: 0, completed: 0, success: 0 };
       if (['light', 'dark', 'pink'].includes(data.theme)) state.theme = data.theme;
       saveState();
       renderAll();
@@ -635,6 +944,9 @@ function renderAll() {
   renderFavorites();
   renderProgress();
   renderScenarioStats();
+  renderMarketVocabulary();
+  renderMarketScenarioCards();
+  renderMarketStats();
 }
 
 
@@ -654,7 +966,12 @@ function bindEvents() {
     state.sessions = {};
     state.quiz = { correct: 0, total: 0 };
     state.scenarios = { runs: 0, completed: 0, success: 0 };
+    state.marketLearned.clear();
+    state.marketFavorites.clear();
+    state.marketQuiz = { correct: 0, total: 0 };
+    state.marketScenarios = { runs: 0, completed: 0, success: 0 };
     resetScenario();
+    resetMarketScenario();
     saveState();
     renderAll();
   });
@@ -666,6 +983,11 @@ function bindEvents() {
     const node = getCurrentScenarioNode();
     if (node) speak(node.en);
   });
+  if ($('#startMarketScenarioBtn')) $('#startMarketScenarioBtn').addEventListener('click', () => startMarketScenario());
+  if ($('#randomMarketScenarioBtn')) $('#randomMarketScenarioBtn').addEventListener('click', () => startMarketScenario({ random: true }));
+  if ($('#resetMarketScenarioBtn')) $('#resetMarketScenarioBtn').addEventListener('click', resetMarketScenario);
+  if ($('#speakMarketLineBtn')) $('#speakMarketLineBtn').addEventListener('click', () => { const node = getCurrentMarketNode(); if (node) speak(node.en); });
+  if ($('#newMarketQuizBtn')) $('#newMarketQuizBtn').addEventListener('click', renderMarketQuiz);
   $('#importInput').addEventListener('change', (event) => {
     const file = event.target.files?.[0];
     if (file) importProgress(file);
@@ -675,6 +997,7 @@ function bindEvents() {
 function init() {
   setupFilters();
   setupScenarioSelectors();
+  setupMarketModule();
   bindEvents();
   applyTheme();
   renderAll();

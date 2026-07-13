@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Daily English Lab - 美国日常生活英语随机场景模拟器。" />
+  <meta name="description" content="Daily English Lab - 美国日常生活与股票期权专业英语模拟器。" />
   <title>Daily English Lab · US Life English Simulator</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -13,7 +13,7 @@
       <div class="logo" aria-hidden="true">E</div>
       <div>
         <h1>Daily English Lab</h1>
-        <p>美国日常生活英语随机场景模拟器 · 本地优先 · GitHub Pages 可部署</p>
+        <p>美国日常生活与市场英语模拟器 · 本地优先 · GitHub Pages 可部署</p>
       </div>
     </div>
     <div class="header-actions">
@@ -27,6 +27,7 @@
       <button class="nav-btn active" data-view="today">今日学习</button>
       <button class="nav-btn" data-view="library">表达库</button>
       <button class="nav-btn" data-view="scenarios">场景模拟</button>
+      <button class="nav-btn" data-view="market">市场英语</button>
       <button class="nav-btn" data-view="quiz">口语测验</button>
       <button class="nav-btn" data-view="favorites">收藏</button>
       <button class="nav-btn" data-view="progress">学习进度</button>
@@ -150,6 +151,97 @@
         </section>
       </section>
 
+
+
+      <section id="view-market" class="view">
+        <div class="market-hero">
+          <div>
+            <span class="eyebrow">Market English</span>
+            <h2>股票与期权专业英语</h2>
+            <p>学习市场术语，并通过股票研究、期权链、券商客服、财报、风险管理和策略讨论场景进行英文模拟。</p>
+            <div class="market-disclaimer">For educational language practice only · 仅用于英语学习，不构成投资建议。</div>
+          </div>
+          <div class="market-stats">
+            <div><strong id="marketTermCount">0</strong><span>专业术语</span></div>
+            <div><strong id="marketScenarioCount">0</strong><span>市场场景</span></div>
+            <div><strong id="marketLearnedCount">0</strong><span>已掌握</span></div>
+          </div>
+        </div>
+
+        <div class="market-tabs" role="tablist" aria-label="市场英语模块">
+          <button class="market-tab active" data-market-tab="vocabulary" type="button">术语库 Vocabulary</button>
+          <button class="market-tab" data-market-tab="situations" type="button">场景模拟 Scenarios</button>
+          <button class="market-tab" data-market-tab="quiz" type="button">专业测验 Quiz</button>
+        </div>
+
+        <section id="market-tab-vocabulary" class="market-tab-panel active">
+          <div class="market-toolbar">
+            <input id="marketSearch" class="search" type="search" placeholder="搜索术语、中文、定义，例如：delta、未平仓量、earnings" />
+            <select id="marketCategoryFilter" class="select" aria-label="市场术语类别"></select>
+            <select id="marketLevelFilter" class="select" aria-label="市场术语难度">
+              <option value="all">全部难度</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+            </select>
+            <select id="marketStatusFilter" class="select" aria-label="掌握状态">
+              <option value="all">全部状态</option>
+              <option value="learned">已掌握</option>
+              <option value="favorite">已收藏</option>
+              <option value="unlearned">未掌握</option>
+            </select>
+          </div>
+          <div class="library-meta"><span id="marketResultCount">0</span> 条术语</div>
+          <div id="marketVocabGrid" class="market-vocab-grid"></div>
+        </section>
+
+        <section id="market-tab-situations" class="market-tab-panel">
+          <div class="market-scenario-shell">
+            <section class="market-scenario-picker">
+              <div class="section-heading">
+                <span class="eyebrow">Role-play Practice</span>
+                <h3>选择一个市场沟通场景</h3>
+                <p>重点练习如何提问、说明证据、表达不确定性，而不是给出交易建议。</p>
+              </div>
+              <div class="market-scenario-tools">
+                <input id="marketScenarioSearch" class="search" type="search" placeholder="搜索场景，例如：limit order、IV crush、财报" />
+                <select id="marketScenarioCategory" class="select" aria-label="市场场景类别"></select>
+                <button id="randomMarketScenarioBtn" class="ghost-btn" type="button">随机场景</button>
+              </div>
+              <div id="marketScenarioGrid" class="market-scenario-grid"></div>
+            </section>
+
+            <section class="market-roleplay-panel">
+              <div id="marketMissionCard" class="market-mission-card empty-state">选择一个场景，然后点击开始练习。</div>
+              <div class="market-roleplay-actions">
+                <button id="startMarketScenarioBtn" class="primary-btn" type="button">开始市场英语模拟</button>
+                <button id="speakMarketLineBtn" class="small-btn" type="button">朗读当前句</button>
+                <button id="resetMarketScenarioBtn" class="ghost-btn" type="button">重置</button>
+              </div>
+              <div id="marketDialogueBox" class="dialogue-box empty-state">尚未开始。</div>
+              <div id="marketChoiceBox" class="choice-box"></div>
+              <div id="marketOutcomeBox" class="outcome-box"></div>
+              <div class="market-transcript-wrap">
+                <h3>Market Transcript / 对话记录</h3>
+                <div id="marketTranscript" class="transcript-list empty-state">暂无记录。</div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="market-tab-quiz" class="market-tab-panel">
+          <div class="quiz-card market-quiz-card">
+            <span class="eyebrow">Market Vocabulary Quiz</span>
+            <h2 id="marketQuizQuestion">点击开始生成专业术语题目</h2>
+            <div id="marketQuizOptions" class="quiz-options"></div>
+            <div class="quiz-actions">
+              <button id="newMarketQuizBtn" class="primary-btn" type="button">下一题</button>
+              <span id="marketQuizFeedback" class="feedback"></span>
+            </div>
+            <div id="marketQuizScore" class="market-quiz-score">0 / 0</div>
+          </div>
+        </section>
+      </section>
+
       <section id="view-quiz" class="view">
         <div class="quiz-card">
           <span class="eyebrow">Quick Quiz</span>
@@ -215,6 +307,7 @@
 
   <script src="data/expressions.js"></script>
   <script src="data/scenarios.js"></script>
+  <script src="data/marketEnglish.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
