@@ -77,7 +77,7 @@ The [app](https://sktt1bert.github.io/us-life-english-simulator/) and [source re
 
 Future participant exports would be collected through an institution-approved private channel after consent and any required ethics review. Keep originals and a restricted backup, analyze copies, and keep study codes and consent records separately. Set storage, retention and deletion rules before recruitment. GitHub would contain documentation and synthetic examples; sharing participant-derived results would require consent and disclosure review.
 
-**Software/documentation DOI:** not assigned. A participant dataset DOI is not applicable yet. ORCID identifies the researcher; the GitHub link identifies the repository. If a documentation or software release is archived later, add that release's DOI here.
+**Documentation DOI (reserved):** `10.5281/zenodo.23090958`. This identifier is reserved for the documentation package and synthetic example. The Zenodo record has not yet been published, and the DOI is not yet registered or active. A participant dataset DOI is not applicable yet.
 
 **Suggested citation:** Yin, B. (2026). *Daily English Lab: Learning Progress Metadata* (v1.2) [Research proposal and documentation].
 
