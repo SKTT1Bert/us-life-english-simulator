@@ -10,7 +10,7 @@
   <a href="example_progress_SYNTHETIC.json"><img src="assets/badge-json.svg" alt="Data: JSON snapshots"></a>
   <br><br>
   <a href="https://ddialliance.org/ddi-codebook"><img src="assets/badge-ddi.svg" alt="Metadata: DDI Codebook structure"></a>&nbsp;&nbsp;&nbsp;
-  <a href="https://orcid.org/0009-0004-4769-1395"><img src="assets/badge-orcid.svg" alt="ORCID: Bert Yin"></a>
+  <a href="https://orcid.org/0009-0004-4769-1395"><img src="assets/badge-orcid.svg" alt="ORCID: Zhenghui Yin"></a>
 </p>
 
 <p align="center"><a href="https://sktt1bert.github.io/us-life-english-simulator/">Try the app</a> · <a href="https://github.com/SKTT1Bert/us-life-english-simulator">Source code</a> · <a href="data_dictionary.csv">Data dictionary</a> · <a href="Daily_English_Lab_README.pdf">PDF copy</a></p>
@@ -39,7 +39,7 @@ Daily English Lab offers bilingual expressions, quizzes and branching conversati
 
 **Research question:** What patterns of daily-expression practice, quiz accuracy and scenario completion appear in a small voluntary pilot?
 
-- **Creator and data contact:** Bert Yin (Zhenghui Yin), Teachers College, Columbia University; contact through [GitHub Issues](https://github.com/SKTT1Bert/us-life-english-simulator/issues).
+- **Creator and data contact:** Zhenghui Yin, Teachers College, Columbia University; contact through [GitHub Issues](https://github.com/SKTT1Bert/us-life-english-simulator/issues).
 - **ORCID:** [0009-0004-4769-1395](https://orcid.org/0009-0004-4769-1395).
 - **Participants:** adult volunteers. Sample size, study duration, dates and collection location will be set before recruitment.
 - **Coverage:** English and Chinese content about U.S. situations; English documentation. Keywords: learning analytics, English practice, browser progress.
@@ -73,15 +73,15 @@ Real exports use `daily-english-lab-progress-YYYY-MM-DD.json`. The reviewed app 
 
 ## 3. Sharing and access
 
-The [app](https://sktt1bert.github.io/us-life-english-simulator/) and [source repository](https://github.com/SKTT1Bert/us-life-english-simulator) are public. Use **Export Progress** to download local JSON. No explicit license file was found in the reviewed repository; a reuse license still needs to be chosen. This coursework package does not assign one.
+The [app](https://sktt1bert.github.io/us-life-english-simulator/) and [source repository](https://github.com/SKTT1Bert/us-life-english-simulator) are public. Use **Export Progress** to download local JSON. The authored documentation, dictionaries and synthetic example are shared under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This license does not apply to the app source or third-party badge assets. No explicit license file was found in the reviewed app repository.
 
 Future participant exports would be collected through an institution-approved private channel after consent and any required ethics review. Keep originals and a restricted backup, analyze copies, and keep study codes and consent records separately. Set storage, retention and deletion rules before recruitment. GitHub would contain documentation and synthetic examples; sharing participant-derived results would require consent and disclosure review.
 
-**Documentation DOI (reserved):** `10.5281/zenodo.23090958`. This identifier is reserved for the documentation package and synthetic example. The Zenodo record has not yet been published, and the DOI is not yet registered or active. A participant dataset DOI is not applicable yet.
+**Documentation DOI:** [10.5281/zenodo.23090958](https://doi.org/10.5281/zenodo.23090958). The Zenodo archive preserves this documentation package and synthetic example. A participant dataset DOI is not applicable yet. The archived version 1.2 files retain the earlier author label; the author metadata has been corrected to Zhenghui Yin.
 
-**Suggested citation:** Yin, B. (2026). *Daily English Lab: Learning Progress Metadata* (v1.2) [Research proposal and documentation].
+**Suggested citation:** Yin, Z. (2026). *Daily English Lab: Learning Progress Metadata* (v1.2) [Research proposal and documentation]. Zenodo. https://doi.org/10.5281/zenodo.23090958
 
-**Documentation release:** [Version 1.2 on GitHub](https://github.com/SKTT1Bert/us-life-english-simulator/blob/main/metadata/README.md).
+**Documentation release:** [Version 1.2 on GitHub](https://github.com/SKTT1Bert/us-life-english-simulator/blob/main/README.md).
 
 ## 4. Methods
 
