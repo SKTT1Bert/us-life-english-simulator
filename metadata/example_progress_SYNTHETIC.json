@@ -1,0 +1,36 @@
+{
+  "app": "Daily English Lab",
+  "exportedAt": "2026-10-01T16:00:00.000Z",
+  "learned": [
+    "how-are-you-doing"
+  ],
+  "favorites": [
+    "how-s-it-going"
+  ],
+  "sessions": {
+    "2026-10-01": [
+      "how-are-you-doing"
+    ]
+  },
+  "quiz": {
+    "correct": 3,
+    "total": 5
+  },
+  "scenarios": {
+    "runs": 3,
+    "completed": 2,
+    "success": 1
+  },
+  "marketLearned": [],
+  "marketFavorites": [],
+  "marketQuiz": {
+    "correct": 0,
+    "total": 0
+  },
+  "marketScenarios": {
+    "runs": 0,
+    "completed": 0,
+    "success": 0
+  },
+  "theme": "light"
+}

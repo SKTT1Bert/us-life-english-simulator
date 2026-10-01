@@ -1,3 +1,11 @@
+# Research metadata — HUDK 4054 Assignment #2
+
+[Read the assignment README](metadata/README.md) · [Download the PDF](metadata/Daily_English_Lab_README.pdf)
+
+This documentation describes the existing progress-export format and a proposed pilot study. The included example is synthetic; participant data collection is planned. A documentation DOI has not yet been assigned.
+
+---
+
 # Daily English Lab V7
 
 A fully static, local-first English learning website for real-life U.S. scenarios and market English. It can be deployed directly to GitHub Pages.
