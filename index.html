@@ -22,19 +22,20 @@
     </div>
   </header>
 
+  <p id="storageNotice" class="practice-note" role="alert" hidden></p>
   <main class="layout">
     <aside class="sidebar" aria-label="学习导航">
       <button class="nav-btn active" data-view="today">今日学习</button>
       <button class="nav-btn" data-view="library">表达库</button>
       <button class="nav-btn" data-view="scenarios">场景模拟</button>
       <button class="nav-btn" data-view="market">市场英语</button>
-      <button class="nav-btn" data-view="quiz">口语测验</button>
+      <button class="nav-btn" data-view="quiz">练习与复习</button>
       <button class="nav-btn" data-view="favorites">收藏</button>
       <button class="nav-btn" data-view="progress">学习进度</button>
       <div class="side-card">
         <span class="side-label">本地记录</span>
         <strong id="sideLearned">0</strong>
-        <span>已掌握表达</span>
+        <span>已学习表达（含旧版标记）</span>
       </div>
     </aside>
 
@@ -43,15 +44,22 @@
         <div class="hero-card">
           <div>
             <span class="eyebrow">Today's Practice</span>
-            <h2>今天先掌握 5 个高频表达</h2>
-            <p>适合每天 5–10 分钟练习：看表达、听发音、跟读例句、标记掌握。</p>
+            <h2>先回忆旧表达，再学习新表达</h2>
+            <p>每天 5–10 分钟：到期回忆 → 核对反馈 → 学习新表达。看懂、选对和隔天能说出，分别记录。</p>
           </div>
           <div class="hero-stats">
             <div><strong id="totalCount">0</strong><span>总表达</span></div>
             <div><strong id="streakCount">0</strong><span>连续天数</span></div>
-            <div><strong id="todayDone">0/5</strong><span>今日完成</span></div>
+            <div><strong id="todayDone">0/5</strong><span>今日新表达</span></div>
           </div>
         </div>
+        <section class="panel review-panel" aria-labelledby="reviewHeading">
+          <div class="review-heading"><h3 id="reviewHeading">到期复习 <span id="dueReviewCount">0</span></h3>
+            <button id="startReviewBtn" class="primary-btn" type="button">开始到期回忆</button></div>
+          <div id="dueReviewList"></div>
+          <p class="practice-note">每天先展示最多 3 条到期表达；剩余项目可在练习模式继续。无需一次清空积压。</p>
+        </section>
+        <h3>今天的新表达</h3>
         <div id="todayList" class="card-grid"></div>
       </section>
 
@@ -243,7 +251,41 @@
       </section>
 
       <section id="view-quiz" class="view">
-        <div class="quiz-card">
+        <div class="practice-toolbar">
+          <label for="practiceMode">练习模式 Practice mode</label>
+          <select id="practiceMode" class="select">
+            <option value="recall">主动回忆 Recall · 到期优先</option>
+            <option value="choice">选择题 Recognition · 原有模式</option>
+          </select>
+        </div>
+        <div id="recallPanel" class="quiz-card">
+          <span class="eyebrow">Recall Practice</span>
+          <p id="recallQueueNote" class="practice-note"></p>
+          <span id="recallCategory" class="badge"></span>
+          <h2 id="recallPrompt">先尝试自己说出英文，再看参考答案</h2>
+          <label class="field-label" for="recallResponse">输入英文，或先在心里／出声回答（可不输入）</label>
+          <textarea id="recallResponse" class="recall-response" rows="3" placeholder="你的回答只在本题显示，不保存、不上传。"></textarea>
+          <label class="field-label" for="recallConfidence">作答前预测（可跳过）：你觉得自己能说出来吗？</label>
+          <select id="recallConfidence" class="select">
+            <option value="">跳过预测</option><option value="low">没把握</option>
+            <option value="medium">有些把握</option><option value="high">很有把握</option>
+          </select>
+          <div class="inline-actions practice-actions">
+            <button id="recallHintBtn" class="ghost-btn" type="button">给一点提示</button>
+            <button id="revealRecallBtn" class="primary-btn" type="button">已尝试，查看参考答案</button>
+          </div>
+          <p id="recallHint" class="practice-note" hidden></p>
+          <div id="recallReference" class="recall-reference" hidden></div>
+          <div id="recallResultButtons" class="inline-actions practice-actions" hidden>
+            <button id="recallIndependent" class="small-btn" data-outcome="independent" type="button">独立说出来了</button>
+            <button class="small-btn" data-outcome="hinted" type="button">提示后说出来了</button>
+            <button class="small-btn" data-outcome="forgot" type="button">看答案才想起／没想起</button>
+          </div>
+          <p id="recallFeedback" class="feedback practice-feedback" role="status" aria-live="polite"></p>
+          <button id="nextRecallBtn" class="primary-btn" type="button">下一条（到期优先）</button>
+          <p class="practice-note">结果来自自评，不自动判定发音、语法或口语水平。间隔默认 1、3、7、14 天，是待调整的产品规则，不是论文证明的最佳安排。</p>
+        </div>
+        <div id="choicePanel" class="quiz-card" hidden>
           <span class="eyebrow">Quick Quiz</span>
           <h2 id="quizQuestion">点击开始生成题目</h2>
           <div id="quizOptions" class="quiz-options"></div>
@@ -264,9 +306,17 @@
 
       <section id="view-progress" class="view">
         <div class="progress-grid">
-          <div class="metric-card"><strong id="learnedMetric">0</strong><span>已掌握</span></div>
+          <div class="metric-card"><strong id="learnedMetric">0</strong><span>已学习／旧版标记</span></div>
           <div class="metric-card"><strong id="favoriteMetric">0</strong><span>已收藏</span></div>
-          <div class="metric-card"><strong id="completionMetric">0%</strong><span>完成度</span></div>
+          <div class="metric-card"><strong id="completionMetric">0%</strong><span>学习覆盖率</span></div>
+          <div class="metric-card"><strong id="recalledMetric">0</strong><span>曾独立回忆（自评）</span></div>
+          <div class="metric-card"><strong id="delayedMetric">0</strong><span>曾延迟回忆成功（自评）</span></div>
+        </div>
+        <div class="panel">
+          <h2>练习证据 Practice evidence</h2>
+          <div id="practiceBreakdown"></div>
+          <p class="practice-note">旧版标记与一次选择正确不等于长期掌握。比例基于最近最多 5,000 条新练习事件；条目累计成功次数另行保留。UTC 日界沿用旧版，显示时间采用设备时区。</p>
+          <h3>最近练习</h3><ul id="recentPractice" class="recent-practice"></ul>
         </div>
         <div class="panel">
           <h2>按场景统计</h2>
@@ -299,7 +349,8 @@
       <p class="example-cn"></p>
       <div class="card-actions">
         <button class="small-btn speak-btn" type="button">朗读</button>
-        <button class="small-btn learned-btn" type="button">标记掌握</button>
+        <button class="small-btn learned-btn" type="button">标记已学习</button>
+        <button class="small-btn recall-btn" type="button">练习回忆</button>
         <button class="small-btn fav-btn" type="button">收藏</button>
       </div>
     </article>
@@ -308,6 +359,8 @@
   <script src="data/expressions.js"></script>
   <script src="data/scenarios.js"></script>
   <script src="data/marketEnglish.js"></script>
+  <script src="review.js"></script>
+  <script src="practice.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

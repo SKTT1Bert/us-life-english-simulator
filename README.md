@@ -17,6 +17,8 @@
 
 Version 1.2 | 2026-10-01 | HUDK 4054 Individual Assignment #2
 
+> **Runtime update (2026-10-07):** Practice & Review now includes active recall, due-item review, and local per-attempt records. Runtime exports use schema v2; legacy progress remains supported. See [current behavior, schema, research limits, and tests](docs/learning-review.md). The coursework narrative/PDF and synthetic example below remain historical v1.2 documentation; the CSV dictionary has been updated for the runtime. Old learned marks are not evidence of delayed recall.
+
 > Status: The app runs on GitHub Pages and can export progress as JSON. This package documents that format for a proposed pilot. The example is synthetic; participant data collection is planned.
 
 <details>

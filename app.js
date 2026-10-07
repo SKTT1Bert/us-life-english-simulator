@@ -3,9 +3,12 @@ const SCENARIO_PACKS = window.SCENARIO_PACKS || [];
 const MARKET_VOCAB = window.MARKET_VOCAB || [];
 const MARKET_SCENARIOS = window.MARKET_SCENARIOS || [];
 const STORAGE_KEY = 'daily-english-lab-state-v1';
+const ReviewEngine = window.ReviewEngine;
+let stateWarning = '';
 
 const state = loadState();
 let currentQuizAnswer = null;
+let quizAnswered = false;
 let activeScenario = null;
 let selectedTaskId = null;
 let selectedMarketScenarioId = null;
@@ -31,28 +34,54 @@ const TIME_SLOTS = [
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+function parseProgress(saved) {
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) throw new Error('进度必须是 JSON 对象。');
+  if (saved.app !== undefined && saved.app !== 'Daily English Lab') throw new Error('这不是 Daily English Lab 的进度。');
+  for (const key of ['learned', 'favorites', 'marketLearned', 'marketFavorites']) {
+    if (saved[key] !== undefined && (!Array.isArray(saved[key]) || saved[key].some((id) => typeof id !== 'string'))) {
+      throw new Error('条目标记格式不正确。');
+    }
+  }
+  for (const key of ['quiz', 'marketQuiz', 'scenarios', 'marketScenarios']) {
+    const value = saved[key];
+    if (value === undefined) continue;
+    const fields = key.toLowerCase().includes('quiz') ? ['correct', 'total'] : ['runs', 'completed', 'success'];
+    if (!value || typeof value !== 'object' || fields.some((field) => !Number.isInteger(value[field]) || value[field] < 0)
+      || (fields.includes('total') ? value.correct > value.total : value.success > value.completed || value.completed > value.runs)) {
+      throw new Error('累计计数格式不正确。');
+    }
+  }
+  if (saved.sessions !== undefined && (!saved.sessions || typeof saved.sessions !== 'object' || Array.isArray(saved.sessions)
+    || Object.entries(saved.sessions).some(([day, ids]) => !/^\d{4}-\d{2}-\d{2}$/.test(day)
+      || !Array.isArray(ids) || ids.some((id) => typeof id !== 'string')))) throw new Error('每日记录格式不正确。');
+  const validIds = new Set(EXPRESSIONS.map((item) => item.id));
+  if (saved.dailyPlan != null && (typeof saved.dailyPlan !== 'object'
+    || !/^\d{4}-\d{2}-\d{2}$/.test(saved.dailyPlan.date) || !Array.isArray(saved.dailyPlan.ids)
+    || saved.dailyPlan.ids.length > 5 || new Set(saved.dailyPlan.ids).size !== saved.dailyPlan.ids.length
+    || saved.dailyPlan.ids.some((id) => !validIds.has(id)))) throw new Error('每日计划格式不正确。');
+  const review = ReviewEngine.restore(saved, validIds);
+  return {
+    learned: new Set(saved.learned || []), favorites: new Set(saved.favorites || []),
+    sessions: saved.sessions || {}, theme: ['light', 'dark', 'pink'].includes(saved.theme) ? saved.theme : 'light',
+    quiz: saved.quiz || { correct: 0, total: 0 }, scenarios: saved.scenarios || { runs: 0, completed: 0, success: 0 },
+    marketLearned: new Set(saved.marketLearned || []), marketFavorites: new Set(saved.marketFavorites || []),
+    marketQuiz: saved.marketQuiz || { correct: 0, total: 0 }, marketScenarios: saved.marketScenarios || { runs: 0, completed: 0, success: 0 },
+    dailyPlan: saved.dailyPlan || null, ...review,
+  };
+}
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return {
-      learned: new Set(saved?.learned || []),
-      favorites: new Set(saved?.favorites || []),
-      sessions: saved?.sessions || {},
-      theme: saved?.theme || 'light',
-      quiz: saved?.quiz || { correct: 0, total: 0 },
-      scenarios: saved?.scenarios || { runs: 0, completed: 0, success: 0 },
-      marketLearned: new Set(saved?.marketLearned || []),
-      marketFavorites: new Set(saved?.marketFavorites || []),
-      marketQuiz: saved?.marketQuiz || { correct: 0, total: 0 },
-      marketScenarios: saved?.marketScenarios || { runs: 0, completed: 0, success: 0 },
-    };
+    return parseProgress(saved || {});
   } catch {
-    return { learned: new Set(), favorites: new Set(), sessions: {}, theme: 'light', quiz: { correct: 0, total: 0 }, scenarios: { runs: 0, completed: 0, success: 0 }, marketLearned: new Set(), marketFavorites: new Set(), marketQuiz: { correct: 0, total: 0 }, marketScenarios: { runs: 0, completed: 0, success: 0 } };
+    stateWarning = '本地进度读取失败，原始记录未被改写。请先备份浏览器数据；当前临时使用空进度。';
+    return parseProgress({});
   }
 }
 
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+function progressPayload() {
+  return {
     learned: [...state.learned],
     favorites: [...state.favorites],
     sessions: state.sessions,
@@ -63,7 +92,25 @@ function saveState() {
     marketFavorites: [...state.marketFavorites],
     marketQuiz: state.marketQuiz,
     marketScenarios: state.marketScenarios,
-  }));
+    schemaVersion: state.schemaVersion,
+    reviewSchedule: state.reviewSchedule,
+    practiceHistory: state.practiceHistory,
+    dailyPlan: state.dailyPlan,
+  };
+}
+
+function saveState() {
+  try {
+    // Do not silently overwrite a corrupt original record.
+    if (stateWarning) throw new Error('blocked');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progressPayload()));
+    $('#storageNotice').hidden = true;
+    return true;
+  } catch {
+    $('#storageNotice').textContent = stateWarning || '进度未能保存到浏览器（可能存储已满或被禁用）。请导出进度备份。';
+    $('#storageNotice').hidden = false;
+    return false;
+  }
 }
 
 function todayKey() {
@@ -72,12 +119,19 @@ function todayKey() {
 
 function getDailyItems(count = 5) {
   const key = todayKey();
+  if (state.dailyPlan?.date === key) {
+    return state.dailyPlan.ids.map((id) => EXPRESSIONS.find((item) => item.id === id)).filter(Boolean).slice(0, count);
+  }
   const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return [...EXPRESSIONS]
+  const newCount = Math.max(2, count - Math.min(3, ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule).length));
+  const items = EXPRESSIONS.filter((item) => !state.learned.has(item.id) && !state.reviewSchedule[item.id])
     .map((item, index) => ({ item, score: Math.sin((index + 1) * (seed + 17)) }))
     .sort((a, b) => a.score - b.score)
-    .slice(0, count)
+    .slice(0, newCount)
     .map(({ item }) => item);
+  state.dailyPlan = { date: key, ids: items.map((item) => item.id) };
+  saveState();
+  return items;
 }
 
 function markSession(id) {
@@ -99,7 +153,7 @@ function renderCard(item) {
 
   const learnedBtn = node.querySelector('.learned-btn');
   const favBtn = node.querySelector('.fav-btn');
-  learnedBtn.textContent = state.learned.has(item.id) ? '已掌握' : '标记掌握';
+  learnedBtn.textContent = state.learned.has(item.id) ? '已学习' : '标记已学习';
   learnedBtn.classList.toggle('active', state.learned.has(item.id));
   favBtn.textContent = state.favorites.has(item.id) ? '已收藏' : '收藏';
   favBtn.classList.toggle('active', state.favorites.has(item.id));
@@ -109,11 +163,13 @@ function renderCard(item) {
     if (state.learned.has(item.id)) state.learned.delete(item.id);
     else {
       state.learned.add(item.id);
+      ReviewEngine.noteStudy(state, item.id);
       markSession(item.id);
     }
     saveState();
     renderAll();
   });
+  node.querySelector('.recall-btn').addEventListener('click', () => startRecall(item.id));
   favBtn.addEventListener('click', () => {
     if (state.favorites.has(item.id)) state.favorites.delete(item.id);
     else state.favorites.add(item.id);
@@ -163,9 +219,10 @@ function renderToday() {
   const daily = getDailyItems(5);
   renderList($('#todayList'), daily);
   const done = daily.filter((item) => state.learned.has(item.id)).length;
-  $('#todayDone').textContent = `${done}/5`;
+  $('#todayDone').textContent = `${done}/${daily.length}`;
   $('#totalCount').textContent = EXPRESSIONS.length;
   $('#streakCount').textContent = getStreak();
+  renderReviewQueue();
 }
 
 function getStreak() {
@@ -228,6 +285,7 @@ function renderProgress() {
   $('#favoriteMetric').textContent = favorite;
   $('#completionMetric').textContent = `${completion}%`;
   $('#sideLearned').textContent = learned;
+  renderPracticeProgress();
 
   const categories = [...new Set(EXPRESSIONS.map((item) => item.category))];
   $('#categoryProgress').innerHTML = categories.map((category) => {
@@ -821,8 +879,10 @@ function handleMarketQuizAnswer(event) {
 }
 
 function renderQuiz() {
+  if (!EXPRESSIONS.length) return;
   const answer = EXPRESSIONS[Math.floor(Math.random() * EXPRESSIONS.length)];
   currentQuizAnswer = answer;
+  quizAnswered = false;
   const pool = EXPRESSIONS
     .filter((item) => item.id !== answer.id && item.category !== answer.category)
     .sort(() => Math.random() - 0.5)
@@ -837,6 +897,8 @@ function renderQuiz() {
 }
 
 function handleQuizAnswer(event) {
+  if (!currentQuizAnswer || quizAnswered) return;
+  quizAnswered = true;
   const btn = event.currentTarget;
   const isCorrect = btn.dataset.id === currentQuizAnswer.id;
   state.quiz.total += 1;
@@ -845,13 +907,14 @@ function handleQuizAnswer(event) {
     state.learned.add(currentQuizAnswer.id);
     markSession(currentQuizAnswer.id);
   }
+  ReviewEngine.recordAttempt(state, currentQuizAnswer.id, { mode: 'choice', outcome: isCorrect ? 'correct' : 'incorrect' });
   $$('.quiz-option').forEach((option) => {
     option.disabled = true;
     if (option.dataset.id === currentQuizAnswer.id) option.classList.add('correct');
   });
   if (!isCorrect) btn.classList.add('wrong');
   $('#quizFeedback').textContent = isCorrect
-    ? '正确，已自动标记为掌握。'
+    ? '选择正确，已标记为已学习；主动回忆与延迟回忆另行记录。'
     : `答案是：${currentQuizAnswer.phrase}`;
   saveState();
   renderProgress();
@@ -866,7 +929,7 @@ function setView(viewName) {
   if (viewName === 'library') renderLibrary();
   if (viewName === 'favorites') renderFavorites();
   if (viewName === 'progress') renderProgress();
-  if (viewName === 'quiz' && !currentQuizAnswer) renderQuiz();
+  if (viewName === 'quiz') setPracticeMode($('#practiceMode').value);
   if (viewName === 'scenarios') renderScenarioStats();
   if (viewName === 'market') { renderMarketVocabulary(); renderMarketScenarioCards(); renderMarketStats(); }
 }
@@ -893,16 +956,7 @@ function exportProgress() {
   const payload = JSON.stringify({
     app: 'Daily English Lab',
     exportedAt: new Date().toISOString(),
-    learned: [...state.learned],
-    favorites: [...state.favorites],
-    sessions: state.sessions,
-    quiz: state.quiz,
-    scenarios: state.scenarios,
-    marketLearned: [...state.marketLearned],
-    marketFavorites: [...state.marketFavorites],
-    marketQuiz: state.marketQuiz,
-    marketScenarios: state.marketScenarios,
-    theme: state.theme,
+    ...progressPayload(),
   }, null, 2);
   const blob = new Blob([payload], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -918,21 +972,21 @@ function importProgress(file) {
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      state.learned = new Set(data.learned || []);
-      state.favorites = new Set(data.favorites || []);
-      state.sessions = data.sessions || {};
-      state.quiz = data.quiz || { correct: 0, total: 0 };
-      state.scenarios = data.scenarios || { runs: 0, completed: 0, success: 0 };
-      state.marketLearned = new Set(data.marketLearned || []);
-      state.marketFavorites = new Set(data.marketFavorites || []);
-      state.marketQuiz = data.marketQuiz || { correct: 0, total: 0 };
-      state.marketScenarios = data.marketScenarios || { runs: 0, completed: 0, success: 0 };
-      if (['light', 'dark', 'pink'].includes(data.theme)) state.theme = data.theme;
-      saveState();
+      const restored = parseProgress(data);
+      Object.assign(state, restored);
+      stateWarning = '';
+      activeRecall = null;
+      currentQuizAnswer = null;
+      quizAnswered = false;
+      resetScenario();
+      resetMarketScenario();
+      applyTheme();
+      const saved = saveState();
       renderAll();
-      alert('进度已导入。');
-    } catch {
-      alert('导入失败：文件格式不正确。');
+      if ($('#view-quiz').classList.contains('active')) setPracticeMode($('#practiceMode').value);
+      alert(saved ? '进度已导入。' : '进度已载入，但浏览器未能保存，请导出备份。');
+    } catch (error) {
+      alert(`导入失败：${error.message} 原有进度未改变。`);
     }
   };
   reader.readAsText(file);
@@ -951,6 +1005,7 @@ function renderAll() {
 
 
 function bindEvents() {
+  setupPractice();
   $$('.nav-btn').forEach((btn) => btn.addEventListener('click', () => setView(btn.dataset.view)));
   $('#newQuizBtn').addEventListener('click', renderQuiz);
   $('#themeToggle').addEventListener('click', () => {
@@ -970,10 +1025,19 @@ function bindEvents() {
     state.marketFavorites.clear();
     state.marketQuiz = { correct: 0, total: 0 };
     state.marketScenarios = { runs: 0, completed: 0, success: 0 };
+    state.schemaVersion = 2;
+    state.reviewSchedule = {};
+    state.practiceHistory = [];
+    state.dailyPlan = null;
+    stateWarning = '';
+    activeRecall = null;
+    currentQuizAnswer = null;
+    quizAnswered = false;
     resetScenario();
     resetMarketScenario();
     saveState();
     renderAll();
+    if ($('#view-quiz').classList.contains('active')) setPracticeMode($('#practiceMode').value);
   });
   if ($('#startScenarioBtn')) $('#startScenarioBtn').addEventListener('click', () => startScenario());
   if ($('#randomScenarioBtn')) $('#randomScenarioBtn').addEventListener('click', () => startScenario({ fullyRandom: true }));
@@ -1001,6 +1065,10 @@ function init() {
   bindEvents();
   applyTheme();
   renderAll();
+  if (stateWarning) {
+    $('#storageNotice').textContent = stateWarning;
+    $('#storageNotice').hidden = false;
+  }
 }
 
 init();

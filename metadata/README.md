@@ -17,6 +17,8 @@
 
 Version 1.2 | 2026-10-01 | HUDK 4054 Individual Assignment #2
 
+> **Runtime update (2026-10-07):** The app now uses progress schema v2 for active recall, due reviews, and per-attempt records. See [the current runtime specification](../docs/learning-review.md). This coursework narrative, PDF, and synthetic example remain historical v1.2 documentation; `data_dictionary.csv` has been updated. Do not interpret old learned marks as verified recall.
+
 > Status: The app runs on GitHub Pages and can export progress as JSON. This package documents that format for a proposed pilot. The example is synthetic; participant data collection is planned.
 
 <details>
