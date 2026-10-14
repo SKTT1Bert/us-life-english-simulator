@@ -27,6 +27,9 @@
 }
 
 * { box-sizing: border-box; }
+.translator-panel { padding: 22px; margin-bottom: 24px; }
+.translator-text { display: block; width: 100%; resize: vertical; margin: 8px 0 14px; }
+#translatorStatus { font-weight: 700; }
 
 body {
   margin: 0;

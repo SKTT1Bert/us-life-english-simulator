@@ -2,3 +2,10 @@
 node_modules/
 dist/
 .env
+.venv-translator/
+__pycache__/
+*.pyc
+local-translator-config.bat
+models/
+*.gguf
+*.safetensors

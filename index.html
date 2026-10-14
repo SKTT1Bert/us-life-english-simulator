@@ -64,6 +64,25 @@
       </section>
 
       <section id="view-library" class="view">
+        <section class="panel translator-panel" aria-labelledby="translatorHeading">
+          <div class="review-heading">
+            <h2 id="translatorHeading">本地中 → 英翻译</h2>
+            <span id="translatorStatus" role="status" aria-live="polite">Offline</span>
+          </div>
+          <p class="practice-note">Hy-MT2 准确翻译 · 首次使用时加载，空闲 10 分钟释放。自然化改写是另一项任务，当前不提供风格选项。</p>
+          <label class="field-label" for="translatorInput">中文原文</label>
+          <textarea id="translatorInput" class="search translator-text" rows="3" maxlength="1000" placeholder="我今天可能会晚一点到，你们不用等我。"></textarea>
+          <div class="inline-actions">
+            <button id="translateBtn" class="primary-btn" type="button">Translate / 翻译</button>
+            <button id="translatorConnect" class="ghost-btn" type="button">检查连接</button>
+            <button id="translatorUnload" class="ghost-btn" type="button">释放模型</button>
+          </div>
+          <p id="translatorMessage" class="practice-note" role="status" aria-live="polite"></p>
+          <label class="field-label" for="translatorOutput">英文结果</label>
+          <textarea id="translatorOutput" class="search translator-text" rows="3" readonly></textarea>
+          <button id="translatorCopy" class="small-btn" type="button" disabled>Copy / 复制</button>
+          <p class="practice-note">需要复习类似表达？使用下方现有表达库搜索，并点击条目上的“练习回忆”或“收藏”。翻译结果不会自动写入学习成绩。</p>
+        </section>
         <div class="toolbar">
           <input id="searchInput" class="search" type="search" placeholder="搜索英文、中文、场景，例如：怎么说、餐厅、I mean" />
           <select id="categoryFilter" class="select" aria-label="分类筛选"></select>
@@ -362,5 +381,6 @@
   <script src="review.js"></script>
   <script src="practice.js"></script>
   <script src="app.js"></script>
+  <script src="translator.js"></script>
 </body>
 </html>
