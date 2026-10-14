@@ -312,7 +312,10 @@ function setupScenarioSelectors() {
   )).join('');
   $('#placeSelect').addEventListener('change', () => {
     selectedTaskId = null;
+    $('#taskSearch').value = '';
+    $('#taskCategoryFilter').value = 'all';
     populateTaskSelect();
+    resetScenario();
   });
   if ($('#taskSearch')) $('#taskSearch').addEventListener('input', renderTaskCards);
   if ($('#taskCategoryFilter')) $('#taskCategoryFilter').addEventListener('change', renderTaskCards);
@@ -406,6 +409,12 @@ function startScenario({ fullyRandom = false } = {}) {
   const complication = (task.complications?.length && Math.random() < complicationChance) ? sample(task.complications) : null;
 
   const arrivalIndex = Math.floor(Math.random() * (place.arrivalLines?.length || 1));
+  // Random runs can change places: keep the shared selector and task picker in sync.
+  $('#placeSelect').value = place.id;
+  selectedTaskId = task.id;
+  $('#taskSearch').value = '';
+  $('#taskCategoryFilter').value = 'all';
+  populateTaskSelect();
   activeScenario = {
     place,
     task,
@@ -431,6 +440,7 @@ function startScenario({ fullyRandom = false } = {}) {
   saveState();
   renderScenarioStats();
   renderCurrentScenario();
+  document.dispatchEvent(new CustomEvent('scenario:started', { detail: { placeId: place.id } }));
 }
 
 function resetScenario() {

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="foundations.css" />
   <link rel="stylesheet" href="pictureLearning.css" />
+  <link rel="stylesheet" href="sceneLearning.css" />
 </head>
 <body>
   <header class="app-header">
@@ -102,27 +103,44 @@
       </section>
 
 
-      <section id="view-scenarios" class="view">
+      <section id="view-scenarios" class="view scene-learning">
         <div class="scenario-hero">
           <div class="scenario-hero-copy">
-            <span class="eyebrow">Scenario Mode</span>
-            <h2>沉浸式随机日常对话模拟</h2>
-            <p>像真实办事一样练：选择场所和今天要办的事，系统随机生成时间、背景、工作人员态度、突发情况和多轮分支。</p>
+            <span class="eyebrow">Scene Learning / 场景学习</span>
+            <h2>看图认词，接着练一场真实对话</h2>
+            <p>先认识场景里的物品和表达，再选择今天要办的事。两种模式共用场所，带图场景可以直接切换练习。</p>
             <button id="scenarioBackBtn" class="ghost-btn scenario-back-btn" type="button">返回主页</button>
           </div>
           <div class="scenario-stats">
-            <div><strong id="scenarioPlaceCount">0</strong><span>场所</span></div>
+            <div><strong id="scenarioPictureCount">0</strong><span>场景图</span></div>
+            <div><strong id="scenarioPlaceCount">0</strong><span>对话场所</span></div>
             <div><strong id="scenarioTaskCount">0</strong><span>目的</span></div>
             <div><strong id="scenarioRunCount">0</strong><span>已练习</span></div>
           </div>
         </div>
 
+        <div class="scene-library-toolbar">
+          <div><label class="field-label" for="placeSelect">选择生活场所 Choose a place</label><select id="placeSelect" class="select"></select></div>
+          <p id="sceneAvailability" role="status"></p>
+        </div>
+        <nav id="sceneGallery" class="scene-gallery" aria-label="有图场景选择"></nav>
+        <div class="scene-mode-tabs" role="tablist" aria-label="场景学习模式">
+          <button id="scene-tab-picture" class="scene-mode-tab" type="button" role="tab" data-scene-tab="picture" aria-controls="scene-panel-picture" aria-selected="true" tabindex="0">看图识词 <span>认物品 · 跟读 · 填空</span></button>
+          <button id="scene-tab-dialogue" class="scene-mode-tab" type="button" role="tab" data-scene-tab="dialogue" aria-controls="scene-panel-dialogue" aria-selected="false" tabindex="-1">对话模拟 <span>选目标 · 多轮交流</span></button>
+        </div>
+        <section id="scene-panel-picture" role="tabpanel" aria-labelledby="scene-tab-picture">
+          <div id="view-picture-words" class="picture-view"></div>
+          <div id="scenePictureEmpty" class="empty-state" hidden><h3>这个场所的图片课程还在补充</h3><p>你仍然可以使用已有的对话任务，或从上方选择一个带图场景。</p><button id="sceneEmptyDialogueBtn" type="button" class="primary-btn">练习这个场所的对话 →</button></div>
+        </section>
+        <section id="scene-panel-dialogue" role="tabpanel" aria-labelledby="scene-tab-dialogue" hidden>
+          <figure id="scenarioImagePreview" class="scene-shared-photo" hidden>
+            <img id="scenarioSceneImage" width="1536" height="1024" alt="">
+            <figcaption><strong id="scenarioSceneCaption"></strong><span>场所示意图 · 具体任务以模拟卡片为准</span><button id="sceneReturnPictureBtn" type="button" class="small-btn">先看图认词</button></figcaption>
+          </figure>
         <div class="scenario-layout">
           <section class="scenario-panel setup-panel">
             <div class="setup-controls">
               <h3>开始一次模拟</h3>
-            <label class="field-label" for="placeSelect">选择生活场所 Choose a place</label>
-            <select id="placeSelect" class="select"></select>
 
             <div class="task-picker-head">
               <div>
@@ -178,6 +196,7 @@
             <button id="resetScenarioBtn" class="ghost-btn" type="button">重置本次模拟</button>
           </div>
           <div id="transcriptList" class="transcript-list empty-state">暂无记录。</div>
+        </section>
         </section>
       </section>
 
@@ -277,11 +296,9 @@
         <div class="foundations-tabs" role="tablist" aria-label="英语基础课程">
           <button id="tab-word-parts" class="foundations-tab" type="button" role="tab" data-course="word-parts" aria-controls="view-word-parts" aria-selected="true" tabindex="0">词根词缀 <span>读懂词义</span></button>
           <button id="tab-phonics" class="foundations-tab" type="button" role="tab" data-course="phonics" aria-controls="view-phonics" aria-selected="false" tabindex="-1">自然拼读 <span>读准单词</span></button>
-          <button id="tab-picture-words" class="foundations-tab" type="button" role="tab" data-course="picture-words" aria-controls="view-picture-words" aria-selected="false" tabindex="-1">看图学词 <span>联系生活</span></button>
         </div>
         <section id="view-word-parts" class="tutorial-view" role="tabpanel" aria-labelledby="tab-word-parts"></section>
         <section id="view-phonics" class="tutorial-view" role="tabpanel" aria-labelledby="tab-phonics" hidden></section>
-        <section id="view-picture-words" class="picture-view" role="tabpanel" aria-labelledby="tab-picture-words" hidden></section>
       </section>
 
       <section id="view-quiz" class="view">
@@ -401,6 +418,8 @@
   <script src="data/phonics.js"></script>
   <script src="tutorials.js"></script>
   <script src="data/pictureLessons.js"></script>
+  <script src="data/sceneLessons.js"></script>
   <script src="pictureLearning.js"></script>
+  <script src="sceneLearning.js"></script>
 </body>
 </html>
