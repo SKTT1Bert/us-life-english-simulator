@@ -6,6 +6,8 @@
   <meta name="description" content="Daily English Lab - 美国日常生活与股票期权专业英语模拟器。" />
   <title>Daily English Lab · US Life English Simulator</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="foundations.css" />
+  <link rel="stylesheet" href="pictureLearning.css" />
 </head>
 <body>
   <header class="app-header">
@@ -27,6 +29,7 @@
     <aside class="sidebar" aria-label="学习导航">
       <button class="nav-btn active" data-view="today">今日学习</button>
       <button class="nav-btn" data-view="library">表达库</button>
+      <button class="nav-btn" data-view="foundations">英语基础</button>
       <button class="nav-btn" data-view="scenarios">场景模拟</button>
       <button class="nav-btn" data-view="market">市场英语</button>
       <button class="nav-btn" data-view="quiz">练习与复习</button>
@@ -269,6 +272,18 @@
         </section>
       </section>
 
+      <section id="view-foundations" class="view foundations-view" aria-label="英语基础">
+        <div class="foundations-heading"><span class="eyebrow">英语基础 / Foundations</span><span>读懂词义，也读准单词</span></div>
+        <div class="foundations-tabs" role="tablist" aria-label="英语基础课程">
+          <button id="tab-word-parts" class="foundations-tab" type="button" role="tab" data-course="word-parts" aria-controls="view-word-parts" aria-selected="true" tabindex="0">词根词缀 <span>读懂词义</span></button>
+          <button id="tab-phonics" class="foundations-tab" type="button" role="tab" data-course="phonics" aria-controls="view-phonics" aria-selected="false" tabindex="-1">自然拼读 <span>读准单词</span></button>
+          <button id="tab-picture-words" class="foundations-tab" type="button" role="tab" data-course="picture-words" aria-controls="view-picture-words" aria-selected="false" tabindex="-1">看图学词 <span>联系生活</span></button>
+        </div>
+        <section id="view-word-parts" class="tutorial-view" role="tabpanel" aria-labelledby="tab-word-parts"></section>
+        <section id="view-phonics" class="tutorial-view" role="tabpanel" aria-labelledby="tab-phonics" hidden></section>
+        <section id="view-picture-words" class="picture-view" role="tabpanel" aria-labelledby="tab-picture-words" hidden></section>
+      </section>
+
       <section id="view-quiz" class="view">
         <div class="practice-toolbar">
           <label for="practiceMode">练习模式 Practice mode</label>
@@ -382,5 +397,10 @@
   <script src="practice.js"></script>
   <script src="app.js"></script>
   <script src="translator.js"></script>
+  <script src="data/wordParts.js"></script>
+  <script src="data/phonics.js"></script>
+  <script src="tutorials.js"></script>
+  <script src="data/pictureLessons.js"></script>
+  <script src="pictureLearning.js"></script>
 </body>
 </html>

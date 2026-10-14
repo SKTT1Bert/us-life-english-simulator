@@ -893,7 +893,7 @@ function renderQuiz() {
   $('#quizOptions').innerHTML = options.map((item) => (
     `<button class="quiz-option" data-id="${item.id}" type="button">${item.phrase}</button>`
   )).join('');
-  $$('.quiz-option').forEach((btn) => btn.addEventListener('click', handleQuizAnswer));
+  $$('#quizOptions .quiz-option').forEach((btn) => btn.addEventListener('click', handleQuizAnswer));
 }
 
 function handleQuizAnswer(event) {
@@ -908,7 +908,7 @@ function handleQuizAnswer(event) {
     markSession(currentQuizAnswer.id);
   }
   ReviewEngine.recordAttempt(state, currentQuizAnswer.id, { mode: 'choice', outcome: isCorrect ? 'correct' : 'incorrect' });
-  $$('.quiz-option').forEach((option) => {
+  $$('#quizOptions .quiz-option').forEach((option) => {
     option.disabled = true;
     if (option.dataset.id === currentQuizAnswer.id) option.classList.add('correct');
   });
