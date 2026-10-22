@@ -5,16 +5,16 @@ const path = require('node:path');
 const vm = require('node:vm');
 const engine = require('../foundationProgress.js');
 const sandbox = { window: {} };
-for (const file of ['wordParts', 'phonics']) vm.runInNewContext(fs.readFileSync(path.join(__dirname, `../data/${file}.js`), 'utf8'), sandbox);
-const catalog = { 'word-parts': sandbox.window.WORD_PARTS_LESSONS, phonics: sandbox.window.PHONICS_LESSONS };
+for (const file of ['wordParts', 'phonics', 'wordPartsStages', 'phonicsStages']) vm.runInNewContext(fs.readFileSync(path.join(__dirname, `../data/${file}.js`), 'utf8'), sandbox);
+const catalog = { 'word-parts': sandbox.window.WORD_PARTS_LESSONS, phonics: sandbox.window.PHONICS_LESSONS, stages: { 'word-parts': sandbox.window.WORD_PARTS_STAGES, phonics: sandbox.window.PHONICS_STAGES } };
 const copy = (value) => JSON.parse(JSON.stringify(value));
 const first = catalog['word-parts'][0];
 
-test('both course routes contain 24 structured lessons and 72 meaningful questions', () => {
+test('both course routes contain 48 structured lessons and 144 meaningful questions', () => {
   const ids = new Set();
   const questions = new Set();
-  for (const lessons of Object.values(catalog)) {
-    assert.equal(lessons.length, 24);
+  for (const lessons of [catalog['word-parts'], catalog.phonics]) {
+    assert.equal(lessons.length, 48);
     assert.ok(new Set(lessons.map((lesson) => lesson.stage)).size >= 4);
     for (const lesson of lessons) {
       assert.match(lesson.id, /^[a-z][a-z0-9-]+$/);
@@ -37,7 +37,7 @@ test('both course routes contain 24 structured lessons and 72 meaningful questio
       for (const source of lesson.sources) { const url = new URL(source.url); assert.equal(url.protocol, 'https:'); assert.ok(!url.username && !url.password && source.label.trim()); }
     }
   }
-  assert.equal(questions.size, 144);
+  assert.equal(questions.size, 288);
 });
 
 test('the original twelve lesson identities remain available', () => {

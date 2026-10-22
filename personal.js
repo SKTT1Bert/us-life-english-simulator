@@ -88,9 +88,9 @@ function addCustomCardActions(node, item) {
 
 function previewProgressImport(restored) {
   pendingProgressImport = restored;
-  const courseAnswers = Object.entries(FOUNDATION_CATALOG).reduce((sum, [id, lessons]) => sum + FoundationProgress.summary(restored.foundationProgress, id, lessons).answered, 0);
+  const courseAnswers = ['word-parts', 'phonics'].reduce((sum, id) => sum + FoundationProgress.summary(restored.foundationProgress, id, FOUNDATION_CATALOG[id]).answered, 0);
   const pathwayLessons = Object.keys(restored.pathwayProgress.lessons).length;
-  $('#importSummary').textContent = `将载入 ${restored.learned.size} 条已学习标记、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 条表达练习事件、基础课程 ${courseAnswers} 题的当前答案，以及学习路线 ${pathwayLessons} 课记录（包含写作和口述文本）。`;
+  $('#importSummary').textContent = `将载入 ${restored.learned.size} 条已学习标记、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 条表达练习事件、基础课程 ${courseAnswers} 题的当前答案（含专项输出、复习和测评），以及学习路线 ${pathwayLessons} 课记录（包含写作和口述文本）。`;
   $('#importError').textContent = '';
   $('#importDialog').showModal();
 }
@@ -166,6 +166,7 @@ function setupPersonalExpressions() {
       return;
     }
     window.resetPathwaySession?.();
+    window.resetFoundationSession?.();
     $('#importDialog').close();
     invalidatePersonalPractice();
     resetScenario();

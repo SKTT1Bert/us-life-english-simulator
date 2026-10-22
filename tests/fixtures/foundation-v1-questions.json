@@ -1,0 +1,1686 @@
+{
+  "word-parts": [
+    {
+      "id": "word-parts-basics",
+      "quizzes": [
+        {
+          "question": "reread 中，哪一部分带来“再次”的意思？",
+          "options": [
+            "re-",
+            "read",
+            "-ed"
+          ],
+          "answer": 0,
+          "explanation": "re- 是这里的前缀，read 是基础形式。reread 表示再次阅读。"
+        },
+        {
+          "question": "给 helpful 加 -ness 时，直接接受后缀的 base 是？",
+          "options": [
+            "只有 help",
+            "helpful",
+            "只有 -ful"
+          ],
+          "answer": 1,
+          "explanation": "base 是这一步添加词缀的对象，可以包含已有词缀。这里以 helpful 为基础。"
+        },
+        {
+          "question": "为什么不能只凭字母把 uncle 拆成 un + cle？",
+          "options": [
+            "前缀只能接动词",
+            "字母不够多",
+            "两部分没有支持该词义的构词关系"
+          ],
+          "answer": 2,
+          "explanation": "构词需要形式和意义对应，uncle 的 un 不是否定前缀。"
+        }
+      ]
+    },
+    {
+      "id": "inflection-and-derivation",
+      "quizzes": [
+        {
+          "question": "哪项属于屈折变化？",
+          "options": [
+            "teach → teacher",
+            "fair → unfair",
+            "walk → walked"
+          ],
+          "answer": 2,
+          "explanation": "walked 提供过去等语法信息；teacher 和 unfair 是新的词汇单位。"
+        },
+        {
+          "question": "teacher 和 taller 中的 -er 有何区别？",
+          "options": [
+            "前者构成人名词，后者表示比较",
+            "两者都表示职业",
+            "两者都表示过去"
+          ],
+          "answer": 0,
+          "explanation": "相同拼写可能承担不同作用。teacher 是派生，taller 是比较级屈折。"
+        },
+        {
+          "question": "fair → unfair 没变词类，因此……",
+          "options": [
+            "一定是屈折",
+            "仍然可以是派生",
+            "un- 不是词缀"
+          ],
+          "answer": 1,
+          "explanation": "派生可以改变词义而保留词类。unfair 仍然是形容词。"
+        }
+      ]
+    },
+    {
+      "id": "useful-prefixes",
+      "quizzes": [
+        {
+          "question": "“Please unwrap the gift.” 中，un- 最接近哪种作用？",
+          "options": [
+            "再做一次",
+            "解除原来的动作或状态",
+            "让动作更快"
+          ],
+          "answer": 1,
+          "explanation": "wrap 是包起来，unwrap 是拆开包装，解除包裹状态。"
+        },
+        {
+          "question": "哪个词适合表达“重写这段话”？",
+          "options": [
+            "unwrite",
+            "diswrite",
+            "rewrite"
+          ],
+          "answer": 2,
+          "explanation": "rewrite 是常见的重写，不能给所有词任意套否定前缀。"
+        },
+        {
+          "question": "disagree with the plan 表示什么？",
+          "options": [
+            "不同意计划",
+            "重新制定计划",
+            "写完计划"
+          ],
+          "answer": 0,
+          "explanation": "disagree 表示不同意，with 引出对象。"
+        }
+      ]
+    },
+    {
+      "id": "negative-prefix-variants",
+      "quizzes": [
+        {
+          "question": "possible 对应的常见否定形容词是？",
+          "options": [
+            "inpossible",
+            "impossible",
+            "unpossible"
+          ],
+          "answer": 1,
+          "explanation": "常见词是 impossible。这组否定前缀在 p 前通常出现 im-。"
+        },
+        {
+          "question": "nonverbal communication 最接近什么？",
+          "options": [
+            "敌对的交流",
+            "重复说话",
+            "不依靠言语的交流"
+          ],
+          "answer": 2,
+          "explanation": "这里 non- 排除 verbal 这一类别，例如手势和表情，不表示敌对。"
+        },
+        {
+          "question": "遇到 inspect 的 in-，最合理的判断是？",
+          "options": [
+            "查整词，in- 不总是否定",
+            "直接译成“不看”",
+            "改成 uninspect"
+          ],
+          "answer": 0,
+          "explanation": "inspect 来自与查看有关的词源；同形开头可能有不同来源和作用。"
+        }
+      ]
+    },
+    {
+      "id": "time-prefixes",
+      "quizzes": [
+        {
+          "question": "prepay for a room 通常表示？",
+          "options": [
+            "离店后付款",
+            "提前支付房费",
+            "拒付房费"
+          ],
+          "answer": 1,
+          "explanation": "pre- 提示在使用房间之前付款，不说明这件事发生在过去还是将来。"
+        },
+        {
+          "question": "postwar 中 post- 主要表达什么？",
+          "options": [
+            "战争之后",
+            "反对战争",
+            "两场战争"
+          ],
+          "answer": 0,
+          "explanation": "post- 提供“之后”的关系。具体战争和时间仍由上下文决定。"
+        },
+        {
+          "question": "“We foresaw the problem last week.” 能否成立？",
+          "options": [
+            "不能，fore- 只配将来时",
+            "不能，fore- 表示否定",
+            "能，预见发生在上周"
+          ],
+          "answer": 2,
+          "explanation": "foresaw 是 foresee 的过去式；预先看出某事与过去时并不冲突。"
+        }
+      ]
+    },
+    {
+      "id": "space-and-relationship-prefixes",
+      "quizzes": [
+        {
+          "question": "哪个形式最直接提示“内部”？",
+          "options": [
+            "trans-",
+            "inter-",
+            "intra-"
+          ],
+          "answer": 2,
+          "explanation": "intra- 指内部，inter- 常指不同对象之间。"
+        },
+        {
+          "question": "transatlantic flight 是什么航班？",
+          "options": [
+            "跨大西洋航班",
+            "地铁接驳航班",
+            "校园内航班"
+          ],
+          "answer": 0,
+          "explanation": "trans- 提供跨越线索，Atlantic 指大西洋。"
+        },
+        {
+          "question": "subgroup 中 sub- 为什么不译为“地下”？",
+          "options": [
+            "sub- 没有作用",
+            "这里表示整体中的次一级单位",
+            "所有 group 都在地下"
+          ],
+          "answer": 1,
+          "explanation": "空间上的“下”可延伸为层级上的下属。整词意思仍由用法决定。"
+        }
+      ]
+    },
+    {
+      "id": "number-and-amount-prefixes",
+      "quizzes": [
+        {
+          "question": "multicultural 能告诉我们确切有几种文化吗？",
+          "options": [
+            "不能，只提示多种",
+            "能，恰好两种",
+            "能，恰好一百种"
+          ],
+          "answer": 0,
+          "explanation": "multi- 不指定精确数值，还需要额外信息。"
+        },
+        {
+          "question": "哪个词表示半圆？",
+          "options": [
+            "bicircle",
+            "semicircle",
+            "monocultural"
+          ],
+          "answer": 1,
+          "explanation": "semicircle 是已有的规范词，semi- 在这里表示半。"
+        },
+        {
+          "question": "新社团说会议 biweekly，最稳妥的做法是？",
+          "options": [
+            "默认每天两次",
+            "默认每两个月一次",
+            "确认一周两次还是每两周一次"
+          ],
+          "answer": 2,
+          "explanation": "词典记录这两种频率义。安排时间时要明确实际频率。"
+        }
+      ]
+    },
+    {
+      "id": "degree-prefixes",
+      "quizzes": [
+        {
+          "question": "underestimated the cost 表示估计值通常怎样？",
+          "options": [
+            "完全准确",
+            "比实际费用低",
+            "比实际费用高"
+          ],
+          "answer": 1,
+          "explanation": "underestimate 是低估；overestimate 才是高估。"
+        },
+        {
+          "question": "overcook vegetables 最可能指什么？",
+          "options": [
+            "蔬菜烹饪过头",
+            "完全没烹饪",
+            "再次清洗蔬菜"
+          ],
+          "answer": 0,
+          "explanation": "over- 在此提示程度过多，具体口感仍由语境决定。"
+        },
+        {
+          "question": "遇到 hypertext 时，应该怎样处理？",
+          "options": [
+            "一定译成活跃的文字",
+            "随便删掉 hyper-",
+            "查技术词的整词释义"
+          ],
+          "answer": 2,
+          "explanation": "hypertext 是约定的技术词，不能靠一个常见前缀义算出全部意思。"
+        }
+      ]
+    },
+    {
+      "id": "noun-suffixes",
+      "quizzes": [
+        {
+          "question": "把 happy 变成表示“幸福”的名词，正确拼写是？",
+          "options": [
+            "happyness",
+            "happiful",
+            "happiness"
+          ],
+          "answer": 2,
+          "explanation": "happy 加 -ness 时，词尾 y 改成 i，得到 happiness。"
+        },
+        {
+          "question": "painter 的 -er 在这里主要表示什么？",
+          "options": [
+            "做某事的人",
+            "过去时",
+            "比较级"
+          ],
+          "answer": 0,
+          "explanation": "paint 是动作，painter 是相关的人；这个 -er 不表示比较。"
+        },
+        {
+          "question": "move 接 -ment 的规范拼写是？",
+          "options": [
+            "movment",
+            "movement",
+            "moveement"
+          ],
+          "answer": 1,
+          "explanation": "movement 保留 move 的 e。辅音开头后缀前常保留 e，但仍有例外。"
+        }
+      ]
+    },
+    {
+      "id": "abstract-and-person-nouns",
+      "quizzes": [
+        {
+          "question": "“The final selection includes three poems.” 中 selection 指什么？",
+          "options": [
+            "总被选中的人",
+            "选择后的作品集合",
+            "动作的速度"
+          ],
+          "answer": 1,
+          "explanation": "includes three poems 支持选择结果义，-ion 不仅表示正在做的动作。"
+        },
+        {
+          "question": "哪组表示艺术与艺术家的关系？",
+          "options": [
+            "art → artist",
+            "art → hardly",
+            "art → postwar"
+          ],
+          "answer": 0,
+          "explanation": "artist 的 -ist 表示相关的人，具体职业由整词决定。"
+        },
+        {
+          "question": "学习 activity 最完整的做法是？",
+          "options": [
+            "写成 activeity",
+            "规定永远不可数",
+            "记 active/activity 词对并看例句"
+          ],
+          "answer": 2,
+          "explanation": "activity 拼写有变化，而且可指一项具体活动。词义与可数性一起记。"
+        }
+      ]
+    },
+    {
+      "id": "adjective-adverb-suffixes",
+      "quizzes": [
+        {
+          "question": "“Please read the label ___.” 要表达“仔细阅读标签”，应填？",
+          "options": [
+            "carefully",
+            "careful",
+            "carefulness"
+          ],
+          "answer": 0,
+          "explanation": "需要副词说明 read 怎样进行，所以用 carefully。careful 是形容词，carefulness 是名词。"
+        },
+        {
+          "question": "carefully 中为什么有两个相邻的 l？",
+          "options": [
+            "所有副词都双写 l",
+            "-ful 与 -ly 的边界相接",
+            "care 本身以 l 结尾"
+          ],
+          "answer": 1,
+          "explanation": "careful 最后的 l 与 -ly 开头的 l 相邻，-ful 本身仍只有一个 l。"
+        },
+        {
+          "question": "an easy task 中 easy 主要描述什么？",
+          "options": [
+            "说话速度",
+            "完成方式",
+            "task 这项任务"
+          ],
+          "answer": 2,
+          "explanation": "easy 描述名词 task。要说明动作方式时常用 easily。"
+        }
+      ]
+    },
+    {
+      "id": "adjective-suffix-families",
+      "quizzes": [
+        {
+          "question": "“Wear ___ gloves.” 要表达防护手套，应填？",
+          "options": [
+            "protection",
+            "protectively",
+            "protective"
+          ],
+          "answer": 2,
+          "explanation": "形容词 protective 修饰 gloves，表示具有保护作用。"
+        },
+        {
+          "question": "readable report 可以强调什么？",
+          "options": [
+            "报告容易读懂",
+            "报告一定只有一页",
+            "报告不能阅读"
+          ],
+          "answer": 0,
+          "explanation": "readable 有易读、可读性好的常见含义；机械拼义可能遗漏它。"
+        },
+        {
+          "question": "-able 与 -ible 应怎样选择？",
+          "options": [
+            "随机选择",
+            "核对整词的标准拼写",
+            "按中文字数选择"
+          ],
+          "answer": 1,
+          "explanation": "二者不能任意替换。完整单词与词族是可靠依据。"
+        }
+      ]
+    },
+    {
+      "id": "verb-suffixes",
+      "quizzes": [
+        {
+          "question": "“Can you ___ these instructions?” 要表达简化，应填？",
+          "options": [
+            "simple",
+            "simplify",
+            "simplicity"
+          ],
+          "answer": 1,
+          "explanation": "can you 后需要动词原形 simplify。simple 是形容词，simplicity 是名词。"
+        },
+        {
+          "question": "wide → widen 的规范结果是？",
+          "options": [
+            "wideen",
+            "widn",
+            "widen"
+          ],
+          "answer": 2,
+          "explanation": "规范拼写是 widen。记完整词对，避免逐字重复拼接。"
+        },
+        {
+          "question": "采用美式拼写时，应怎样处理 -ise/-ize？",
+          "options": [
+            "核对具体词，不能全局替换",
+            "所有 -ise 都改 -ize",
+            "按长度选择"
+          ],
+          "answer": 0,
+          "explanation": "modernise/modernize 属于相关变体，但不能把这一关系推广到所有 -ise 结尾。"
+        }
+      ]
+    },
+    {
+      "id": "adverbs-comparison-and-traps",
+      "quizzes": [
+        {
+          "question": "“I can hardly hear you.” 最自然的意思是？",
+          "options": [
+            "我努力听你说话",
+            "我听得特别清楚",
+            "我几乎听不见你说话"
+          ],
+          "answer": 2,
+          "explanation": "hardly 有近乎否定的意思，不能按 hard“努力地”加 -ly 理解。"
+        },
+        {
+          "question": "“Our tutor is friendly.” 中 friendly 是？",
+          "options": [
+            "描述 tutor 的形容词",
+            "必然是方式副词",
+            "过去式动词"
+          ],
+          "answer": 0,
+          "explanation": "它描述人的性质。-ly 结尾不保证是副词。"
+        },
+        {
+          "question": "表达“更仔细地”的常见形式是？",
+          "options": [
+            "carefullyer",
+            "more carefully",
+            "more carefullier"
+          ],
+          "answer": 1,
+          "explanation": "carefully 通常用 more 表示比较，而不是加 -er。"
+        }
+      ]
+    },
+    {
+      "id": "spelling-at-boundaries",
+      "quizzes": [
+        {
+          "question": "hope 接 -ing 的正确结果是？",
+          "options": [
+            "hoping",
+            "hopeing",
+            "hopping"
+          ],
+          "answer": 0,
+          "explanation": "hope 去掉 e 后加 -ing。hopping 对应另一个动词 hop。"
+        },
+        {
+          "question": "study 接 -ing 时怎样处理 y？",
+          "options": [
+            "删除 y",
+            "保留 y，得到 studying",
+            "一律改成 i"
+          ],
+          "answer": 1,
+          "explanation": "y → i 不能机械套到 -ing 形式。studying 保留 y。"
+        },
+        {
+          "question": "哪组过去式拼写都正确？",
+          "options": [
+            "planed / visitted",
+            "planned / visitted",
+            "planned / visited"
+          ],
+          "answer": 2,
+          "explanation": "plan 符合常见双写条件；visit 的最后音节不重读，通常不双写 t。"
+        }
+      ]
+    },
+    {
+      "id": "roots-port-spect-struct",
+      "quizzes": [
+        {
+          "question": "哪个“词根—含义”配对不符合本课？",
+          "options": [
+            "spect — 看",
+            "struct — 建造",
+            "port — 说话"
+          ],
+          "answer": 2,
+          "explanation": "port 与“携带、运送”有关；spect 与“看”有关，struct 与“建造”有关。"
+        },
+        {
+          "question": "inspect the cable 的自然意思是？",
+          "options": [
+            "检查线缆",
+            "拒绝看线缆",
+            "把线缆写下来"
+          ],
+          "answer": 0,
+          "explanation": "inspect 是检查，不能把 in- 一律当否定。"
+        },
+        {
+          "question": "学会历史词根后，使用整词前还需做什么？",
+          "options": [
+            "随意拼出一个词即可",
+            "核对词义、读音与搭配",
+            "把所有 port 都译作携带"
+          ],
+          "answer": 1,
+          "explanation": "词源有助记忆，但不决定整词的全部现代用法。"
+        }
+      ]
+    },
+    {
+      "id": "roots-dict-scrib-script",
+      "quizzes": [
+        {
+          "question": "dict 在本课词族中与什么有关？",
+          "options": [
+            "携带",
+            "说",
+            "建造"
+          ],
+          "answer": 1,
+          "explanation": "predict 联系拉丁语 dicere“说”的词族。"
+        },
+        {
+          "question": "manuscript 一定是手写纸稿吗？",
+          "options": [
+            "一定不能用电脑",
+            "只能用墨水",
+            "不是，也可指电子或打字稿"
+          ],
+          "answer": 2,
+          "explanation": "现代 manuscript 的范围已扩展，不能用历史的“手写”排除电子稿。"
+        },
+        {
+          "question": "describe 只能表示书面描述吗？",
+          "options": [
+            "也可以口头描述",
+            "是，scrib 与写有关",
+            "加 re- 才能口头描述"
+          ],
+          "answer": 0,
+          "explanation": "历史线索帮助记忆，但不限定现代描述媒介。"
+        }
+      ]
+    },
+    {
+      "id": "roots-ject-tract",
+      "quizzes": [
+        {
+          "question": "reject a proposal 最合理的释义是？",
+          "options": [
+            "再次投递方案",
+            "否决方案",
+            "提取方案日期"
+          ],
+          "answer": 1,
+          "explanation": "reject 的现代义是拒绝接受，不能把 re- 一律解释为再次。"
+        },
+        {
+          "question": "extract information from a report 表示？",
+          "options": [
+            "从报告中提取信息",
+            "给报告加封面",
+            "再读一次报告"
+          ],
+          "answer": 0,
+          "explanation": "from 引出信息来源；“拉出”只是记忆线索。"
+        },
+        {
+          "question": "“The garden is an attraction.” 中 attraction 最可能指？",
+          "options": [
+            "过去时",
+            "书写动作",
+            "值得参观的景点"
+          ],
+          "answer": 2,
+          "explanation": "garden 和 an 支持可数景点义，不能只译为抽象拉力。"
+        }
+      ]
+    },
+    {
+      "id": "roots-duc-duct",
+      "quizzes": [
+        {
+          "question": "duc 与 duct 在本课是什么关系？",
+          "options": [
+            "所有词中可自由替换",
+            "两种否定后缀",
+            "与引导有关的历史词干形式"
+          ],
+          "answer": 2,
+          "explanation": "它们连接一个词族，但现代具体词形已固定，不能自由替换。"
+        },
+        {
+          "question": "conduct a survey 中 conduct 的意思是？",
+          "options": [
+            "开展、进行",
+            "否定调查",
+            "缩短调查表的字母"
+          ],
+          "answer": 0,
+          "explanation": "这个搭配中的 conduct 是开展；其他搭配可能有其他含义。"
+        },
+        {
+          "question": "reduction in travel time 最自然的意思是？",
+          "options": [
+            "又一次旅行",
+            "出行时间减少",
+            "旅行方向相反"
+          ],
+          "answer": 1,
+          "explanation": "reduction 表示减少，历史拆分不能代替已固定的现代义。"
+        }
+      ]
+    },
+    {
+      "id": "roots-cred-vid-vis",
+      "quizzes": [
+        {
+          "question": "cred 的历史线索最接近哪项？",
+          "options": [
+            "相信",
+            "拉出",
+            "写字"
+          ],
+          "answer": 0,
+          "explanation": "cred 联系 credere“相信”；判断信息真假仍需证据。"
+        },
+        {
+          "question": "“The sign is visible.” 直接说明什么？",
+          "options": [
+            "内容一定真实",
+            "标牌能被看见",
+            "标牌是手稿"
+          ],
+          "answer": 1,
+          "explanation": "visible 说明可见性，不保证内容正确或来源可信。"
+        },
+        {
+          "question": "“That was an incredible performance!” 常见理解是？",
+          "options": [
+            "表演者研究词源",
+            "表演不存在",
+            "表演非常惊人"
+          ],
+          "answer": 2,
+          "explanation": "incredible 常有赞叹义，不能只按否定前缀推断在指控欺骗。"
+        }
+      ]
+    },
+    {
+      "id": "greek-bio-geo",
+      "quizzes": [
+        {
+          "question": "biology 中 bio- 在这里表示什么？",
+          "options": [
+            "恰好两个",
+            "生命或生物",
+            "在某事之后"
+          ],
+          "answer": 1,
+          "explanation": "bio- 是生命相关形式，不是表示二的 bi-；字母重叠不等于同一语素。"
+        },
+        {
+          "question": "geology 与 geography 的关系是？",
+          "options": [
+            "完全相同的学科",
+            "任何语境可互换",
+            "都有关地球，但定义与范围不同"
+          ],
+          "answer": 2,
+          "explanation": "共同 geo- 提供主题联系，完整学科定义仍要分别学习。"
+        },
+        {
+          "question": "学习 bio- 中的 o 时，应该怎样做？",
+          "options": [
+            "作为组合形式的一部分，不另造意义",
+            "总解释为否定",
+            "解释为过去时"
+          ],
+          "answer": 0,
+          "explanation": "连接字母不能随意当成独立语素；本课用实用的组合形式分组。"
+        }
+      ]
+    },
+    {
+      "id": "greek-tele-photo-graph",
+      "quizzes": [
+        {
+          "question": "telephone 中 tele- 的主要线索是什么？",
+          "options": [
+            "远距离",
+            "否定",
+            "半个"
+          ],
+          "answer": 0,
+          "explanation": "tele- 联系远，-phone 联系声音，整词已形成电话这一约定义。"
+        },
+        {
+          "question": "向作者索要 autograph，通常是要什么？",
+          "options": [
+            "自动图表",
+            "亲笔签名",
+            "地质地图"
+          ],
+          "answer": 1,
+          "explanation": "auto- 联系自己，graph 联系书写，现代常指亲笔签名。"
+        },
+        {
+          "question": "独立 photo 与组合形式 photo- 应怎样区分？",
+          "options": [
+            "都只能指一束光",
+            "photo- 是过去时",
+            "独立 photo 常指照片，组合形式提供光等线索"
+          ],
+          "answer": 2,
+          "explanation": "photo 常是 photograph 的缩略词，不能把全部缩略词义带入历史组合。"
+        }
+      ]
+    },
+    {
+      "id": "compounds-families-and-stress",
+      "quizzes": [
+        {
+          "question": "toothbrush 最自然地属于哪一类？",
+          "options": [
+            "一种牙齿",
+            "一种刷子",
+            "一种过去式"
+          ],
+          "answer": 1,
+          "explanation": "右侧 brush 提供类别，tooth 限定用途；这是清楚的复合词例子。"
+        },
+        {
+          "question": "“Please email me the file.” 中 email 为什么是动词？",
+          "options": [
+            "所有 e 开头词都是动词",
+            "省略了 -ize",
+            "句子让它承担发送邮件的动作"
+          ],
+          "answer": 2,
+          "explanation": "词类转换不需要新增词缀。祈使结构与后续宾语帮助判断。"
+        },
+        {
+          "question": "从 photograph 学到 photography 后，还应检查什么？",
+          "options": [
+            "整词重音与读音",
+            "是否必须全大写",
+            "是否可跳过词典"
+          ],
+          "answer": 0,
+          "explanation": "同族词可能改变重音和元音读法，词根拆分不是完整发音规则。"
+        }
+      ]
+    },
+    {
+      "id": "combine-and-check",
+      "quizzes": [
+        {
+          "question": "“This bottle is reusable.” 中 reusable 的意思是？",
+          "options": [
+            "只能使用一次的",
+            "可以重复使用的",
+            "已经破损的"
+          ],
+          "answer": 1,
+          "explanation": "reuse 是再次使用，-able 构成“能够被……的”形容词；这里表示可重复使用的。"
+        },
+        {
+          "question": "carelessness 的哪个分层最合理？",
+          "options": [
+            "(care + less) + ness",
+            "care + (less + ness)，把 lessness 当基础词",
+            "每个字母都必须是独立语素"
+          ],
+          "answer": 0,
+          "explanation": "先由 care 构成 careless，再以 careless 为 base 加 -ness，得到名词。"
+        },
+        {
+          "question": "词根猜测与整句意思明显冲突时，应怎样做？",
+          "options": [
+            "强行保留字面翻译",
+            "跳过整句，只背词根",
+            "查整词与搭配，必要时放弃拆分"
+          ],
+          "answer": 2,
+          "explanation": "构词分析是可修正的线索。现代用法和语境可以推翻初步猜测。"
+        }
+      ]
+    }
+  ],
+  "phonics": [
+    {
+      "id": "sounds-and-blending",
+      "quizzes": [
+        {
+          "question": "拼读 cat 时，应该连接哪一组声音？",
+          "options": [
+            "/k/ + /æ/ + /t/",
+            "/si/ + /eɪ/ + /ti/",
+            "/k/ + /eɪ/ + /t/"
+          ],
+          "answer": 0,
+          "explanation": "cat 的 c、a、t 对应 /k/、/æ/、/t/。字母名用于口头拼写，词中的声音用于拼读。"
+        },
+        {
+          "question": "把 map /mæp/ 拆成音素，正确的是？",
+          "options": [
+            "/m/ + /æ/ + /p/",
+            "/ɛm/ + /eɪ/ + /pi/",
+            "/mæ/ + /pə/"
+          ],
+          "answer": 0,
+          "explanation": "分音数的是词中的声音；字母名和额外的 /ə/ 都不是原词的一部分。"
+        },
+        {
+          "question": "本课程的朗读按钮示范什么？",
+          "options": [
+            "纯音素发音和自动口语评分",
+            "完整单词或有标注的短语语音",
+            "每个字母的中文名字"
+          ],
+          "answer": 1,
+          "explanation": "设备 TTS 读完整文本；不能替代纯音素示范，也没有自动发音评分。"
+        }
+      ]
+    },
+    {
+      "id": "consonant-sound-map",
+      "quizzes": [
+        {
+          "question": "box /bɑks/ 中，字母 x 对应什么？",
+          "options": [
+            "/z/",
+            "/k/ + /s/",
+            "/ɛks/"
+          ],
+          "answer": 1,
+          "explanation": "box 的 x 表示 /ks/；/ɛks/ 是字母名。"
+        },
+        {
+          "question": "哪一个词的开头是 /j/？",
+          "options": [
+            "jam",
+            "van",
+            "yes"
+          ],
+          "answer": 2,
+          "explanation": "yes 的 y 是 /j/；jam 的 j 是 /dʒ/。"
+        },
+        {
+          "question": "哪一对词适合比较 /f/ 和 /v/？",
+          "options": [
+            "fan /fæn/ 与 van /væn/",
+            "cat 与 cup",
+            "pin 与 pan"
+          ],
+          "answer": 0,
+          "explanation": "fan/van 只更换开头辅音，适合听辨清浊和发音部位。"
+        }
+      ]
+    },
+    {
+      "id": "short-vowels",
+      "quizzes": [
+        {
+          "question": "哪个词的元音与 bed 相同？",
+          "options": [
+            "pin",
+            "pen",
+            "pan"
+          ],
+          "answer": 1,
+          "explanation": "bed 和 pen 都含 /ɛ/；pin 是 /ɪ/，pan 是 /æ/。"
+        },
+        {
+          "question": "哪个词的元音是 /ʌ/？",
+          "options": [
+            "pin",
+            "bed",
+            "cup"
+          ],
+          "answer": 2,
+          "explanation": "cup /kʌp/ 含 /ʌ/；pin 为 /ɪ/，bed 为 /ɛ/。"
+        },
+        {
+          "question": "关于 put /pʊt/，哪项正确？",
+          "options": [
+            "它提醒我们 CVC 拼写也有例外",
+            "u 必须改读 /ʌ/",
+            "它有三个音节"
+          ],
+          "answer": 0,
+          "explanation": "put 的 u 为 /ʊ/，所以不能把所有 CVC 词读法都绝对化。"
+        }
+      ]
+    },
+    {
+      "id": "digraphs-and-blends",
+      "quizzes": [
+        {
+          "question": "哪个开头是辅音连缀，两个辅音都保留？",
+          "options": [
+            "ship 的 sh",
+            "chip 的 ch",
+            "stop 的 st"
+          ],
+          "answer": 2,
+          "explanation": "st 保留 /s/、/t/；sh 表示 /ʃ/，ch 在 chip 中表示 /tʃ/。"
+        },
+        {
+          "question": "ship 的 sh 通常表示什么？",
+          "options": [
+            "/s/ + /h/",
+            "/ʃ/",
+            "/tʃ/"
+          ],
+          "answer": 1,
+          "explanation": "sh 在 ship /ʃɪp/ 中表示 /ʃ/，是一个辅音音素。"
+        },
+        {
+          "question": "哪一对 th 分别为清音 /θ/ 和浊音 /ð/？",
+          "options": [
+            "thin 与 this",
+            "ship 与 chip",
+            "stop 与 thin"
+          ],
+          "answer": 0,
+          "explanation": "thin /θɪn/ 和 this /ðɪs/ 展示了 th 的两种常见读音。"
+        }
+      ]
+    },
+    {
+      "id": "more-consonant-digraphs",
+      "quizzes": [
+        {
+          "question": "sing 的常见结尾读音是哪一项？",
+          "options": [
+            "/nɡ/",
+            "/ŋɡ/",
+            "/ŋ/"
+          ],
+          "answer": 2,
+          "explanation": "sing /sɪŋ/ 的 ng 通常只有 /ŋ/，没有额外的 /ɡ/。"
+        },
+        {
+          "question": "哪一个组合在 back 中只表示一个辅音？",
+          "options": [
+            "ba",
+            "ck",
+            "ack"
+          ],
+          "answer": 1,
+          "explanation": "ck 表示 /k/；back 共 /b æ k/ 三个音。"
+        },
+        {
+          "question": "本课示范中，this 的 th 与 thin 的 th 有何区别？",
+          "options": [
+            "this 用 /ð/，thin 用 /θ/",
+            "两者都读 /t/",
+            "this 的 th 不发音"
+          ],
+          "answer": 0,
+          "explanation": "/ð/ 与 /θ/ 发音部位相近，主要区别是清浊。"
+        }
+      ]
+    },
+    {
+      "id": "consonant-blends-review",
+      "quizzes": [
+        {
+          "question": "spring /sprɪŋ/ 的词首有几个辅音音素？",
+          "options": [
+            "一个",
+            "两个",
+            "三个"
+          ],
+          "answer": 2,
+          "explanation": "/s/、/p/、/r/ 都保留；ng 则整体表示 /ŋ/。"
+        },
+        {
+          "question": "哪个读法没有给 desk 加额外元音？",
+          "options": [
+            "/dɛsk/",
+            "/dɛsək/",
+            "/dəɛsk/"
+          ],
+          "answer": 0,
+          "explanation": "desk 只有一个元音核 /ɛ/，词尾 /sk/ 直接相接。"
+        },
+        {
+          "question": "哪一项正确区分 ship 与 slip 的开头？",
+          "options": [
+            "都是一个 /ʃ/",
+            "ship 为 /ʃ/，slip 为 /s/+/l/",
+            "ship 有两个音，slip 有一个音"
+          ],
+          "answer": 1,
+          "explanation": "sh 是双字母辅音组合，sl 是保留两个音的连缀。"
+        }
+      ]
+    },
+    {
+      "id": "silent-e",
+      "quizzes": [
+        {
+          "question": "cap 加 e 成为 cape 后怎么读？",
+          "options": [
+            "/keɪp/",
+            "/kæp/",
+            "/kæpi/"
+          ],
+          "answer": 0,
+          "explanation": "a_e 对应 /eɪ/，末尾 e 不发音，cape /keɪp/ 仍是一个音节。"
+        },
+        {
+          "question": "hope /hoʊp/ 的末尾 e 做了什么？",
+          "options": [
+            "读一个 /ɛ/ 音节",
+            "把 p 读成 b",
+            "不单独发音，帮助识别 o_e 模式"
+          ],
+          "answer": 2,
+          "explanation": "hope 为一个音节，o_e 常对应 /oʊ/；末尾 e 不额外发音。"
+        },
+        {
+          "question": "哪个词不按本课的常见长元音 VCe 模式读？",
+          "options": [
+            "kite",
+            "have",
+            "cape"
+          ],
+          "answer": 1,
+          "explanation": "have /hæv/ 是常见反例，a 仍为 /æ/。"
+        }
+      ]
+    },
+    {
+      "id": "open-syllables-and-y",
+      "quizzes": [
+        {
+          "question": "哪个词末尾 y 在本课读 /aɪ/？",
+          "options": [
+            "happy",
+            "cry",
+            "city"
+          ],
+          "answer": 1,
+          "explanation": "cry /kraɪ/ 为单音节；happy 和 city 末尾通常为 /i/。"
+        },
+        {
+          "question": "me 的常见读音是？",
+          "options": [
+            "/mɛ/",
+            "/mɪ/",
+            "/mi/"
+          ],
+          "answer": 2,
+          "explanation": "me 是简单开音节，e 读 /i/。"
+        },
+        {
+          "question": "gym 中 y 表示哪个音？",
+          "options": [
+            "/ɪ/",
+            "/j/",
+            "/waɪ/"
+          ],
+          "answer": 0,
+          "explanation": "gym /dʒɪm/ 的 y 表示元音 /ɪ/。"
+        }
+      ]
+    },
+    {
+      "id": "vowel-teams",
+      "quizzes": [
+        {
+          "question": "哪个词的 ea 读 /ɛ/？",
+          "options": [
+            "sea",
+            "bread",
+            "break"
+          ],
+          "answer": 1,
+          "explanation": "bread /brɛd/ 是 /ɛ/；sea /si/ 是 /i/；break /breɪk/ 是 /eɪ/。"
+        },
+        {
+          "question": "rain 的 ai 与哪个词的组合常表示同一个音？",
+          "options": [
+            "day 的 ay",
+            "bread 的 ea",
+            "seed 的 ee"
+          ],
+          "answer": 0,
+          "explanation": "rain 和 day 都使用 /eɪ/；bread 为 /ɛ/，seed 为 /i/。"
+        },
+        {
+          "question": "为什么不能把 ea 永远读成 /i/？",
+          "options": [
+            "因为 ea 永远不发音",
+            "因为 ea 总表示两个音节",
+            "因为 bread /brɛd/、break /breɪk/ 等具有不同读法"
+          ],
+          "answer": 2,
+          "explanation": "相同 ea 可表示 /i/、/ɛ/、/eɪ/ 等；需要和具体词一起记。"
+        }
+      ]
+    },
+    {
+      "id": "more-long-vowel-spellings",
+      "quizzes": [
+        {
+          "question": "light 中 igh 的读音是什么？",
+          "options": [
+            "/ɪɡh/",
+            "/i/",
+            "/aɪ/"
+          ],
+          "answer": 2,
+          "explanation": "light /laɪt/ 的 igh 表示一个双元音 /aɪ/。"
+        },
+        {
+          "question": "哪个词的 ie 读 /i/？",
+          "options": [
+            "pie",
+            "field",
+            "tie"
+          ],
+          "answer": 1,
+          "explanation": "field /fild/ 为 /i/；pie、tie 中 ie 为 /aɪ/。"
+        },
+        {
+          "question": "few 的本课读音是哪项？",
+          "options": [
+            "/fju/",
+            "/fɛw/",
+            "/fʌ/"
+          ],
+          "answer": 0,
+          "explanation": "few /fju/ 的 ew 对应 /ju/，不是额外加一个音节。"
+        }
+      ]
+    },
+    {
+      "id": "diphthongs-oi-ou-ow",
+      "quizzes": [
+        {
+          "question": "哪个词的 ow 与 cow 相同？",
+          "options": [
+            "snow /snoʊ/",
+            "low /loʊ/",
+            "now /naʊ/"
+          ],
+          "answer": 2,
+          "explanation": "cow 和 now 都含 /aʊ/；snow、low 是 /oʊ/。"
+        },
+        {
+          "question": "coin 和 toy 共有哪个元音？",
+          "options": [
+            "/ɔɪ/",
+            "/aʊ/",
+            "/oʊ/"
+          ],
+          "answer": 0,
+          "explanation": "oi 和 oy 在这两个词中都表示 /ɔɪ/。"
+        },
+        {
+          "question": "对于 soup，哪种做法正确？",
+          "options": [
+            "见到 ou 就读 /aʊ/",
+            "记住 soup /sup/，不把 ou 读法绝对化",
+            "把 ou 拆成两个音节"
+          ],
+          "answer": 1,
+          "explanation": "soup 是 ou 读 /u/ 的常见词，需与具体词一起记忆。"
+        }
+      ]
+    },
+    {
+      "id": "vowel-variants-review",
+      "quizzes": [
+        {
+          "question": "哪个词按本课读音含 /ʊ/？",
+          "options": [
+            "food",
+            "book",
+            "moon"
+          ],
+          "answer": 1,
+          "explanation": "book /bʊk/，food 和 moon 使用 /u/。"
+        },
+        {
+          "question": "哪组都可以归入 /oʊ/？",
+          "options": [
+            "boat 与 snow",
+            "cow 与 snow",
+            "bread 与 boat"
+          ],
+          "answer": 0,
+          "explanation": "boat /boʊt/、snow /snoʊ/；cow 为 /aʊ/，bread 为 /ɛ/。"
+        },
+        {
+          "question": "听到美式 talk /tɑk/，最合理的判断是？",
+          "options": [
+            "对方漏读了 a",
+            "这个词必须读成两个音节",
+            "可能是 /ɔ/ 与 /ɑ/ 合流的口音"
+          ],
+          "answer": 2,
+          "explanation": "部分美式口音不区分这组元音，不能只因与标音不同就判错。"
+        }
+      ]
+    },
+    {
+      "id": "r-controlled-vowels",
+      "quizzes": [
+        {
+          "question": "bird 和 turn 在本课共有哪个元音？",
+          "options": [
+            "/æ/",
+            "/oʊ/",
+            "/ɝ/"
+          ],
+          "answer": 2,
+          "explanation": "bird /bɝd/ 与 turn /tɝn/ 都使用重读 /ɝ/。"
+        },
+        {
+          "question": "teacher 最后一个音节中的 er 通常怎样读？",
+          "options": [
+            "非重读 /ɚ/",
+            "重读 /eɪr/",
+            "字母名 e 加 r"
+          ],
+          "answer": 0,
+          "explanation": "teacher /ˈtitʃɚ/ 的重音在第一音节，末尾为非重读 /ɚ/。"
+        },
+        {
+          "question": "哪个词的 or 不能照 fork /fɔrk/ 类推？",
+          "options": [
+            "corn /kɔrn/",
+            "word /wɝd/",
+            "short /ʃɔrt/"
+          ],
+          "answer": 1,
+          "explanation": "word 的 or 是 /ɝ/，需要记住这个具体词。"
+        }
+      ]
+    },
+    {
+      "id": "r-vowel-combinations",
+      "quizzes": [
+        {
+          "question": "哪个词与 hair 的元音加 r 最接近？",
+          "options": [
+            "care /kɛr/",
+            "near /nɪr/",
+            "heard /hɝd/"
+          ],
+          "answer": 0,
+          "explanation": "hair 与 care 都按本课使用 /ɛr/。"
+        },
+        {
+          "question": "ear 在 heard 中表示什么？",
+          "options": [
+            "/ɪr/",
+            "/eɪr/",
+            "/ɝ/"
+          ],
+          "answer": 2,
+          "explanation": "heard /hɝd/ 不能照 near 或 bear 的读音拼。"
+        },
+        {
+          "question": "哪一项说明了 war 的读音？",
+          "options": [
+            "必定和 car 押韵",
+            "常见美式 /wɔr/，需要与整词一起记",
+            "w 不发音"
+          ],
+          "answer": 1,
+          "explanation": "war 的 w 发 /w/，元音加 r 为 /ɔr/。"
+        }
+      ]
+    },
+    {
+      "id": "soft-c-g-and-alternatives",
+      "quizzes": [
+        {
+          "question": "哪一个 g 读 /ɡ/，属于软音预测的常见例外？",
+          "options": [
+            "gem",
+            "giant",
+            "give"
+          ],
+          "answer": 2,
+          "explanation": "give /ɡɪv/ 的 g 仍为 /ɡ/。"
+        },
+        {
+          "question": "badge 中 dge 表示什么？",
+          "options": [
+            "/d/ + /ɡ/ + /ɛ/",
+            "/dʒ/",
+            "/ʒ/"
+          ],
+          "answer": 1,
+          "explanation": "badge /bædʒ/ 中 dge 对应 /dʒ/，不是三个独立的音。"
+        },
+        {
+          "question": "vision 中 s 对应哪个辅音？",
+          "options": [
+            "/ʒ/",
+            "/s/",
+            "/ʃ/"
+          ],
+          "answer": 0,
+          "explanation": "vision /ˈvɪʒən/ 使用 /ʒ/，与清音 /ʃ/ 不同。"
+        }
+      ]
+    },
+    {
+      "id": "silent-letter-patterns",
+      "quizzes": [
+        {
+          "question": "write 中哪个字母不单独发音？",
+          "options": [
+            "r",
+            "w",
+            "t"
+          ],
+          "answer": 1,
+          "explanation": "write /raɪt/ 从 /r/ 开始，w 不发音。"
+        },
+        {
+          "question": "哪个词的 gh 在本课读 /f/？",
+          "options": [
+            "night",
+            "ghost",
+            "laugh"
+          ],
+          "answer": 2,
+          "explanation": "laugh /læf/ 的 gh 对应 /f/；night 的 gh 不单独发音，ghost 的 gh 为 /ɡ/。"
+        },
+        {
+          "question": "knee 的正确分音结果是什么？",
+          "options": [
+            "/n/ + /i/",
+            "/k/ + /n/ + /i/",
+            "/n/ + /ɛ/"
+          ],
+          "answer": 0,
+          "explanation": "knee /ni/ 中 k 不发音，ee 表示 /i/。"
+        }
+      ]
+    },
+    {
+      "id": "s-ending-sounds",
+      "quizzes": [
+        {
+          "question": "cups 的 -s 按本课读什么？",
+          "options": [
+            "/ɪz/",
+            "/z/",
+            "/s/"
+          ],
+          "answer": 2,
+          "explanation": "/p/ 是非嘶擦类清辅音，后面接 /s/。"
+        },
+        {
+          "question": "哪个词的规则词尾增加一个音节？",
+          "options": [
+            "watches",
+            "bags",
+            "keys"
+          ],
+          "answer": 0,
+          "explanation": "watch 以 /tʃ/ 结尾，watches 加 /ɪz/；另两个只加 /z/。"
+        },
+        {
+          "question": "选择 -s 的读音时，首先看什么？",
+          "options": [
+            "最后一个字母的名字",
+            "词基最后一个声音",
+            "单词有几个字母"
+          ],
+          "answer": 1,
+          "explanation": "词基尾音决定规则词尾的变体，不能只看字母。"
+        }
+      ]
+    },
+    {
+      "id": "ed-endings-review",
+      "quizzes": [
+        {
+          "question": "哪个词的 -ed 按本课增加一个音节？",
+          "options": [
+            "washed",
+            "wanted",
+            "cleaned"
+          ],
+          "answer": 1,
+          "explanation": "want 以 /t/ 结尾，wanted 加 /ɪd/；另外两个只加辅音。"
+        },
+        {
+          "question": "cleaned 的词尾是什么？",
+          "options": [
+            "/d/",
+            "/t/",
+            "/ɛd/"
+          ],
+          "answer": 0,
+          "explanation": "词基 clean 以浊音 /n/ 结尾，后接 /d/。"
+        },
+        {
+          "question": "对于 stopped，哪项正确？",
+          "options": [
+            "双写 p 所以要读两次 /p/",
+            "末尾必须增加一个音节",
+            "词基 stop 后接 /t/，全词仍一个音节"
+          ],
+          "answer": 2,
+          "explanation": "stopped /stɑpt/ 的双写是拼写规则，语音上不增加 /p/ 或元音。"
+        }
+      ]
+    },
+    {
+      "id": "six-syllable-types",
+      "quizzes": [
+        {
+          "question": "table 最后一部分 ble 属于哪类常见拼写？",
+          "options": [
+            "开放音节",
+            "辅音-le",
+            "VCe"
+          ],
+          "answer": 1,
+          "explanation": "ble 是辅音 b 加 le，通常构成非重读结尾。"
+        },
+        {
+          "question": "rain 的主要元音拼写线索是什么？",
+          "options": [
+            "结尾 r",
+            "两个封闭音节",
+            "元音组合 ai"
+          ],
+          "answer": 2,
+          "explanation": "rain 中 ai 整体表示 /eɪ/，属于元音组合类。"
+        },
+        {
+          "question": "哪一项正确理解六类音节？",
+          "options": [
+            "它们是实用拼写线索，仍需核对例外",
+            "它们能唯一推出任何词的读音",
+            "每个元音字母永远形成一个音节"
+          ],
+          "answer": 0,
+          "explanation": "音节类别帮助第一次解码；重音、弱读、例外和口音仍要查证。"
+        }
+      ]
+    },
+    {
+      "id": "multisyllable-decoding",
+      "quizzes": [
+        {
+          "question": "tiger 在本课的辅助分块是哪一项？",
+          "options": [
+            "tig + er，必须读短 /ɪ/",
+            "ti + ger，第一块试 /taɪ/",
+            "t + i + g + e + r，五个音节"
+          ],
+          "answer": 1,
+          "explanation": "tiger /ˈtaɪɡɚ/ 可用 ti + ger 辅助；元音字母数不直接决定音节数。"
+        },
+        {
+          "question": "habit 的第一音节元音是什么？",
+          "options": [
+            "/eɪ/",
+            "/ɑ/",
+            "/æ/"
+          ],
+          "answer": 2,
+          "explanation": "habit /ˈhæbɪt/ 第一音节为 /hæb/；不是字母名 /eɪ/。"
+        },
+        {
+          "question": "试读长词后，下一步最合适的是？",
+          "options": [
+            "连接整词并核对词典读音、重音和语境",
+            "只要分成小块就不必再核对",
+            "把每块都读得同样重"
+          ],
+          "answer": 0,
+          "explanation": "分块只是解码步骤，完整读音与语义必须接得上。"
+        }
+      ]
+    },
+    {
+      "id": "syllables-stress-schwa",
+      "quizzes": [
+        {
+          "question": "banana /bəˈnæn.ə/ 的主重音在哪？",
+          "options": [
+            "第一个音节",
+            "三个一样重",
+            "第二个音节"
+          ],
+          "answer": 2,
+          "explanation": "ˈ 标在 /næn/ 前，所以第二音节重读。首尾 /ə/ 轻读，形成轻—重—轻。"
+        },
+        {
+          "question": "lemon /ˈlɛmən/ 的第二个元音是什么？",
+          "options": [
+            "/oʊ/",
+            "/ə/",
+            "/æ/"
+          ],
+          "answer": 1,
+          "explanation": "lemon 的非重读第二音节使用 schwa /ə/。"
+        },
+        {
+          "question": "哪项正确描述 music /ˈmjuzɪk/？",
+          "options": [
+            "所有非重读元音都必须变 /ə/",
+            "它没有重音",
+            "第一音节重读，末尾仍保留 /ɪ/"
+          ],
+          "answer": 2,
+          "explanation": "非重读不自动等于 schwa；music 的后一个元音仍是 /ɪ/。"
+        }
+      ]
+    },
+    {
+      "id": "irregular-high-frequency",
+      "quizzes": [
+        {
+          "question": "said 中主要需要特别记忆的是哪一部分？",
+          "options": [
+            "s 必须不发音",
+            "ai 在这里读 /ɛ/",
+            "d 读成 /t/"
+          ],
+          "answer": 1,
+          "explanation": "said /sɛd/ 的特殊元音拼写为 ai；s、d 仍可按熟悉对应识别。"
+        },
+        {
+          "question": "does 的常见重读读音是哪项？",
+          "options": [
+            "/duz/",
+            "/doʊz/",
+            "/dʌz/"
+          ],
+          "answer": 2,
+          "explanation": "does /dʌz/ 不能由 do /du/ 直接加 /z/ 推出。"
+        },
+        {
+          "question": "关于高频词，哪一项正确？",
+          "options": [
+            "高频词既可能规则，也可能不规则",
+            "所有高频词都不规则",
+            "所有高频词都按字母名读"
+          ],
+          "answer": 0,
+          "explanation": "高频说的是出现频率，不是拼写与读音是否规则。"
+        }
+      ]
+    },
+    {
+      "id": "heteronyms-and-accents",
+      "quizzes": [
+        {
+          "question": "I read it yesterday. 中 read 按本课应读？",
+          "options": [
+            "/rɛd/",
+            "/rid/",
+            "/reɪd/"
+          ],
+          "answer": 0,
+          "explanation": "yesterday 明确过去时间，read 的过去式读 /rɛd/。"
+        },
+        {
+          "question": "record a message 中 record 的主重音在哪？",
+          "options": [
+            "第一音节",
+            "第二音节",
+            "没有重音"
+          ],
+          "answer": 1,
+          "explanation": "这里 record 为动词，常见 /rɪˈkɔrd/，第二音节重读。"
+        },
+        {
+          "question": "美国与英国词典给 tomato 不同元音时，合理做法是？",
+          "options": [
+            "判定其中一个必然错误",
+            "把两个元音同时塞进同一个词",
+            "选择一个目标口音练习，并认识另一个合法变体"
+          ],
+          "answer": 2,
+          "explanation": "口音差异不等于错误；听懂不同变体，同时保持自己的练习基准。"
+        }
+      ]
+    },
+    {
+      "id": "integrated-decoding-review",
+      "quizzes": [
+        {
+          "question": "replayed 的 -ed 为什么不增加音节？",
+          "options": [
+            "因为拼写有两个 e",
+            "因为词基 play 以元音结尾，规则词尾为 /d/",
+            "因为所有 -ed 都不增加音节"
+          ],
+          "answer": 1,
+          "explanation": "play 的尾音是 /eɪ/，不是 /t/ 或 /d/，所以接 /d/：/ˌriˈpleɪd/。"
+        },
+        {
+          "question": "shipment 中正确的一组线索是什么？",
+          "options": [
+            "sh 读两个音、重音在末尾",
+            "所有元音字母都读字母名",
+            "sh 为 /ʃ/、首音节重读、后半含弱读 /ə/"
+          ],
+          "answer": 2,
+          "explanation": "shipment /ˈʃɪpmənt/ 同时用到辅音组合、重音和 schwa。"
+        },
+        {
+          "question": "学习本路线后遇到一个不合规则的生词，应当怎样？",
+          "options": [
+            "保留能解码的部分，并查整词读音、重音与意思",
+            "为了符合口诀而改动词的发音",
+            "只凭外形猜一个熟悉的词"
+          ],
+          "answer": 0,
+          "explanation": "规则用于尝试，可靠词典与语境用于核对；例外应具体记录。"
+        }
+      ]
+    }
+  ]
+}

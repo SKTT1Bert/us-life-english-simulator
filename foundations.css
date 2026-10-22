@@ -652,3 +652,35 @@
     transition: none;
   }
 }
+
+.foundation-study { margin: 24px 0; padding: 22px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); }
+.foundation-study .foundation-levels { margin-top: 0; }
+.foundation-stage-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.foundation-stage-heading h3 { margin: 7px 0; font-size: 23px; }
+.foundation-stage-heading p { margin: 0; color: var(--muted); line-height: 1.8; }
+.foundation-route-link { flex-shrink: 0; }
+.foundation-study-body { padding: 26px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); }
+.foundation-study-body, .foundation-production { line-height: 1.8; overflow-wrap: anywhere; min-width: 0; }
+.foundation-study-body h3 { margin-top: 0; }
+#view-foundations textarea { display: block; width: 100%; box-sizing: border-box; resize: vertical; margin-top: 9px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); color: var(--text); line-height: 1.8; min-height: 100px; font: inherit; }
+.foundation-production > label, .foundation-study-body .pathway-production > label { display: block; margin: 18px 0; }
+.foundation-review-card { border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-top: 20px; }
+.foundation-review-card h4 { margin-top: 0; }
+.foundation-review-card button { margin-top: 12px; }
+.foundation-history { margin: 16px 0; padding: 16px; background: var(--bg); border-radius: 12px; }
+.foundation-history li { margin-bottom: 16px; }
+.foundation-assessment-result { scroll-margin-top: 110px; }
+.foundation-study-body legend { font-weight: 600; }
+.foundation-study-body legend small { color: var(--muted); font-weight: normal; }
+#view-foundations fieldset { min-width: 0; margin: 18px 0; padding: 16px; border: 1px solid var(--border); border-radius: 12px; }
+#view-foundations legend { line-height: 1.8; padding: 0 5px; }
+#view-foundations :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+.foundation-assessment-result:not(:empty) { margin-top: 24px; padding: 18px; background: var(--bg); border-radius: 14px; }
+.foundation-assessment-error, .foundation-review-error { color: var(--primary); }
+@media (max-width: 700px) {
+  .foundation-study, .foundation-study-body { padding: 16px 12px; }
+  .foundation-stage-heading { display: block; }
+  .foundation-route-link { margin-top: 14px; }
+  .foundation-review-card { padding: 14px; }
+  .foundation-assessment-result { scroll-margin-top: 20px; }
+}

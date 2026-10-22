@@ -42,11 +42,11 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
     await page.goto(app.url);
     const catalog = await page.evaluate(() => ({ 'word-parts': window.WORD_PARTS_LESSONS, phonics: window.PHONICS_LESSONS }));
 
-    await run('both complete courses expose 24 lessons, 72 questions, stages, goals and sources', async () => {
+    await run('both complete courses expose 48 lessons, 144 questions, stages, goals and sources', async () => {
       await navigate(page, 'foundations');
       for (const [id, lessons] of Object.entries(catalog)) {
-        assert.equal(lessons.length, 24, id);
-        assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, 24);
+        assert.equal(lessons.length, 48, id);
+        assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, 48);
         assert.ok(new Set(lessons.map((lesson) => lesson.stage)).size >= 4);
         for (const lesson of lessons) {
           assert.equal(lesson.quizzes.length, 3, lesson.id);
@@ -55,9 +55,9 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
         await page.locator(`[data-course="${id}"]`).click();
         const root = courseRoot(id);
         assert.equal(await root.locator('.tutorial-catalog').evaluate((el) => el.open), false);
-        assert.ok((await root.locator('.tutorial-meta').textContent()).includes('72 道练习'));
+        assert.ok((await root.locator('.tutorial-meta').textContent()).includes('144 道练习'));
         assert.equal(await root.locator('.tutorial-quiz-nav button').count(), 3);
-        assert.equal(await root.locator('progress').getAttribute('max'), '24');
+        assert.equal(await root.locator('progress').getAttribute('max'), '48');
         assert.ok(await root.locator('.tutorial-goals li').count() > 0);
         assert.ok(await root.locator('.tutorial-sources a').count() > 0);
         const links = await root.locator('.tutorial-sources a').evaluateAll((nodes) => nodes.map((el) => ({ href: el.href, rel: el.rel })));
@@ -69,7 +69,7 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
       await page.locator('[data-course="word-parts"]').click();
       const root = courseRoot();
       await root.locator('.tutorial-catalog > summary').click();
-      assert.equal(await root.locator('[data-lesson]').count(), 24);
+      assert.equal(await root.locator('[data-lesson]').count(), 48);
       const stage = catalog['word-parts'][0].stage;
       await root.locator('.tutorial-stage').selectOption(stage);
       assert.equal(await root.locator('[data-lesson]').count(), catalog['word-parts'].filter((lesson) => lesson.stage === stage).length);

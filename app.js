@@ -6,7 +6,7 @@ const STORAGE_KEY = 'daily-english-lab-state-v1';
 const BACKUP_KEY = 'daily-english-lab-backup-before-change';
 const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
-const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [] };
+const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [], stages: { 'word-parts': window.WORD_PARTS_STAGES || [], phonics: window.PHONICS_STAGES || [] } };
 const PATHWAY_CATALOG = window.LEARNING_PATH || [];
 let stateWarning = '';
 
@@ -972,7 +972,7 @@ function handleQuizAnswer(event) {
 
 function setView(viewName) {
   if (viewName !== 'pathway') { window.flushPathwayDraft?.(); window.stopPathwaySpeech?.(); }
-  if (viewName !== 'foundations') window.stopFoundationSpeech?.();
+  if (viewName !== 'foundations') { window.flushFoundationDrafts?.(); window.stopFoundationSpeech?.(); window.stopFoundationStudySpeech?.(); }
   if (!$(`#view-${viewName}`)) return;
   $$('.nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === viewName));
   $$('.view').forEach((view) => view.classList.remove('active'));
@@ -1006,6 +1006,7 @@ function applyTheme() {
 }
 
 function exportProgress() {
+  if (window.flushFoundationDrafts?.() === false) alert('部分基础课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   if (window.flushPathwayDraft?.() === false) alert('部分课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   const payload = JSON.stringify({
     app: 'Daily English Lab',
@@ -1066,6 +1067,7 @@ function bindEvents() {
     if (!confirm('确定要清空本地学习进度和个人表达吗？将保留一份操作前备份。')) return;
     if (!persistReplacement(parseProgress({ theme: state.theme }), true)) return;
     window.resetPathwaySession?.();
+    window.resetFoundationSession?.();
     activeRecall = null;
     currentQuizAnswer = null;
     quizAnswered = false;
