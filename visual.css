@@ -1,0 +1,267 @@
+/* Static CSS artwork keeps the learning surface fast, private, and readable. */
+:root {
+  --bg: #f5f7fc;
+  --panel: #ffffff;
+  --text: #19233a;
+  --muted: #626e85;
+  --border: #dce3f0;
+  --primary: #4d59d8;
+  --primary-dark: #3944b7;
+  --soft: #eef0ff;
+  --visual-violet: #8d6be4;
+  --visual-cyan: #42b9c6;
+  --visual-button-text: #ffffff;
+  --shadow: 0 12px 34px rgb(36 53 94 / 6%);
+  --visual-card-shadow: 0 3px 10px rgb(36 53 94 / 3%), 0 16px 38px rgb(36 53 94 / 5%);
+}
+
+[data-theme="dark"] {
+  --bg: #0a111e;
+  --panel: #141e30;
+  --text: #edf3ff;
+  --muted: #a4b2ca;
+  --border: #2c3d57;
+  --primary: #9baaff;
+  --primary-dark: #b9c3ff;
+  --soft: #202c48;
+  --visual-violet: #8b71cf;
+  --visual-cyan: #3ba6b5;
+  --visual-button-text: #111b35;
+  --shadow: 0 16px 36px rgb(0 0 0 / 17%);
+  --visual-card-shadow: 0 3px 10px rgb(0 0 0 / 10%), 0 16px 38px rgb(0 0 0 / 14%);
+}
+
+[data-theme="pink"] {
+  --bg: #fcf6fa;
+  --panel: #fffafd;
+  --text: #382235;
+  --muted: #7b6174;
+  --border: #edd5e2;
+  --primary: #ab4175;
+  --primary-dark: #89315d;
+  --soft: #fceaf3;
+  --visual-violet: #bc7fc8;
+  --visual-cyan: #e4a99a;
+  --visual-button-text: #ffffff;
+  --shadow: 0 12px 34px rgb(117 51 87 / 6%);
+  --visual-card-shadow: 0 3px 10px rgb(117 51 87 / 3%), 0 16px 38px rgb(117 51 87 / 5%);
+}
+
+body,
+html[data-theme="pink"] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 1% 0%, color-mix(in srgb, var(--visual-violet) 17%, transparent), transparent 48%),
+    radial-gradient(ellipse at 100% 10%, color-mix(in srgb, var(--visual-cyan) 14%, transparent), transparent 46%),
+    linear-gradient(color-mix(in srgb, var(--primary) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--primary) 3%, transparent) 1px, transparent 1px);
+  background-size: 100% 1100px, 100% 1100px, 44px 44px, 44px 44px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-header {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--panel) 70%, transparent);
+}
+
+.logo,
+[data-theme="pink"] .logo {
+  background: linear-gradient(140deg, var(--primary), var(--visual-violet));
+  color: var(--visual-button-text);
+  box-shadow: 0 7px 20px color-mix(in srgb, var(--primary) 23%, transparent), inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+.layout {
+  max-width: 1680px;
+  margin-inline: auto;
+}
+
+.primary-nav-btn {
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.primary-navigation .primary-nav-btn.active {
+  background: linear-gradient(110deg, var(--soft), color-mix(in srgb, var(--panel) 80%, var(--soft)));
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+  box-shadow: inset 3px 0 0 var(--primary), 0 4px 14px color-mix(in srgb, var(--primary) 6%, transparent);
+}
+
+.context-navigation .context-nav-btn.active {
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--primary) 7%, transparent);
+}
+
+.primary-btn,
+[data-theme="pink"] .primary-btn {
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 84%, var(--visual-violet)));
+  color: var(--visual-button-text);
+  border-color: transparent;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.primary-btn:hover,
+[data-theme="pink"] .primary-btn:hover {
+  background: var(--primary-dark);
+}
+
+.hero-card,
+.expr-card,
+.quiz-card,
+.panel,
+.tutorial-hero,
+.tutorial-article,
+.scenario-panel,
+.scenario-hero {
+  box-shadow: var(--visual-card-shadow);
+}
+
+.expr-card,
+.quiz-card,
+.panel,
+.scenario-panel,
+.tutorial-article {
+  background: var(--panel);
+}
+
+.expr-card {
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+#view-today .hero-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(115deg, var(--panel) 18%, color-mix(in srgb, var(--panel) 90%, var(--visual-violet)) 68%, color-mix(in srgb, var(--panel) 89%, var(--visual-cyan)));
+  border-color: color-mix(in srgb, var(--primary) 20%, var(--border));
+  padding: 32px;
+}
+
+#view-today .hero-card::before,
+#view-today .hero-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+#view-today .hero-card::before {
+  width: 330px;
+  height: 330px;
+  right: -70px;
+  top: -190px;
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 24px color-mix(in srgb, var(--visual-violet) 4%, transparent),
+    0 0 0 25px color-mix(in srgb, var(--primary) 9%, transparent),
+    0 0 0 52px color-mix(in srgb, var(--visual-cyan) 4%, transparent),
+    0 0 0 53px color-mix(in srgb, var(--primary) 7%, transparent);
+}
+
+#view-today .hero-card::after {
+  width: 90px;
+  height: 90px;
+  right: 37%;
+  bottom: -65px;
+  border: 16px solid color-mix(in srgb, var(--visual-cyan) 9%, transparent);
+  border-radius: 24px;
+  transform: rotate(28deg);
+}
+
+.hero-card h2 {
+  font-size: clamp(28px, 3.1vw, 42px);
+  line-height: 1.2;
+  letter-spacing: -.045em;
+}
+
+.hero-card p {
+  line-height: 1.8;
+  margin-bottom: 0;
+}
+
+.hero-stats > div {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+.hero-stats strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: .11em;
+}
+
+.badge {
+  border: 1px solid color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.view.active {
+  animation: workbench-enter .28s ease-out both;
+}
+
+@keyframes workbench-enter {
+  from { opacity: .75; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .expr-card:hover {
+    border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--primary) 10%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .primary-navigation .primary-nav-btn:not(.active):hover {
+    transform: translateX(2px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .hero-card {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  #view-today .hero-card {
+    padding: 22px;
+  }
+
+  .hero-card h2 {
+    font-size: 28px;
+  }
+
+  .primary-navigation .primary-nav-btn.active {
+    box-shadow: inset 0 -2px 0 var(--primary);
+  }
+
+  .hero-card p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view.active {
+    animation: none;
+  }
+
+  .expr-card,
+  .primary-nav-btn {
+    transition: none;
+  }
+
+  .expr-card:hover,
+  .primary-navigation .primary-nav-btn:not(.active):hover {
+    transform: none;
+  }
+}

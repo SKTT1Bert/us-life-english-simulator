@@ -240,6 +240,8 @@ const backupKey = 'daily-english-lab-backup-before-change';
       const before = await raw();
       await navigate(page, 'progress');
       await upload(exported);
+      // FileReader finishes after setInputFiles; wait for the actual preview.
+      await page.locator('#importDialog').waitFor({ state: 'visible' });
       assert.equal(await page.locator('#importDialog').isVisible(), true);
       assert.equal(await raw(), before);
       await page.locator('#cancelImportBtn').click();

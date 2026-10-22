@@ -21,6 +21,8 @@ Version 1.2 | 2026-10-01 | HUDK 4054 Individual Assignment #2
 
 > **Runtime update (2026-10-22):** Navigation now groups related activities into fewer primary destinations. Practice & Review includes active recall, due-item review, and local per-attempt records; the expression library also supports confirmed personal expressions and local translation drafts. Runtime exports use schema v3; legacy progress remains supported. See [recall behavior and research limits](docs/learning-review.md) and [personal-expression fields, editing, and backup recovery](docs/personal-expressions.md). The coursework narrative/PDF and synthetic example below remain historical v1.2 documentation; the CSV dictionary has been updated for the runtime. Old learned marks and saved references are not evidence of delayed recall.
 
+> **Foundation courses:** Word building and phonics each now offer 24 lessons with three explained questions per lesson, searchable course stages, local continuation, and wrong-answer practice. Course records are included in exports through the optional schema-v3 `foundationProgress` field. See [coverage, record semantics, and compatibility](docs/foundations.md). The visual update uses lightweight CSS backgrounds and supports reduced motion.
+
 > Status: The app runs on GitHub Pages and can export progress as JSON. This package documents that format for a proposed pilot. The example is synthetic; participant data collection is planned.
 
 <details>

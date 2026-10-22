@@ -88,7 +88,8 @@ function addCustomCardActions(node, item) {
 
 function previewProgressImport(restored) {
   pendingProgressImport = restored;
-  $('#importSummary').textContent = `将载入 ${restored.learned.size} 条已学习标记、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达和 ${restored.practiceHistory.length} 条练习事件。`;
+  const courseAnswers = Object.entries(FOUNDATION_CATALOG).reduce((sum, [id, lessons]) => sum + FoundationProgress.summary(restored.foundationProgress, id, lessons).answered, 0);
+  $('#importSummary').textContent = `将载入 ${restored.learned.size} 条已学习标记、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 条表达练习事件，以及基础课程 ${courseAnswers} 题的当前答案。`;
   $('#importError').textContent = '';
   $('#importDialog').showModal();
 }

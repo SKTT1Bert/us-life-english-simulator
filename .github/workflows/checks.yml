@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
       - name: Scheduling, personal data and translator unit tests
-        run: node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js tests/trending-content.test.js
+        run: node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js tests/trending-content.test.js tests/foundations.test.js
       - name: Install browser test runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
@@ -29,3 +29,5 @@ jobs:
         run: node tests/personal-browser.cjs
       - name: Contemporary expressions and stable daily plans
         run: node tests/trending-browser.cjs
+      - name: Foundation courses and visual accessibility
+        run: node tests/foundations-browser.cjs

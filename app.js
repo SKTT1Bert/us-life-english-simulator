@@ -6,6 +6,7 @@ const STORAGE_KEY = 'daily-english-lab-state-v1';
 const BACKUP_KEY = 'daily-english-lab-backup-before-change';
 const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
+const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [] };
 let stateWarning = '';
 
 const state = loadState();
@@ -75,6 +76,7 @@ function parseProgress(saved) {
     marketLearned: new Set(saved.marketLearned || []), marketFavorites: new Set(saved.marketFavorites || []),
     marketQuiz: saved.marketQuiz || { correct: 0, total: 0 }, marketScenarios: saved.marketScenarios || { runs: 0, completed: 0, success: 0 },
     dailyPlan: saved.dailyPlan || null, ...review, ...custom, schemaVersion: 3,
+    foundationProgress: FoundationProgress.restore(saved.foundationProgress, FOUNDATION_CATALOG),
   };
 }
 
@@ -111,6 +113,7 @@ function progressPayload(source = state) {
     dailyPlan: state.dailyPlan,
     customExpressions: state.customExpressions,
     deletedCustomExpressions: state.deletedCustomExpressions,
+    foundationProgress: state.foundationProgress,
   };
 }
 
@@ -965,6 +968,7 @@ function handleQuizAnswer(event) {
 }
 
 function setView(viewName) {
+  if (viewName !== 'foundations') window.stopFoundationSpeech?.();
   if (!$(`#view-${viewName}`)) return;
   $$('.nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === viewName));
   $$('.view').forEach((view) => view.classList.remove('active'));
@@ -1037,6 +1041,7 @@ function renderAll() {
   renderMarketVocabulary();
   renderMarketScenarioCards();
   renderMarketStats();
+  window.refreshFoundations?.();
 }
 
 
