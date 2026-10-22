@@ -1,4 +1,4 @@
-const EXPRESSIONS = window.EXPRESSIONS || [];
+const EXPRESSIONS = [...(window.EXPRESSIONS || []), ...(window.TRENDING_EXPRESSIONS || [])];
 const SCENARIO_PACKS = window.SCENARIO_PACKS || [];
 const MARKET_VOCAB = window.MARKET_VOCAB || [];
 const MARKET_SCENARIOS = window.MARKET_SCENARIOS || [];
@@ -143,11 +143,13 @@ function getDailyItems(count = 5) {
   }
   const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const newCount = Math.max(2, count - Math.min(3, ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule).length));
-  const items = EXPRESSIONS.filter((item) => !state.learned.has(item.id) && !state.reviewSchedule[item.id])
+  const ranked = EXPRESSIONS.filter((item) => !state.learned.has(item.id) && !state.reviewSchedule[item.id])
     .map((item, index) => ({ item, score: Math.sin((index + 1) * (seed + 17)) }))
     .sort((a, b) => a.score - b.score)
-    .slice(0, newCount)
     .map(({ item }) => item);
+  // Add one contemporary phrase to newly generated plans; keep an existing day's plan stable.
+  const featured = ranked.find((item) => item.tags?.includes('contemporary'));
+  const items = (featured ? [featured, ...ranked.filter((item) => item.id !== featured.id)] : ranked).slice(0, newCount);
   state.dailyPlan = { date: key, ids: items.map((item) => item.id) };
   saveState();
   return items;
@@ -169,6 +171,8 @@ function renderCard(item) {
   node.querySelector('.meaning').textContent = item.meaning_cn;
   node.querySelector('.example').textContent = item.example;
   node.querySelector('.example-cn').textContent = item.example_cn;
+  const usage = window.createExpressionUsage?.(item);
+  if (usage) node.querySelector('.card-actions').before(usage);
   if (item.id.startsWith('custom:')) addCustomCardActions(node, item);
 
   const learnedBtn = node.querySelector('.learned-btn');

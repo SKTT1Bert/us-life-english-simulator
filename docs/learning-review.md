@@ -2,7 +2,7 @@
 
 ## What changed
 
-The Practice & Review page has two modes: **Recall** (the default) and the original **Recognition** multiple-choice quiz. The Today page prioritizes up to three due expressions and assigns two to five new built-in expressions, for a suggested five-item session. Its new-expression plan is pinned for the UTC day, so marking an expression does not silently replace it. Additional due items remain available in Recall mode. Built-in and saved personal expressions can be practiced using their Chinese meanings as prompts; no model is required. Recognition continues to use the built-in library. See [personal expressions and schema v3](personal-expressions.md) for saving, editing, deletion, and backup behavior.
+The Practice & Review page has two modes: **Recall** (the default) and the original **Recognition** multiple-choice quiz. The Today page prioritizes up to three due expressions and assigns two to five new built-in expressions, for a suggested five-item session. A newly generated plan includes an unstudied contemporary expression when one is available. Its new-expression plan is pinned for the UTC day, so adding content or marking an expression does not silently replace it. The Today page also links directly to the [twelve contemporary expressions](trending-expressions.md). Additional due items remain available in Recall mode. Built-in and saved personal expressions can be practiced using their Chinese meanings as prompts; no model is required. Recognition continues to use the built-in library. See [personal expressions and schema v3](personal-expressions.md) for saving, editing, deletion, and backup behavior.
 
 Recall hides the reference until the learner has tried to respond. Learners may type or speak to themselves; the app does not record audio, transcribe speech, or retain typed responses. After revealing the reference, learners self-report independent recall, prompted recall, or inability to recall. Alternative phrasings can be valid: there is no exact-string grading or automatic evaluation of speech. Using a hint disables the independent result. Results can only be submitted once per question.
 
@@ -35,7 +35,7 @@ Storage remains `daily-english-lab-state-v1` to preserve existing browsers. The 
 
 ## Field definitions
 
-The full path dictionary is in [`metadata/data_dictionary.csv`](../metadata/data_dictionary.csv). Schedule keys refer to built-in `data/expressions.js` IDs or active personal IDs. Event item IDs may also refer to a personal deletion tombstone, preserving the historical result without its text.
+The full path dictionary is in [`metadata/data_dictionary.csv`](../metadata/data_dictionary.csv). Schedule keys refer to built-in `data/expressions.js` or `data/trendingExpressions.js` IDs, or active personal IDs. Event item IDs may also refer to a personal deletion tombstone, preserving the historical result without its text.
 
 | Path | Definition |
 | --- | --- |
@@ -75,7 +75,7 @@ These studies motivate features; they do not validate this app, its particular i
 Pure scheduling tests require Node 18+:
 
 ```sh
-node --test tests/review.test.js tests/custom-expressions.test.js
+node --test tests/review.test.js tests/custom-expressions.test.js tests/trending-content.test.js
 ```
 
 Browser integration checks require Playwright and its Chromium installation:
@@ -83,6 +83,7 @@ Browser integration checks require Playwright and its Chromium installation:
 ```sh
 node tests/browser.cjs
 node tests/personal-browser.cjs
+node tests/trending-browser.cjs
 ```
 
 The browser suites use `PLAYWRIGHT_MODULE` if supplied, then an installed `playwright`, or the configured Codex runtime dependency. `PLAYWRIGHT_EXECUTABLE_PATH` can point to an installed Chrome/Chromium executable when Playwright's bundled browser is unavailable. By default the suites serve and load the app over real local HTTP, use isolated browser contexts, and never contact GitHub or learner accounts. The optional translation endpoint is blocked or mocked; these suites do not validate a live model.

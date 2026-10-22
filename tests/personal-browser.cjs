@@ -192,6 +192,42 @@ const backupKey = 'daily-english-lab-backup-before-change';
       assert.equal(item.meaning_cn, '我需要改约时间。');
     });
 
+    await run('a queued close event cannot clear a newly reopened expression editor', async () => {
+      const before = await raw();
+      const record = (await stored()).customExpressions.find((item) => item.id === customId);
+      await page.evaluate((record) => new Promise((resolve) => {
+        const dialog = document.querySelector('#expressionDialog');
+        dialog.addEventListener('close', () => resolve(), { once: true });
+        openExpressionEditor();
+        dialog.close();
+        // A close event is queued; another user operation can already reopen the editor.
+        openExpressionEditor(record);
+      }), record);
+      assert.equal(await page.locator('#expressionDialog').isVisible(), true);
+      assert.equal(await page.locator('#customPhrase').inputValue(), record.phrase);
+      assert.equal(await page.evaluate(() => editingExpressionId), customId);
+      await page.locator('#cancelExpressionBtn').click();
+      assert.equal(await raw(), before);
+    });
+
+    await run('a queued import close event cannot discard the replacement preview', async () => {
+      const snapshot = await stored();
+      await page.evaluate((snapshot) => new Promise((resolve) => {
+        const dialog = document.querySelector('#importDialog');
+        dialog.addEventListener('close', () => resolve(), { once: true });
+        previewProgressImport(parseProgress({ ...snapshot, theme: 'dark' }));
+        dialog.close();
+        previewProgressImport(parseProgress(snapshot));
+      }), snapshot);
+      assert.equal(await page.locator('#importDialog').isVisible(), true);
+      assert.equal(await page.evaluate(() => pendingProgressImport?.theme), snapshot.theme);
+      const confirmed = page.waitForEvent('dialog');
+      await page.locator('#confirmImportBtn').click();
+      await confirmed;
+      assert.deepEqual((await stored()).customExpressions, snapshot.customExpressions);
+      assert.equal((await stored()).theme, snapshot.theme);
+    });
+
     let exported;
     await run('export includes personal content and import requires a preview before replacing or backing up', async () => {
       const download = page.waitForEvent('download');

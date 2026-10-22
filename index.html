@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="pictureLearning.css" />
   <link rel="stylesheet" href="sceneLearning.css" />
   <link rel="stylesheet" href="navigation.css" />
+  <link rel="stylesheet" href="trending.css" />
 </head>
 <body>
   <header class="app-header">
@@ -85,7 +86,11 @@
           <div id="dueReviewList"></div>
           <p class="practice-note">每天先展示最多 3 条到期表达；剩余项目可在练习模式继续。无需一次清空积压。</p>
         </section>
-        <h3>今天的新表达</h3>
+        <div class="today-expression-heading">
+          <h3>今天的新表达</h3>
+          <button id="browseTrendingBtn" class="small-btn" type="button">看看流行口语 <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="trending-intro">本期精选：常见社交口语与近期网络表达 · 2026-10 核对。</p>
         <div id="todayList" class="card-grid"></div>
       </section>
 
@@ -472,12 +477,14 @@
   </template>
 
   <script src="data/expressions.js"></script>
+  <script src="data/trendingExpressions.js"></script>
   <script src="data/scenarios.js"></script>
   <script src="data/marketEnglish.js"></script>
   <script src="review.js"></script>
   <script src="customExpressions.js"></script>
   <script src="practice.js"></script>
   <script src="personal.js"></script>
+  <script src="trending.js"></script>
   <script src="app.js"></script>
   <script src="navigation.js"></script>
   <script src="translator.js"></script>

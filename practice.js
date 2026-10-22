@@ -65,6 +65,8 @@ function revealRecall() {
     <p>${escapeHTML(item.example)}</p><p>${escapeHTML(item.example_cn)}</p>
     <p class="practice-note">参考表达不是唯一正确答案。意思、对象和语气合适的改写也可以；请根据看答案之前的表现自评。</p>
     <button id="speakRecallReference" class="small-btn" type="button">朗读参考表达</button>`;
+  const usage = window.createExpressionUsage?.(item);
+  if (usage) $('#recallReference').append(usage);
   $('#recallReference').hidden = false;
   $('#speakRecallReference').addEventListener('click', () => speak(item.phrase));
   $('#recallResultButtons').hidden = false;

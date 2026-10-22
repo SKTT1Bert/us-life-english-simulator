@@ -110,6 +110,8 @@ function setupPersonalExpressions() {
   $('#addExpressionBtn').addEventListener('click', () => openExpressionEditor());
   $('#cancelExpressionBtn').addEventListener('click', () => $('#expressionDialog').close());
   $('#expressionDialog').addEventListener('close', () => {
+    // close is queued; a newer edit may already have reopened this dialog.
+    if ($('#expressionDialog').open) return;
     $('#expressionForm').reset();
     editingExpressionId = null;
   });
@@ -149,7 +151,10 @@ function setupPersonalExpressions() {
     } catch (error) { $('#expressionError').textContent = error.message; }
   });
   $('#cancelImportBtn').addEventListener('click', () => $('#importDialog').close());
-  $('#importDialog').addEventListener('close', () => { pendingProgressImport = null; });
+  $('#importDialog').addEventListener('close', () => {
+    // Do not let an earlier close discard a preview opened by a later file read.
+    if (!$('#importDialog').open) pendingProgressImport = null;
+  });
   $('#importExportBtn').addEventListener('click', exportProgress);
   $('#backupDownloadBtn').addEventListener('click', downloadLocalBackup);
   $('#confirmImportBtn').addEventListener('click', () => {

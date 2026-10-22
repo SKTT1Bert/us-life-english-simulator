@@ -1,0 +1,105 @@
+.today-expression-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 8px;
+}
+
+.today-expression-heading h3 {
+  margin: 0;
+}
+
+#browseTrendingBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--primary);
+}
+
+.trending-intro {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.expression-usage {
+  margin: 0 0 18px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.usage-register {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.expression-usage .usage-note {
+  color: var(--muted);
+  margin: 9px 0 0;
+}
+
+.expression-usage .usage-alternative {
+  display: grid;
+  gap: 3px;
+  margin: 10px 0 0;
+  color: var(--text);
+}
+
+.usage-alternative > span:first-child {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.usage-alternative > span[lang] {
+  font-weight: 600;
+}
+
+.usage-source {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.usage-source > summary {
+  width: fit-content;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+
+.usage-source > a {
+  display: inline-block;
+  margin: 6px 0 4px;
+  color: var(--primary);
+  text-underline-offset: 3px;
+}
+
+.usage-verified {
+  display: block;
+  font-size: 11px;
+}
+
+.usage-source > summary:focus-visible,
+.usage-source > a:focus-visible,
+#browseTrendingBtn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+
+.recall-reference .expression-usage {
+  margin-top: 18px;
+  margin-bottom: 0;
+}

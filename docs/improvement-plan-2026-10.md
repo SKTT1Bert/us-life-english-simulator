@@ -42,4 +42,6 @@
 
 本分支供审阅，合并前保留 v3 导出及操作前备份。旧版页面会拒绝 v3，因此不能把回退代码等同于数据向下兼容；回退旧程序时需使用旧版备份，新个人表达保留在 v3 导出中。
 
-测试入口：`node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js`、`node tests/browser.cjs`、`node tests/personal-browser.cjs`。浏览器运行选项见 [复习文档](learning-review.md)。真实 Hy-MT2 推理、GPU 卸载和 GitHub Pages 部署后的跨源 loopback 行为需在相应环境单独验收，本分支不将 mock 结果表述为这些实测。
+测试入口：`node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js tests/trending-content.test.js`、`node tests/browser.cjs`、`node tests/personal-browser.cjs`、`node tests/trending-browser.cjs`。浏览器运行选项见 [复习文档](learning-review.md)。真实 Hy-MT2 推理、GPU 卸载和 GitHub Pages 部署后的跨源 loopback 行为需在相应环境单独验收，本分支不将 mock 结果表述为这些实测。
+
+用户后续提出在新表达中加入近期流行口语，本分支增补了 12 条带来源和场合提示的表达，包括 2 条明确标为选学的网络词。首页快捷入口沿用表达库筛选，新生成的每日计划会带入尚未学习的流行口语；当天已有计划保持不变。详见 [表达与来源](trending-expressions.md)。
