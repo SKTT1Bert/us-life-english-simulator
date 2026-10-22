@@ -1,0 +1,73 @@
+.pathway-today { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 26px; margin:20px 0; background:var(--panel); border:1px solid var(--border); border-radius:20px; }
+.pathway-today strong { display:block; margin:6px 0; font-size:18px; }
+.pathway-today p { margin:0; color:var(--muted); font-size:13px; }
+.pathway-today button { flex-shrink:0; }
+.pathway-hero { padding:28px; border:1px solid var(--border); border-radius:24px; background:var(--panel); }
+.pathway-hero h2 { margin:12px 0; font-size:clamp(28px,4vw,42px); letter-spacing:-.04em; }
+.pathway-hero p { max-width:76ch; line-height:1.85; }
+.pathway-boundary, .pathway-support, .pathway-reference, .pathway-listening small { color:var(--muted); font-size:13px; line-height:1.9; }
+.pathway-levels { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:22px 0; }
+.pathway-levels button { background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:15px; padding:14px 10px; cursor:pointer; min-width:0; }
+.pathway-levels strong { display:block; font-size:21px; margin-bottom:5px; }
+.pathway-levels span { font-size:12px; line-height:1.6; }
+.pathway-levels [aria-pressed=true], .pathway-modes [aria-pressed=true] { border-color:var(--primary); color:var(--primary); box-shadow:0 0 0 1px var(--primary); }
+.pathway-stage { border:1px solid var(--border); border-radius:24px; padding:28px; background:var(--panel); min-width:0; }
+.pathway-stage-heading h3 { font-size:26px; margin:8px 0; }
+.pathway-stage-heading p { line-height:1.9; color:var(--muted); }
+.pathway-can-do, .pathway-goals { padding-left:22px; line-height:1.9; }
+.pathway-can-do { color:var(--muted); font-size:14px; }
+.pathway-metrics { display:flex; flex-wrap:wrap; gap:12px 26px; padding:18px 0; margin:18px 0; border-block:1px solid var(--border); font-size:13px; color:var(--muted); }
+.pathway-metrics strong { color:var(--text); font-size:21px; margin-right:4px; }
+.pathway-modes, .pathway-audio-controls, .pathway-grade-buttons, .pathway-result-actions, .pathway-save-row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.pathway-modes { margin-bottom:16px; }
+#pathwayNotice, #pathwayAssessmentError { color:var(--primary); line-height:1.8; }
+#pathwayNotice:empty, #pathwayAssessmentError:empty { display:none; }
+.pathway-catalog, .pathway-foundation-links { padding:16px; background:var(--bg); border:1px solid var(--border); border-radius:14px; margin:18px 0; }
+#view-pathway summary { cursor:pointer; font-size:14px; line-height:1.7; }
+.pathway-lesson-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:14px; }
+.pathway-lesson-grid button { text-align:left; white-space:normal; line-height:1.7; }
+.pathway-lesson-grid [aria-current] { border-color:var(--primary); color:var(--primary); }
+.pathway-lesson-heading { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-top:28px; }
+.pathway-lesson-heading h3 { font-size:26px; margin:8px 0; }
+.pathway-lesson-heading .badge { white-space:normal; text-align:center; flex-shrink:0; }
+.pathway-explanation { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; margin:24px 0; }
+#view-pathway h4 { font-size:17px; line-height:1.65; margin:10px 0; }
+.pathway-explanation p { line-height:1.9; color:var(--muted); font-size:14px; }
+.pathway-foundation-links > div { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.pathway-vocabulary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:24px 0; }
+.pathway-vocabulary > div { padding:16px; border:1px solid var(--border); border-radius:12px; min-width:0; }
+.pathway-vocabulary strong { display:block; color:var(--primary); font-size:18px; overflow-wrap:anywhere; }
+.pathway-vocabulary span { font-size:13px; color:var(--muted); }
+.pathway-vocabulary p { font-size:14px; line-height:1.8; }
+.pathway-reading, .pathway-listening, .pathway-production, .pathway-practice, .pathway-recall { margin-top:26px; padding-top:22px; border-top:1px solid var(--border); }
+.pathway-text { font-size:17px; line-height:1.95; max-width:80ch; }
+.pathway-text p { margin:0 0 1em; }
+.pathway-listening p, .pathway-transcript div, .pathway-model div, .pathway-recall p { line-height:1.9; }
+.pathway-transcript, .pathway-model { padding:16px; margin:16px 0; border:1px solid var(--border); border-radius:12px; }
+.pathway-audio-status { color:var(--muted); font-size:13px; }
+.pathway-audio-controls select { padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--panel); color:var(--text); }
+#view-pathway fieldset { min-width:0; padding:18px; margin:18px 0; border:1px solid var(--border); border-radius:12px; }
+#view-pathway legend { line-height:1.8; padding:0 5px; font-weight:650; }
+#view-pathway legend small { color:var(--muted); font-weight:400; }
+.pathway-options { display:grid; gap:8px; }
+.pathway-options button { white-space:normal; text-align:left; line-height:1.7; }
+.pathway-feedback { font-size:14px; line-height:1.9; color:var(--muted); margin-bottom:0; }
+.pathway-production > label, .pathway-recall > label { display:block; margin:20px 0 10px; line-height:1.9; font-weight:650; }
+#view-pathway textarea { display:block; width:100%; box-sizing:border-box; resize:vertical; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--bg); color:var(--text); line-height:1.8; min-height:100px; }
+.pathway-rubric label, .pathway-radio, .pathway-transcript-flag { display:flex; gap:10px; align-items:flex-start; line-height:1.8; font-size:14px; padding:8px 0; }
+.pathway-rubric input, .pathway-radio input, .pathway-transcript-flag input { flex-shrink:0; margin-top:6px; accent-color:var(--primary); }
+.pathway-save-row span { font-size:12px; color:var(--muted); }
+.pathway-lesson-footer { display:flex; justify-content:space-between; gap:12px; margin-top:28px; padding-top:20px; border-top:1px solid var(--border); }
+.pathway-reference { margin-top:28px; border-top:1px solid var(--border); padding-top:20px; }
+.pathway-reference a { color:var(--primary); overflow-wrap:anywhere; }
+.pathway-empty { padding:26px 0; line-height:1.9; }
+.pathway-assessment-history { margin:18px 0; color:var(--muted); font-size:13px; line-height:1.9; }
+.pathway-assessment-feedback { padding-left:22px; line-height:1.8; }
+.pathway-assessment-feedback p { color:var(--muted); }
+#pathwayAssessmentResult:not(:empty) { margin-top:24px; padding:22px; background:var(--bg); border:1px solid var(--border); border-radius:16px; line-height:1.9; }
+#view-pathway [tabindex="-1"] { scroll-margin-top:110px; }
+#view-pathway :focus-visible, .pathway-today :focus-visible { outline:3px solid var(--primary); outline-offset:3px; }
+#view-pathway, .pathway-today { overflow-wrap:break-word; }
+@media (max-width:1050px) { .pathway-levels { grid-template-columns:repeat(3,minmax(0,1fr)); } .pathway-vocabulary { grid-template-columns:repeat(2,minmax(0,1fr)); } .pathway-today { align-items:flex-start; } }
+@media (max-width:700px) { .pathway-hero, .pathway-stage { padding:20px 16px; border-radius:18px; } .pathway-today { flex-direction:column; padding:20px; } .pathway-explanation, .pathway-vocabulary, .pathway-lesson-grid { grid-template-columns:minmax(0,1fr); } .pathway-lesson-heading { align-items:flex-start; flex-direction:column; } .pathway-lesson-heading h3 { font-size:23px; } .pathway-text { font-size:16px; } #view-pathway fieldset { padding:12px; } .pathway-metrics { gap:12px; flex-direction:column; } .pathway-modes { gap:8px; } .pathway-modes button { flex:1; padding:9px 6px; } .pathway-lesson-footer button { font-size:12px; padding:10px; white-space:normal; } #pathwayAssessmentResult:not(:empty) { padding:14px; } }
+@media (prefers-reduced-motion:reduce) { #view-pathway *, .pathway-today * { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }

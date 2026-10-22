@@ -7,6 +7,7 @@ const BACKUP_KEY = 'daily-english-lab-backup-before-change';
 const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
 const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [] };
+const PATHWAY_CATALOG = window.LEARNING_PATH || [];
 let stateWarning = '';
 
 const state = loadState();
@@ -77,6 +78,7 @@ function parseProgress(saved) {
     marketQuiz: saved.marketQuiz || { correct: 0, total: 0 }, marketScenarios: saved.marketScenarios || { runs: 0, completed: 0, success: 0 },
     dailyPlan: saved.dailyPlan || null, ...review, ...custom, schemaVersion: 3,
     foundationProgress: FoundationProgress.restore(saved.foundationProgress, FOUNDATION_CATALOG),
+    pathwayProgress: PathwayProgress.restore(saved.pathwayProgress, PATHWAY_CATALOG),
   };
 }
 
@@ -114,6 +116,7 @@ function progressPayload(source = state) {
     customExpressions: state.customExpressions,
     deletedCustomExpressions: state.deletedCustomExpressions,
     foundationProgress: state.foundationProgress,
+    pathwayProgress: state.pathwayProgress,
   };
 }
 
@@ -968,6 +971,7 @@ function handleQuizAnswer(event) {
 }
 
 function setView(viewName) {
+  if (viewName !== 'pathway') { window.flushPathwayDraft?.(); window.stopPathwaySpeech?.(); }
   if (viewName !== 'foundations') window.stopFoundationSpeech?.();
   if (!$(`#view-${viewName}`)) return;
   $$('.nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === viewName));
@@ -1002,6 +1006,7 @@ function applyTheme() {
 }
 
 function exportProgress() {
+  if (window.flushPathwayDraft?.() === false) alert('部分课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   const payload = JSON.stringify({
     app: 'Daily English Lab',
     exportedAt: new Date().toISOString(),
@@ -1042,6 +1047,7 @@ function renderAll() {
   renderMarketScenarioCards();
   renderMarketStats();
   window.refreshFoundations?.();
+  window.refreshPathway?.();
 }
 
 
@@ -1059,6 +1065,7 @@ function bindEvents() {
   $('#resetBtn').addEventListener('click', () => {
     if (!confirm('确定要清空本地学习进度和个人表达吗？将保留一份操作前备份。')) return;
     if (!persistReplacement(parseProgress({ theme: state.theme }), true)) return;
+    window.resetPathwaySession?.();
     activeRecall = null;
     currentQuizAnswer = null;
     quizAnswered = false;

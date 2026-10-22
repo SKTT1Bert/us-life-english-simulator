@@ -14,7 +14,7 @@
 
 ## 数据、导出与回退
 
-课程记录纳入现有 `daily-english-lab-state-v1` 主存储和 JSON 导出，以可选 `foundationProgress` 扩展 schema v3。导出共 19 个顶层字段（含 `app` 和 `exportedAt`）。旧 v1/v2/v3 文件缺少该字段时得到空课程记录，不生成学习证据。
+课程记录纳入现有 `daily-english-lab-state-v1` 主存储和 JSON 导出，以可选 `foundationProgress` 扩展 schema v3。加入 [零基础到 C1 路线](zero-to-c1.md) 后，导出共 20 个顶层字段（含 `app` 和 `exportedAt`）。旧 v1/v2/v3 文件缺少该字段时得到空课程记录，不生成学习证据。
 
 ```json
 {

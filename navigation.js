@@ -4,6 +4,7 @@
   const viewGroups = {
     today: 'today',
     library: 'learn',
+    pathway: 'learn',
     foundations: 'learn',
     scenarios: 'learn',
     market: 'learn',
@@ -11,7 +12,7 @@
     favorites: 'personal',
     progress: 'personal',
   };
-  const lastView = { learn: 'library', personal: 'progress' };
+  const lastView = { learn: 'pathway', personal: 'progress' };
   const primaryButtons = [...document.querySelectorAll('[data-nav-group]')];
   const contextMenus = {
     learn: document.getElementById('learnNavigation'),

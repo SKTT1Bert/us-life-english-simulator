@@ -54,7 +54,7 @@ async function startApp() {
 }
 
 async function navigate(page, view) {
-  if (['library', 'foundations', 'scenarios', 'market'].includes(view)) await page.locator('[data-nav-group="learn"]').click();
+  if (['library', 'foundations', 'scenarios', 'market', 'pathway'].includes(view)) await page.locator('[data-nav-group="learn"]').click();
   if (['progress', 'favorites'].includes(view)) await page.locator('[data-nav-group="personal"]').click();
   await page.locator(`[data-view="${view}"]`).click();
 }

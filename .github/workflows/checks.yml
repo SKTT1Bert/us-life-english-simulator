@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
       - name: Scheduling, personal data and translator unit tests
-        run: node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js tests/trending-content.test.js tests/foundations.test.js
+        run: node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js tests/trending-content.test.js tests/foundations.test.js tests/pathway-progress.test.js tests/pathway-content.test.js
       - name: Install browser test runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
@@ -31,3 +31,5 @@ jobs:
         run: node tests/trending-browser.cjs
       - name: Foundation courses and visual accessibility
         run: node tests/foundations-browser.cjs
+      - name: Zero to C1 learning pathway
+        run: node tests/pathway-browser.cjs

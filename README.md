@@ -23,6 +23,8 @@ Version 1.2 | 2026-10-01 | HUDK 4054 Individual Assignment #2
 
 > **Foundation courses:** Word building and phonics each now offer 24 lessons with three explained questions per lesson, searchable course stages, local continuation, and wrong-answer practice. Course records are included in exports through the optional schema-v3 `foundationProgress` field. See [coverage, record semantics, and compatibility](docs/foundations.md). The visual update uses lightweight CSS backgrounds and supports reduced motion.
 
+> **Zero-to-C1 pathway:** Six stages now add 48 integrated lessons, 192 lesson questions, six independent stage checks (48 questions), writing/speaking tasks, and scheduled active review. Existing foundation courses remain linked. Pathway drafts and submitted work stay local and are included through optional schema-v3 `pathwayProgress`. See [curriculum scope, assessment limits and recovery](docs/zero-to-c1.md).
+
 > Status: The app runs on GitHub Pages and can export progress as JSON. This package documents that format for a proposed pilot. The example is synthetic; participant data collection is planned.
 
 <details>

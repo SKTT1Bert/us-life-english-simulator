@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="navigation.css" />
   <link rel="stylesheet" href="trending.css" />
   <link rel="stylesheet" href="visual.css" />
+  <link rel="stylesheet" href="pathway.css" />
 </head>
 <body>
   <header class="app-header">
@@ -59,6 +60,7 @@
 
     <section class="content">
       <nav id="learnNavigation" class="context-navigation" aria-label="学习内容" hidden>
+        <button class="nav-btn context-nav-btn" type="button" data-view="pathway">零基础 → C1</button>
         <button class="nav-btn context-nav-btn" type="button" data-view="library">表达库</button>
         <button class="nav-btn context-nav-btn" type="button" data-view="foundations">英语基础</button>
         <button class="nav-btn context-nav-btn" type="button" data-view="scenarios">场景模拟</button>
@@ -81,6 +83,7 @@
             <div><strong id="todayDone">0/5</strong><span>今日新表达</span></div>
           </div>
         </div>
+        <div id="pathwayToday" class="pathway-today"></div>
         <section class="panel review-panel" aria-labelledby="reviewHeading">
           <div class="review-heading"><h3 id="reviewHeading">到期复习 <span id="dueReviewCount">0</span></h3>
             <button id="startReviewBtn" class="primary-btn" type="button">开始到期回忆</button></div>
@@ -94,6 +97,8 @@
         <p class="trending-intro">本期精选：常见社交口语与近期网络表达 · 2026-10 核对。</p>
         <div id="todayList" class="card-grid"></div>
       </section>
+
+      <section id="view-pathway" class="view" aria-label="零基础到 C1 学习路线"></section>
 
       <section id="view-library" class="view">
         <div class="library-heading">
@@ -484,6 +489,10 @@
   <script src="data/wordParts.js"></script>
   <script src="data/phonics.js"></script>
   <script src="foundationProgress.js"></script>
+  <script src="data/pathwayStarter.js"></script>
+  <script src="data/pathwayAdvanced.js"></script>
+  <script src="data/learningPath.js"></script>
+  <script src="pathwayProgress.js"></script>
   <script src="review.js"></script>
   <script src="customExpressions.js"></script>
   <script src="practice.js"></script>
@@ -493,6 +502,7 @@
   <script src="navigation.js"></script>
   <script src="translator.js"></script>
   <script src="tutorials.js"></script>
+  <script src="pathway.js"></script>
   <script src="data/pictureLessons.js"></script>
   <script src="data/sceneLessons.js"></script>
   <script src="pictureLearning.js"></script>

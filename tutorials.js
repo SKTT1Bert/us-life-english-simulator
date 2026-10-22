@@ -25,6 +25,7 @@
     });
   });
   const refreshers = [];
+  const openers = {};
   courses.forEach((course) => {
     const root = document.getElementById(`view-${course.id}`);
     let current = 0, questionIndex = 0;
@@ -134,6 +135,12 @@
       notice.textContent = ''; selectLesson(index, false, false);
     };
     refreshers.push(refresh); refresh();
+    openers[course.id] = (lessonId) => {
+      const index = course.lessons.findIndex((lesson) => lesson.id === lessonId);
+      if (index < 0) return false;
+      setView('foundations'); selectCourse(course.id); selectLesson(index, true); return true;
+    };
   });
   window.refreshFoundations = () => refreshers.forEach((refresh) => refresh());
+  window.openFoundationLesson = (courseId, lessonId) => openers[courseId]?.(lessonId) || false;
 })();
