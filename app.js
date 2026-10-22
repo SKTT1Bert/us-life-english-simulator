@@ -3,7 +3,9 @@ const SCENARIO_PACKS = window.SCENARIO_PACKS || [];
 const MARKET_VOCAB = window.MARKET_VOCAB || [];
 const MARKET_SCENARIOS = window.MARKET_SCENARIOS || [];
 const STORAGE_KEY = 'daily-english-lab-state-v1';
+const BACKUP_KEY = 'daily-english-lab-backup-before-change';
 const ReviewEngine = window.ReviewEngine;
+const CustomExpressions = window.CustomExpressions;
 let stateWarning = '';
 
 const state = loadState();
@@ -14,6 +16,7 @@ let selectedTaskId = null;
 let selectedMarketScenarioId = null;
 let activeMarketScenario = null;
 let currentMarketQuizAnswer = null;
+let marketQuizAnswered = false;
 
 const SCENARIO_MOODS = [
   { id: 'friendly', en: 'Friendly', cn: '友好', note: 'The staff member is patient and willing to explain.' },
@@ -54,19 +57,24 @@ function parseProgress(saved) {
   if (saved.sessions !== undefined && (!saved.sessions || typeof saved.sessions !== 'object' || Array.isArray(saved.sessions)
     || Object.entries(saved.sessions).some(([day, ids]) => !/^\d{4}-\d{2}-\d{2}$/.test(day)
       || !Array.isArray(ids) || ids.some((id) => typeof id !== 'string')))) throw new Error('每日记录格式不正确。');
-  const validIds = new Set(EXPRESSIONS.map((item) => item.id));
+  const custom = CustomExpressions.validate(saved);
+  const validIds = new Set([...EXPRESSIONS, ...custom.customExpressions].map((item) => item.id));
   if (saved.dailyPlan != null && (typeof saved.dailyPlan !== 'object'
     || !/^\d{4}-\d{2}-\d{2}$/.test(saved.dailyPlan.date) || !Array.isArray(saved.dailyPlan.ids)
     || saved.dailyPlan.ids.length > 5 || new Set(saved.dailyPlan.ids).size !== saved.dailyPlan.ids.length
     || saved.dailyPlan.ids.some((id) => !validIds.has(id)))) throw new Error('每日计划格式不正确。');
-  const review = ReviewEngine.restore(saved, validIds);
+  const historyIds = new Set([...validIds, ...custom.deletedCustomExpressions.map((item) => item.id)]);
+  if (Object.keys(saved.reviewSchedule || {}).some((id) => !validIds.has(id))) throw new Error('复习计划引用了已删除或不存在的表达。');
+  const review = ReviewEngine.restore(saved, historyIds);
+  for (const item of custom.deletedCustomExpressions) delete review.reviewSchedule[item.id];
   return {
-    learned: new Set(saved.learned || []), favorites: new Set(saved.favorites || []),
+    learned: new Set((saved.learned || []).filter((id) => !id.startsWith('custom:') || validIds.has(id))),
+    favorites: new Set((saved.favorites || []).filter((id) => !id.startsWith('custom:') || validIds.has(id))),
     sessions: saved.sessions || {}, theme: ['light', 'dark', 'pink'].includes(saved.theme) ? saved.theme : 'light',
     quiz: saved.quiz || { correct: 0, total: 0 }, scenarios: saved.scenarios || { runs: 0, completed: 0, success: 0 },
     marketLearned: new Set(saved.marketLearned || []), marketFavorites: new Set(saved.marketFavorites || []),
     marketQuiz: saved.marketQuiz || { correct: 0, total: 0 }, marketScenarios: saved.marketScenarios || { runs: 0, completed: 0, success: 0 },
-    dailyPlan: saved.dailyPlan || null, ...review,
+    dailyPlan: saved.dailyPlan || null, ...review, ...custom, schemaVersion: 3,
   };
 }
 
@@ -80,7 +88,12 @@ function loadState() {
   }
 }
 
-function progressPayload() {
+function learningExpressions() {
+  return [...EXPRESSIONS, ...state.customExpressions.map(CustomExpressions.asExpression)];
+}
+
+function progressPayload(source = state) {
+  const state = source;
   return {
     learned: [...state.learned],
     favorites: [...state.favorites],
@@ -96,6 +109,8 @@ function progressPayload() {
     reviewSchedule: state.reviewSchedule,
     practiceHistory: state.practiceHistory,
     dailyPlan: state.dailyPlan,
+    customExpressions: state.customExpressions,
+    deletedCustomExpressions: state.deletedCustomExpressions,
   };
 }
 
@@ -103,6 +118,10 @@ function saveState() {
   try {
     // Do not silently overwrite a corrupt original record.
     if (stateWarning) throw new Error('blocked');
+    const previous = localStorage.getItem(STORAGE_KEY);
+    if (previous && JSON.parse(previous).schemaVersion !== 3) {
+      localStorage.setItem(BACKUP_KEY, previous);
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progressPayload()));
     $('#storageNotice').hidden = true;
     return true;
@@ -120,10 +139,10 @@ function todayKey() {
 function getDailyItems(count = 5) {
   const key = todayKey();
   if (state.dailyPlan?.date === key) {
-    return state.dailyPlan.ids.map((id) => EXPRESSIONS.find((item) => item.id === id)).filter(Boolean).slice(0, count);
+    return state.dailyPlan.ids.map((id) => learningExpressions().find((item) => item.id === id)).filter(Boolean).slice(0, count);
   }
   const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const newCount = Math.max(2, count - Math.min(3, ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule).length));
+  const newCount = Math.max(2, count - Math.min(3, ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule).length));
   const items = EXPRESSIONS.filter((item) => !state.learned.has(item.id) && !state.reviewSchedule[item.id])
     .map((item, index) => ({ item, score: Math.sin((index + 1) * (seed + 17)) }))
     .sort((a, b) => a.score - b.score)
@@ -150,6 +169,7 @@ function renderCard(item) {
   node.querySelector('.meaning').textContent = item.meaning_cn;
   node.querySelector('.example').textContent = item.example;
   node.querySelector('.example-cn').textContent = item.example_cn;
+  if (item.id.startsWith('custom:')) addCustomCardActions(node, item);
 
   const learnedBtn = node.querySelector('.learned-btn');
   const favBtn = node.querySelector('.fav-btn');
@@ -220,7 +240,7 @@ function renderToday() {
   renderList($('#todayList'), daily);
   const done = daily.filter((item) => state.learned.has(item.id)).length;
   $('#todayDone').textContent = `${done}/${daily.length}`;
-  $('#totalCount').textContent = EXPRESSIONS.length;
+  $('#totalCount').textContent = learningExpressions().length;
   $('#streakCount').textContent = getStreak();
   renderReviewQueue();
 }
@@ -241,7 +261,7 @@ function getStreak() {
 }
 
 function setupFilters() {
-  const categories = ['all', ...new Set(EXPRESSIONS.map((item) => item.category))];
+  const categories = ['all', ...new Set(EXPRESSIONS.map((item) => item.category)), '我的表达'];
   $('#categoryFilter').innerHTML = categories.map((category) => {
     const label = category === 'all' ? '全部场景' : category;
     return `<option value="${category}">${label}</option>`;
@@ -249,14 +269,18 @@ function setupFilters() {
   $('#searchInput').addEventListener('input', renderLibrary);
   $('#categoryFilter').addEventListener('change', renderLibrary);
   $('#levelFilter').addEventListener('change', renderLibrary);
+  $('#expressionSource').addEventListener('change', renderLibrary);
 }
 
 function getFilteredExpressions() {
   const query = $('#searchInput')?.value.trim().toLowerCase() || '';
   const category = $('#categoryFilter')?.value || 'all';
   const level = $('#levelFilter')?.value || 'all';
-  return EXPRESSIONS.filter((item) => {
-    const text = [item.phrase, item.meaning_cn, item.example, item.example_cn, item.category, ...(item.tags || [])]
+  const source = $('#expressionSource').value;
+  return learningExpressions().filter((item) => {
+    const custom = item.id.startsWith('custom:');
+    if ((source === 'custom' && !custom) || (source === 'built-in' && custom)) return false;
+    const text = [item.phrase, item.meaning_cn, item.example, item.example_cn, item.category, item.source, ...(item.tags || [])]
       .join(' ')
       .toLowerCase();
     const matchesQuery = !query || text.includes(query);
@@ -269,27 +293,29 @@ function getFilteredExpressions() {
 function renderLibrary() {
   const list = getFilteredExpressions();
   $('#resultCount').textContent = list.length;
+  $('#customExpressionCount').textContent = state.customExpressions.length;
   renderList($('#libraryList'), list, '没有找到匹配表达。');
 }
 
 function renderFavorites() {
-  const list = EXPRESSIONS.filter((item) => state.favorites.has(item.id));
+  const list = learningExpressions().filter((item) => state.favorites.has(item.id));
   renderList($('#favoriteList'), list, '还没有收藏表达。');
 }
 
 function renderProgress() {
-  const learned = state.learned.size;
-  const favorite = state.favorites.size;
-  const completion = EXPRESSIONS.length ? Math.round((learned / EXPRESSIONS.length) * 100) : 0;
+  const items = learningExpressions();
+  const learned = items.filter((item) => state.learned.has(item.id)).length;
+  const favorite = items.filter((item) => state.favorites.has(item.id)).length;
+  const completion = items.length ? Math.round((learned / items.length) * 100) : 0;
   $('#learnedMetric').textContent = learned;
   $('#favoriteMetric').textContent = favorite;
   $('#completionMetric').textContent = `${completion}%`;
   $('#sideLearned').textContent = learned;
   renderPracticeProgress();
 
-  const categories = [...new Set(EXPRESSIONS.map((item) => item.category))];
+  const categories = [...new Set(learningExpressions().map((item) => item.category))];
   $('#categoryProgress').innerHTML = categories.map((category) => {
-    const items = EXPRESSIONS.filter((item) => item.category === category);
+    const items = learningExpressions().filter((item) => item.category === category);
     const done = items.filter((item) => state.learned.has(item.id)).length;
     const pct = items.length ? Math.round((done / items.length) * 100) : 0;
     return `
@@ -861,6 +887,7 @@ function renderMarketQuiz() {
   if (!MARKET_VOCAB.length) return;
   const answer = sample(MARKET_VOCAB);
   currentMarketQuizAnswer = answer;
+  marketQuizAnswered = false;
   const distractors = MARKET_VOCAB.filter((item) => item.id !== answer.id && item.category !== answer.category).sort(() => Math.random() - 0.5).slice(0,3);
   const options = [...distractors, answer].sort(() => Math.random() - 0.5);
   $('#marketQuizQuestion').textContent = `“${answer.definitionCn}” 对应哪个英文术语？`;
@@ -871,6 +898,8 @@ function renderMarketQuiz() {
 }
 
 function handleMarketQuizAnswer(event) {
+  if (!currentMarketQuizAnswer || marketQuizAnswered) return;
+  marketQuizAnswered = true;
   const button = event.currentTarget;
   const correct = button.dataset.marketId === currentMarketQuizAnswer.id;
   state.marketQuiz.total += 1;
@@ -932,6 +961,7 @@ function handleQuizAnswer(event) {
 }
 
 function setView(viewName) {
+  if (!$(`#view-${viewName}`)) return;
   $$('.nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === viewName));
   $$('.view').forEach((view) => view.classList.remove('active'));
   $(`#view-${viewName}`).classList.add('active');
@@ -942,6 +972,7 @@ function setView(viewName) {
   if (viewName === 'quiz') setPracticeMode($('#practiceMode').value);
   if (viewName === 'scenarios') renderScenarioStats();
   if (viewName === 'market') { renderMarketVocabulary(); renderMarketScenarioCards(); renderMarketStats(); }
+  window.syncNavigation?.(viewName);
 }
 
 function getNextTheme(theme) {
@@ -978,27 +1009,18 @@ function exportProgress() {
 }
 
 function importProgress(file) {
+  if (file.size > 5 * 1024 * 1024) { alert('导入失败：文件不能超过 5 MB。原有进度未改变。'); return; }
   const reader = new FileReader();
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
       const restored = parseProgress(data);
-      Object.assign(state, restored);
-      stateWarning = '';
-      activeRecall = null;
-      currentQuizAnswer = null;
-      quizAnswered = false;
-      resetScenario();
-      resetMarketScenario();
-      applyTheme();
-      const saved = saveState();
-      renderAll();
-      if ($('#view-quiz').classList.contains('active')) setPracticeMode($('#practiceMode').value);
-      alert(saved ? '进度已导入。' : '进度已载入，但浏览器未能保存，请导出备份。');
+      previewProgressImport(restored);
     } catch (error) {
       alert(`导入失败：${error.message} 原有进度未改变。`);
     }
   };
+  reader.onerror = () => alert('文件读取失败，原有进度未改变。');
   reader.readAsText(file);
 }
 
@@ -1016,6 +1038,7 @@ function renderAll() {
 
 function bindEvents() {
   setupPractice();
+  setupPersonalExpressions();
   $$('.nav-btn').forEach((btn) => btn.addEventListener('click', () => setView(btn.dataset.view)));
   $('#newQuizBtn').addEventListener('click', renderQuiz);
   $('#themeToggle').addEventListener('click', () => {
@@ -1025,27 +1048,15 @@ function bindEvents() {
   });
   $('#exportBtn').addEventListener('click', exportProgress);
   $('#resetBtn').addEventListener('click', () => {
-    if (!confirm('确定要清空本地学习进度吗？')) return;
-    state.learned.clear();
-    state.favorites.clear();
-    state.sessions = {};
-    state.quiz = { correct: 0, total: 0 };
-    state.scenarios = { runs: 0, completed: 0, success: 0 };
-    state.marketLearned.clear();
-    state.marketFavorites.clear();
-    state.marketQuiz = { correct: 0, total: 0 };
-    state.marketScenarios = { runs: 0, completed: 0, success: 0 };
-    state.schemaVersion = 2;
-    state.reviewSchedule = {};
-    state.practiceHistory = [];
-    state.dailyPlan = null;
-    stateWarning = '';
+    if (!confirm('确定要清空本地学习进度和个人表达吗？将保留一份操作前备份。')) return;
+    if (!persistReplacement(parseProgress({ theme: state.theme }), true)) return;
     activeRecall = null;
     currentQuizAnswer = null;
     quizAnswered = false;
+    $('#recallResponse').value = '';
     resetScenario();
     resetMarketScenario();
-    saveState();
+    renderMarketQuiz();
     renderAll();
     if ($('#view-quiz').classList.contains('active')) setPracticeMode($('#practiceMode').value);
   });
@@ -1065,6 +1076,7 @@ function bindEvents() {
   $('#importInput').addEventListener('change', (event) => {
     const file = event.target.files?.[0];
     if (file) importProgress(file);
+    event.target.value = '';
   });
 }
 

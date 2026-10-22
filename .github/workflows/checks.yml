@@ -1,0 +1,29 @@
+name: Learning app checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  browser-and-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Scheduling, personal data and translator unit tests
+        run: node --test tests/review.test.js tests/translator.test.js tests/custom-expressions.test.js
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Existing learning flows
+        run: node tests/browser.cjs
+      - name: Personal expressions and import safety
+        run: node tests/personal-browser.cjs

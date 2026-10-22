@@ -1,0 +1,32 @@
+.library-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin: 4px 0 20px; }
+.library-heading h2 { margin: 5px 0 8px; font-size: 30px; letter-spacing: -.04em; }
+.library-heading p { margin: 0; color: var(--muted); }
+.library-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.library-controls .select { min-width: 170px; width: auto; flex: 0 1 200px; }
+.library-controls > .practice-note { margin: 0; }
+.panel.translator-disclosure { padding: 0; }
+.translator-disclosure { margin-bottom: 24px; }
+.translator-disclosure > summary { cursor: pointer; padding: 17px 20px; font-weight: 650; }
+.translator-disclosure > summary span { color: var(--muted); font-weight: 400; margin-left: 8px; font-size: 13px; }
+.translator-disclosure .translator-panel { margin: 0; border: 0; border-radius: 0 0 22px 22px; box-shadow: none; padding-top: 4px; }
+.custom-actions { display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+.custom-delete-btn { color: var(--danger); }
+.expr-card { overflow-wrap: anywhere; min-width: 0; }
+.editor-dialog { width: min(620px, calc(100% - 28px)); max-height: calc(100dvh - 40px); padding: 28px; border: 1px solid var(--border); border-radius: 22px; color: var(--text); background: var(--panel); box-shadow: var(--shadow); }
+.editor-dialog::backdrop { background: rgb(9 16 30 / .55); backdrop-filter: blur(3px); }
+.editor-dialog textarea, .editor-dialog input[type="text"] { width: 100%; display: block; margin: 6px 0 16px; }
+.editor-dialog textarea { resize: vertical; min-height: 80px; }
+.editor-dialog .field-label { margin-top: 14px; }
+.confirmation-label { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.6; margin: 20px 0; }
+.confirmation-label input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; }
+.form-error { color: var(--danger); font-size: 14px; overflow-wrap: anywhere; }
+.dialog-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.editor-dialog h2 { font-size: 24px; margin-bottom: 10px; }
+#personalNotice:empty { display: none; }
+@media (max-width: 600px) {
+  .editor-dialog { padding: 20px; }
+  .editor-dialog textarea, .editor-dialog input { font-size: 16px; }
+  .library-heading { align-items: stretch; }
+  .library-heading > button { width: 100%; }
+  .translator-disclosure > summary span { display: block; margin: 6px 0 0 18px; }
+}
