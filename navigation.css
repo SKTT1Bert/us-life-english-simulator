@@ -1,0 +1,325 @@
+/* A quiet four-item shell; detailed destinations appear with their content. */
+.app-header {
+  padding: 20px 28px;
+}
+
+.brand p {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.layout {
+  grid-template-columns: 192px minmax(0, 1fr);
+  gap: 28px;
+  padding: 26px 28px 42px;
+}
+
+.sidebar {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  top: 120px;
+}
+
+.primary-navigation {
+  display: grid;
+  gap: 7px;
+}
+
+.primary-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  width: 100%;
+  padding: 13px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease;
+}
+
+.primary-nav-btn svg {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.primary-nav-btn small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.primary-navigation .primary-nav-btn:hover {
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+  color: var(--text);
+  border-color: transparent;
+  transform: none;
+}
+
+.primary-navigation .primary-nav-btn.active {
+  background: var(--soft);
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.primary-nav-btn:focus-visible,
+.context-nav-btn:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.sidebar .side-card {
+  margin: 0 12px;
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  gap: 8px;
+}
+
+.side-total {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.side-total strong {
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+}
+
+.side-total > span,
+.side-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.context-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 22px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.context-navigation .context-nav-btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-height: 44px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.context-navigation .context-nav-btn:hover {
+  transform: none;
+  color: var(--text);
+  background: var(--panel);
+}
+
+.context-navigation .context-nav-btn.active {
+  background: var(--panel);
+  border-color: var(--border);
+  color: var(--primary);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 3%);
+}
+
+/* Keep the scene workspace wide, with all four primary destinations available. */
+@media (min-width: 921px) {
+  body.scenario-focus .sidebar {
+    display: block;
+    position: static;
+    margin-bottom: 20px;
+  }
+
+  body.scenario-focus .primary-navigation {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 760px;
+  }
+
+  body.scenario-focus .primary-nav-btn {
+    min-height: 48px;
+  }
+
+  body.scenario-focus .primary-nav-btn small,
+  body.scenario-focus .side-card {
+    display: none;
+  }
+}
+
+@media (max-width: 920px) {
+  .app-header {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 20px;
+  }
+
+  .brand {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .logo {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .brand h1 {
+    font-size: 20px;
+  }
+
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 18px 20px 32px;
+  }
+
+  .sidebar,
+  body.scenario-focus .sidebar {
+    display: block;
+    position: static;
+  }
+
+  .primary-navigation {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: var(--panel);
+  }
+
+  .primary-nav-btn {
+    justify-content: center;
+    min-height: 48px;
+    gap: 8px;
+    padding: 10px 6px;
+    border-radius: 12px;
+  }
+
+  .primary-nav-btn small,
+  .sidebar .side-card {
+    display: none;
+  }
+
+  .context-navigation {
+    gap: 4px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+  }
+
+  .context-navigation .context-nav-btn {
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .brand p {
+    font-size: 11px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .header-actions .ghost-btn {
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    min-height: 36px;
+  }
+
+  .layout {
+    padding: 16px 14px 28px;
+    gap: 18px;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hero-stats > div {
+    min-width: 0;
+    padding: 12px 8px;
+    border-radius: 14px;
+  }
+
+  .hero-stats strong {
+    font-size: 24px;
+  }
+
+  .hero-stats span {
+    font-size: 11px;
+  }
+
+  .primary-nav-btn {
+    flex-direction: column;
+    gap: 5px;
+    padding: 9px 4px;
+    font-size: 12px;
+  }
+
+  .primary-nav-btn svg {
+    flex-basis: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .context-navigation {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #personalNavigation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .context-navigation .context-nav-btn {
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-nav-btn,
+  .context-nav-btn {
+    transition: none;
+  }
+}

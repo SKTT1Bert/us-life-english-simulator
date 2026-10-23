@@ -13,7 +13,7 @@ function setPracticeMode(mode) {
 }
 
 function startRecall(id) {
-  const item = EXPRESSIONS.find((entry) => entry.id === id);
+  const item = learningExpressions().find((entry) => entry.id === id);
   if (!item) return;
   activeRecall = { item, hintUsed: false, revealed: false, recorded: false, startedAt: new Date().toISOString() };
   $('#practiceMode').value = 'recall';
@@ -35,15 +35,15 @@ function startRecall(id) {
   $('#recallHintBtn').disabled = false;
   $('#revealRecallBtn').disabled = false;
   $$('#recallResultButtons button').forEach((button) => { button.disabled = false; });
-  $('#recallQueueNote').textContent = `${ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule).length} 条到期 · 自评不等于自动验证的口语能力`;
+  $('#recallQueueNote').textContent = `${ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule).length} 条表达待复习 · 先自己回答，再看参考答案`;
 }
 
 function nextRecall() {
-  const due = ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule);
+  const due = ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule);
   const practicedToday = new Set(state.practiceHistory.filter((e) => e.at.slice(0, 10) === todayKey() && e.mode === 'recall').map((e) => e.itemId));
   const fresh = getDailyItems().filter((item) => !practicedToday.has(item.id));
-  const unused = EXPRESSIONS.filter((item) => !practicedToday.has(item.id));
-  const item = due[0] || fresh[0] || sample(unused) || sample(EXPRESSIONS);
+  const unused = learningExpressions().filter((item) => !practicedToday.has(item.id));
+  const item = due[0] || fresh[0] || sample(unused) || sample(learningExpressions());
   if (item) startRecall(item.id);
 }
 
@@ -52,7 +52,7 @@ function showRecallHint() {
   activeRecall.hintUsed = true;
   const words = activeRecall.item.phrase.trim().split(/\s+/);
   const hint = words.length > 3 ? words.slice(0, 2).join(' ') : activeRecall.item.phrase[0];
-  $('#recallHint').textContent = `开头提示：${hint}…（本题不能再记为无提示回忆）`;
+  $('#recallHint').textContent = `开头提示：${hint}…（看过提示后，请选择“提示后说出来了”或“看答案才想起／没想起”）`;
   $('#recallHint').hidden = false;
   $('#recallHintBtn').disabled = true;
 }
@@ -63,8 +63,10 @@ function revealRecall() {
   const item = activeRecall.item;
   $('#recallReference').innerHTML = `<h3>${escapeHTML(item.phrase)}</h3>
     <p>${escapeHTML(item.example)}</p><p>${escapeHTML(item.example_cn)}</p>
-    <p class="practice-note">参考表达不是唯一正确答案。意思、对象和语气合适的改写也可以；请根据看答案之前的表现自评。</p>
+    <p class="practice-note">表达方式不止一种，意思清楚、语气适合就好。请根据看答案前的表现，选择下面的结果。</p>
     <button id="speakRecallReference" class="small-btn" type="button">朗读参考表达</button>`;
+  const usage = window.createExpressionUsage?.(item);
+  if (usage) $('#recallReference').append(usage);
   $('#recallReference').hidden = false;
   $('#speakRecallReference').addEventListener('click', () => speak(item.phrase));
   $('#recallResultButtons').hidden = false;
@@ -88,22 +90,22 @@ function finishRecall(outcome) {
   const saved = saveState();
   $$('#recallResultButtons button').forEach((button) => { button.disabled = true; });
   const due = state.reviewSchedule[activeRecall.item.id].nextDueAt;
-  const labels = { independent: '独立回忆（自评）', hinted: '提示后回忆（自评）', forgot: '暂时未回忆出（自评）' };
-  $('#recallFeedback').textContent = `${saved ? '已保存' : '仅本次页面记录，尚未保存'}：${labels[outcome]}。下次建议：${new Date(due).toLocaleString()}。`;
+  const labels = { independent: '独立说出来了（自评）', hinted: '提示后说出来了（自评）', forgot: '还需要再练（自评）' };
+  $('#recallFeedback').textContent = `${saved ? '已保存' : '暂未保存，关闭页面后会丢失'}：${labels[outcome]}。建议下次复习：${new Date(due).toLocaleString()}。`;
   renderToday();
   renderProgress();
-  $('#recallQueueNote').textContent = `${ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule).length} 条到期 · 回答文本没有保存或上传`;
+  $('#recallQueueNote').textContent = `${ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule).length} 条表达待复习 · 只记录练习结果，不保存或上传回答原文`;
 }
 
 function renderReviewQueue() {
-  const due = ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule);
+  const due = ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule);
   $('#dueReviewCount').textContent = due.length;
   $('#startReviewBtn').disabled = due.length === 0;
   const list = $('#dueReviewList');
   list.innerHTML = due.slice(0, 3).map((item) => `<div class="review-row">
     <div><strong>${escapeHTML(item.meaning_cn)}</strong><span>${escapeHTML(item.category)}</span></div>
-    <button class="small-btn due-recall-btn" type="button" data-item-id="${escapeHTML(item.id)}">回忆这条</button></div>`).join('');
-  if (!due.length) list.innerHTML = '<p class="practice-note">暂时没有到期表达。先学习新表达，或进入主动回忆模式练习。</p>';
+    <button class="small-btn due-recall-btn" type="button" data-item-id="${escapeHTML(item.id)}">复习这条</button></div>`).join('');
+  if (!due.length) list.innerHTML = '<p class="practice-note">暂时没有待复习的表达。可以学一点新的，或到“练习”试着看中文说英文。</p>';
   $$('.due-recall-btn').forEach((button) => button.addEventListener('click', () => startRecall(button.dataset.itemId)));
 }
 
@@ -112,16 +114,17 @@ function renderPracticeProgress() {
   $('#recalledMetric').textContent = result.recalledItems;
   $('#delayedMetric').textContent = result.delayedItems;
   const ratio = (good, total) => total ? `${good}/${total}（${Math.round(good / total * 100)}%）` : '尚无记录';
-  $('#practiceBreakdown').innerHTML = `<p>选择题（答案核对）：${ratio(result.choiceCorrect, result.choiceTotal)}</p>
-    <p>无提示回忆（自评）：${ratio(result.recallIndependent, result.recallTotal)}</p>
-    <p>间隔至少 24 小时后的无提示回忆（自评）：${ratio(result.delayedIndependent, result.delayedTotal)}</p>`;
-  const outcomes = { independent: '独立回忆', hinted: '提示后回忆', forgot: '未回忆出', correct: '选择正确', incorrect: '选择错误' };
+  $('#practiceBreakdown').innerHTML = `<p>选择题答对：${ratio(result.choiceCorrect, result.choiceTotal)}</p>
+    <p>不看提示就能说出（自评）：${ratio(result.recallIndependent, result.recallTotal)}</p>
+    <p>至少隔 24 小时仍能独立说出（自评）：${ratio(result.delayedIndependent, result.delayedTotal)}</p>`;
+  const outcomes = { independent: '独立说出来了', hinted: '提示后说出来了', forgot: '还需要再练', correct: '答对了', incorrect: '答错了' };
   $('#recentPractice').innerHTML = state.practiceHistory.slice(-8).reverse().map((event) => {
-    const item = EXPRESSIONS.find((entry) => entry.id === event.itemId);
-    return `<li><strong>${escapeHTML(item?.meaning_cn || event.itemId)}</strong> · ${outcomes[event.outcome]}
-      ${event.assessment === 'self-report' ? '（自评）' : '（答案核对）'}${event.delayed ? ' · 延迟练习' : ''}
+    const item = learningExpressions().find((entry) => entry.id === event.itemId);
+    const deleted = state.deletedCustomExpressions.some((entry) => entry.id === event.itemId);
+    return `<li><strong>${escapeHTML(deleted ? '已删除的个人表达' : item?.meaning_cn || event.itemId)}</strong> · ${outcomes[event.outcome]}${event.itemId.startsWith('custom:') ? ' · 个人表达（当时版本）' : ''}
+      ${event.assessment === 'self-report' ? '（自评）' : '（答案核对）'}${event.delayed ? ' · 间隔至少 24 小时再练' : ''}
       <span>${escapeHTML(new Date(event.at).toLocaleString())}</span></li>`;
-  }).join('') || '<li>练习后会在这里留下记录；旧版累计成绩不会补造为逐次记录。</li>';
+  }).join('') || '<li>完成练习后，可以在这里查看每次的表现。以往只有累计成绩的记录，仍保留在统计中。</li>';
 }
 
 function setupPractice() {
@@ -131,7 +134,7 @@ function setupPractice() {
   $('#revealRecallBtn').addEventListener('click', revealRecall);
   $$('#recallResultButtons button').forEach((button) => button.addEventListener('click', () => finishRecall(button.dataset.outcome)));
   $('#startReviewBtn').addEventListener('click', () => {
-    const due = ReviewEngine.dueItems(EXPRESSIONS, state.reviewSchedule);
+    const due = ReviewEngine.dueItems(learningExpressions(), state.reviewSchedule);
     if (due.length) startRecall(due[0].id);
   });
 }

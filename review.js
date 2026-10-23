@@ -18,7 +18,7 @@
 
   function validateReviewData(saved, validIds) {
     if (!object(saved)) throw new Error('进度必须是 JSON 对象。');
-    if (saved.schemaVersion !== undefined && ![1, 2].includes(saved.schemaVersion)) {
+    if (saved.schemaVersion !== undefined && ![1, 2, 3].includes(saved.schemaVersion)) {
       throw new Error('不支持这个进度版本。');
     }
     if (saved.reviewSchedule !== undefined) {
