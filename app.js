@@ -120,22 +120,49 @@ function progressPayload(source = state) {
   };
 }
 
+function progressStoragePayload(source, previous, receiptId = null) {
+  let marker = null;
+  try { marker = JSON.parse(previous || '{}').syncCommitId; } catch { /* Corrupt originals remain in the operation-before backup. */ }
+  const valid = (value) => typeof value === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(value);
+  if (receiptId !== null && receiptId !== undefined) {
+    if (!valid(receiptId)) throw new Error('同步保存凭据格式无效。');
+    marker = receiptId;
+  }
+  return { ...progressPayload(source), ...(valid(marker) ? { syncCommitId: marker } : {}) };
+}
+
 function saveState() {
   try {
+    if (window.DailyEnglishStorageGate?.canWrite === false) throw new Error('another-tab');
     // Do not silently overwrite a corrupt original record.
     if (stateWarning) throw new Error('blocked');
     const previous = localStorage.getItem(STORAGE_KEY);
     if (previous && JSON.parse(previous).schemaVersion !== 3) {
       localStorage.setItem(BACKUP_KEY, previous);
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progressPayload()));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progressStoragePayload(state, previous)));
     $('#storageNotice').hidden = true;
+    notifyLearningSyncSaved();
     return true;
   } catch {
-    $('#storageNotice').textContent = stateWarning || '进度未能保存到浏览器（可能存储已满或被禁用）。请导出进度备份。';
+    $('#storageNotice').textContent = stateWarning || (window.DailyEnglishStorageGate?.canWrite === false ? '另一页正在使用学习记录，请先关闭另一页，再在这里继续。' : '进度未能保存到浏览器（可能存储已满或被禁用）。请导出进度备份。');
     $('#storageNotice').hidden = false;
     return false;
   }
+}
+
+function notifyLearningSyncSaved() {
+  if (window.dailyEnglishApplyingSync) return;
+  try { window.dailyEnglishSync?.noteSaved(); }
+  catch {
+    $('#storageNotice').textContent = '本机记录已保存，自动同步暂未完成。请在“多设备同步”中重试。';
+    $('#storageNotice').hidden = false;
+  }
+}
+
+function requiresSyncDisconnect() {
+  const value = window.dailyEnglishSync?.status();
+  return Boolean(value?.connected || value?.phase === 'connecting' || value?.phase === 'syncing');
 }
 
 function todayKey() {
@@ -984,7 +1011,9 @@ function setView(viewName) {
   if (viewName === 'quiz') setPracticeMode($('#practiceMode').value);
   if (viewName === 'scenarios') renderScenarioStats();
   if (viewName === 'market') { renderMarketVocabulary(); renderMarketScenarioCards(); renderMarketStats(); }
+  if (viewName === 'today') window.refreshPracticeHub?.(state, { pathway: PATHWAY_CATALOG, foundation: FOUNDATION_CATALOG });
   window.syncNavigation?.(viewName);
+  window.dispatchEvent(new CustomEvent('daily-english-view', { detail: { view: viewName } }));
 }
 
 function getNextTheme(theme) {
@@ -1008,11 +1037,17 @@ function applyTheme() {
 function exportProgress() {
   if (window.flushFoundationDrafts?.() === false) alert('部分基础课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   if (window.flushPathwayDraft?.() === false) alert('部分课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
+  let syncEnvelope = null;
+  if (window.dailyEnglishSync?.status().connected) {
+    try { syncEnvelope = window.dailyEnglishSync.backupEnvelope(); }
+    catch { alert('同步副本暂时无法备份，本次仍会导出已保存在本机的学习记录。'); }
+  }
   const payload = JSON.stringify({
     app: 'Daily English Lab',
     exportedAt: new Date().toISOString(),
     ...progressPayload(),
-  }, null, 2);
+    ...(syncEnvelope ? { syncEnvelope } : {}),
+  }, null, syncEnvelope ? undefined : 2);
   const blob = new Blob([payload], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1023,13 +1058,18 @@ function exportProgress() {
 }
 
 function importProgress(file) {
-  if (file.size > 5 * 1024 * 1024) { alert('导入失败：文件不能超过 5 MB。原有进度未改变。'); return; }
+  if (requiresSyncDisconnect()) { alert('请先在“多设备同步”中断开此设备，再导入文件。已有记录会保留。'); return; }
+  if (file.size > 12 * 1024 * 1024) { alert('导入失败：文件不能超过 12 MB。原有进度未改变。'); return; }
   const reader = new FileReader();
   reader.onload = () => {
     try {
+      if (requiresSyncDisconnect()) throw new Error('同步已经连接，请先断开此设备再导入文件。');
       const data = JSON.parse(reader.result);
+      const hasSyncArchive = data?.syncEnvelope !== undefined;
+      if (hasSyncArchive) window.SyncMerge.validate(data.syncEnvelope);
+      if (file.size > 5 * 1024 * 1024 && !hasSyncArchive) throw new Error('普通进度文件不能超过 5 MB；带有效同步副本的完整备份最多 12 MB。');
       const restored = parseProgress(data);
-      previewProgressImport(restored);
+      previewProgressImport(restored, hasSyncArchive);
     } catch (error) {
       alert(`导入失败：${error.message} 原有进度未改变。`);
     }
@@ -1049,6 +1089,7 @@ function renderAll() {
   renderMarketStats();
   window.refreshFoundations?.();
   window.refreshPathway?.();
+  window.refreshPracticeHub?.(state, { pathway: PATHWAY_CATALOG, foundation: FOUNDATION_CATALOG });
 }
 
 
@@ -1064,6 +1105,7 @@ function bindEvents() {
   });
   $('#exportBtn').addEventListener('click', exportProgress);
   $('#resetBtn').addEventListener('click', () => {
+    if (requiresSyncDisconnect()) { alert('请先在“多设备同步”中断开此设备，再清空本机记录。其他设备的记录不会因此清空。'); return; }
     if (!confirm('确定要清空本地学习进度和个人表达吗？将保留一份操作前备份。')) return;
     if (!persistReplacement(parseProgress({ theme: state.theme }), true)) return;
     window.resetPathwaySession?.();
@@ -1111,4 +1153,8 @@ function init() {
   }
 }
 
-init();
+window.dailyEnglishAppReady = (window.DailyEnglishStorageGate?.ready || Promise.resolve()).then(() => {
+  stateWarning = '';
+  Object.assign(state, loadState());
+  init();
+});

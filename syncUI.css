@@ -1,0 +1,52 @@
+.sync-panel {
+  margin: 22px 0;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--panel);
+  color: var(--text);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.sync-panel [hidden] { display: none !important; }
+.sync-panel h3 { margin: 0 0 14px; font-size: 22px; }
+#syncHeading { scroll-margin-top: 130px; }
+.sync-status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-bottom: 12px; }
+.sync-state { display: inline-flex; padding: 5px 10px; background: var(--soft); color: var(--primary); border: 1px solid var(--border); border-radius: 9px; font-size: 14px; }
+.sync-last-time, .sync-help, .sync-message { color: var(--muted); font-size: 13px; line-height: 1.85; }
+.sync-help, .sync-message { margin: 8px 0; }
+.sync-panel[data-phase="error"] .sync-state { color: var(--danger); }
+.sync-setup, .sync-connected { margin-top: 18px; }
+.sync-connect-form { display: grid; gap: 8px; border-top: 1px solid var(--border); padding-top: 18px; margin-top: 20px; }
+.sync-connect-form label { font-size: 14px; font-weight: 750; }
+.sync-connect-form input { display: block; width: 100%; max-width: 680px; min-width: 0; font: inherit; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 10px; }
+.sync-connect-form button { justify-self: start; }
+.sync-connect-form .sync-help { margin: 0 0 5px; }
+.sync-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.sync-panel button { min-height: 44px; max-width: 100%; white-space: normal; }
+.sync-panel button:disabled { cursor: wait; opacity: .6; }
+.sync-panel button:focus-visible, .sync-panel input:focus-visible, .sync-panel summary:focus-visible, .sync-panel pre:focus-visible, #syncHeading:focus-visible {
+  outline: 3px solid var(--primary); outline-offset: 3px;
+}
+.sync-notice { margin: 14px 0 0; color: var(--text); font-size: 13px; line-height: 1.85; }
+.sync-notice:empty { display: none; }
+.sync-code-area, .sync-conflicts { padding: 16px; margin-top: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.sync-code, .sync-conflict-copy pre { padding: 12px; margin: 12px 0; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; font: 13px/1.8 ui-monospace, monospace; user-select: text; }
+.sync-conflict-copy pre { max-height: 320px; overflow: auto; }
+.sync-conflict-copy { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; }
+.sync-conflict-copy summary { cursor: pointer; font-size: 13px; line-height: 1.8; }
+.sync-dialog { width: min(480px, calc(100% - 28px)); max-height: calc(100dvh - 40px); padding: 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); color: var(--text); box-shadow: var(--shadow); overflow: auto; }
+.sync-dialog::backdrop { background: rgb(9 16 30 / .55); backdrop-filter: blur(3px); }
+.sync-dialog p { font-size: 14px; line-height: 1.85; color: var(--muted); }
+.sync-dialog .sync-actions { margin-top: 20px; }
+@media (max-width: 600px) {
+  .sync-panel { padding: 20px 16px; }
+  .sync-actions { align-items: stretch; }
+  .sync-actions button { flex: 1 1 140px; }
+  .sync-connect-form input { font-size: 16px; }
+}
+@media (max-width: 360px) {
+  .sync-panel { padding: 18px 14px; }
+  .sync-code-area, .sync-conflicts { padding: 12px; }
+  .sync-dialog { padding: 20px 16px; }
+}
