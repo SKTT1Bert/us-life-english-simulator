@@ -39,3 +39,5 @@ jobs:
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation
         run: node tests/sync-browser.cjs
+      - name: Illustrated scenes and shared role play
+        run: node tests/scenes-browser.cjs

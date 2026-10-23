@@ -2,7 +2,7 @@ window.PICTURE_LESSONS = [{
   id:'gas-station',placeId:'gas-auto',title:'加油站',english:'Gas Station',category:'交通出行',description:'从一张场景图认识加油站常用词，听发音、跟读例句，再用填空把单词放进真实对话。',
   positions:{'gas-pump':[12,53],shop:[78,30],customer:[59,47],price:[18,11],money:[51,34],'trash-can':[33,62],nozzle:[76,60],'fuel-cap':[84,74],hose:[37,86],car:[93,85]},
   imageAltEnglish:'Gas station with a pump, shop, customer, trash can, hose, nozzle, car and fuel cap.',
-  image:'assets/gas-station.png',imageAlt:'加油站场景：蓝色加油机、商店、拿着现金和卡的顾客、垃圾桶、连接汽车的油管与油枪，以及挂在加油口旁的油箱盖。',
+  image: 'assets/gas-station.png', thumbnail: 'assets/thumbnails/gas-station.webp',imageAlt:'加油站场景：蓝色加油机、商店、拿着现金和卡的顾客、垃圾桶、连接汽车的油管与油枪，以及挂在加油口旁的油箱盖。',
   words:[
     {id:'gas-station',word:'gas station',ipa:'/ˈɡæs ˌsteɪʃən/',meaning:'加油站',note:'名词短语。美式 gas 指汽油；英式常说 petrol station。'},
     {id:'gas-pump',word:'gas pump',ipa:'/ˈɡæs ˌpʌmp/',meaning:'加油机',note:'指显示油价、油量并为汽车加油的整台设备；语境明确时可简称 pump。'},

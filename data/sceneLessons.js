@@ -4,7 +4,7 @@
     {
       id: 'restaurant', placeId: 'restaurant', title: '餐厅', english: 'Restaurant', category: '吃喝点餐',
       description: '从点餐到结账，认识餐桌上的物品，学会把需要说清楚。',
-      image: 'assets/restaurant.png', imageAlt: '餐厅里，服务员与顾客交谈；餐桌上有菜单、餐盘、餐叉、餐刀、水杯和账单，旁边有椅子。',
+      image: 'assets/restaurant.png', thumbnail: 'assets/thumbnails/restaurant.webp', imageAlt: '餐厅里，服务员与顾客交谈；餐桌上有菜单、餐盘、餐叉、餐刀、水杯和账单，旁边有椅子。',
       imageAltEnglish: 'Restaurant with a waiter, customer, table, chair, menu, plate, fork, knife, glass and bill.',
       positions: {waiter:[52,33],customer:[83,45],table:[50,90],chair:[12,86],menu:[34,57],plate:[55,70],fork:[42,75],knife:[67,75],glass:[69,60],bill:[79,72]},
       words: [
@@ -39,7 +39,7 @@
     {
       id:'supermarket',placeId:'supermarket',title:'超市',english:'Supermarket',category:'购物采购',
       description:'把购物车里的东西说出来，再练习结账、索要小票和询问商品。',
-      image:'assets/supermarket.png',imageAlt:'超市结账区，顾客推着购物车与收银员交谈；附近有购物篮、货架、牛奶、苹果、面包和小票。',
+      image: 'assets/supermarket.png', thumbnail: 'assets/thumbnails/supermarket.webp',imageAlt:'超市结账区，顾客推着购物车与收银员交谈；附近有购物篮、货架、牛奶、苹果、面包和小票。',
       imageAltEnglish:'Supermarket checkout with a cashier, customer, cart, basket, shelves, receipt, milk, apples and bread.',
       positions:{cart:[41,79],basket:[12,83],cashier:[79,27],checkout:[80,80],receipt:[56,32],shelf:[12,34],milk:[52,47],apples:[59,52],bread:[73,56],customer:[37,38]},
       words:[
@@ -74,7 +74,7 @@
     {
       id:'cafe',placeId:'cafe',title:'咖啡店',english:'Cafe',category:'吃喝点餐',
       description:'认识点单柜台和饮品用品，把一杯咖啡的需求说得更清楚。',
-      image:'assets/cafe.png',imageAlt:'咖啡店里，咖啡师在柜台后接待顾客；柜台上有杯子、牛奶、杯盖、餐巾和糕点，左侧有咖啡机和菜单板。',
+      image: 'assets/cafe.png', thumbnail: 'assets/thumbnails/cafe.webp',imageAlt:'咖啡店里，咖啡师在柜台后接待顾客；柜台上有杯子、牛奶、杯盖、餐巾和糕点，左侧有咖啡机和菜单板。',
       imageAltEnglish:'Cafe with a barista, customer, coffee machine, menu, counter, cup, milk, lid, napkin and pastry.',
       positions:{barista:[57,35],customer:[89,47],'coffee-machine':[27,46],menu:[29,13],counter:[46,91],cup:[41,69],milk:[52,66],lid:[65,72],napkin:[61,78],pastry:[28,71]},
       words:[
@@ -109,7 +109,7 @@
     {
       id:'airport',placeId:'airport',title:'机场',english:'Airport',category:'交通出行',
       description:'从值机柜台到登机口，认清证件、行李和指示信息，再练习出行沟通。',
-      image:'assets/airport.png',imageAlt:'机场值机区域，工作人员在柜台帮助旅客；旅客带着护照、登机牌和行李箱，周围有登机口、指示牌、屏幕和座椅。',
+      image: 'assets/airport.png', thumbnail: 'assets/thumbnails/airport.webp',imageAlt:'机场值机区域，工作人员在柜台帮助旅客；旅客带着护照、登机牌和行李箱，周围有登机口、指示牌、屏幕和座椅。',
       imageAltEnglish:'Airport with an agent, traveler, passport, boarding pass, suitcase, counter, gate, sign, screen and seats.',
       positions:{passport:[54,41],'boarding-pass':[55,52],suitcase:[78,85],gate:[90,45],sign:[88,13],screen:[22,16],seat:[14,61],traveler:[70,40],agent:[43,40],counter:[44,74]},
       words:[
@@ -144,7 +144,7 @@
     {
       id:'hotel',placeId:'hotel',title:'酒店',english:'Hotel',category:'住宿出行',
       description:'认识酒店前台和行李用品，练习办理入住、拿房卡和询问设施。',
-      image:'assets/hotel.png',imageAlt:'酒店大厅，前台工作人员向客人递房卡；附近有前台桌、服务铃、行李箱、行李车、电梯、沙发和灯。',
+      image: 'assets/hotel.png', thumbnail: 'assets/thumbnails/hotel.webp',imageAlt:'酒店大厅，前台工作人员向客人递房卡；附近有前台桌、服务铃、行李箱、行李车、电梯、沙发和灯。',
       imageAltEnglish:'Hotel lobby with a receptionist, guest, key card, suitcase, elevator, bell, desk, sofa, lamp and luggage cart.',
       positions:{receptionist:[42,33],guest:[68,35],'key-card':[54,37],suitcase:[69,84],elevator:[86,31],bell:[36,47],desk:[41,73],sofa:[12,48],lamp:[26,27],'luggage-cart':[95,55]},
       words:[
@@ -179,7 +179,7 @@
     {
       id:'clinic',placeId:'clinic',title:'诊所',english:'Clinic',category:'就医沟通',
       description:'在诊所前台认清证件和表格，练习预约登记与基本沟通。',
-      image:'assets/clinic.png',imageAlt:'诊所前台，工作人员接待一位病人；前台有保险卡、表格、写字板、笔、体温计和口罩，旁边有等候椅。',
+      image: 'assets/clinic.png', thumbnail: 'assets/thumbnails/clinic.webp',imageAlt:'诊所前台，工作人员接待一位病人；前台有保险卡、表格、写字板、笔、体温计和口罩，旁边有等候椅。',
       imageAltEnglish:'Clinic reception with a receptionist, patient, insurance card, form, clipboard, pen, chair, thermometer and mask.',
       positions:{receptionist:[27,34],patient:[68,33],'insurance-card':[48,38],form:[43,51],clipboard:[33,53],pen:[46,57],chair:[92,57],thermometer:[10,47],mask:[19,53]},
       words:[
