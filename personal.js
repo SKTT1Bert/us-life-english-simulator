@@ -43,7 +43,7 @@ function openExpressionEditor(record = null, provenance = 'user') {
   $('#customExample').value = record?.example || '';
   $('#customSource').value = record?.source || '';
   $('#customProvenance').textContent = expressionProvenance === 'model-assisted'
-    ? '来源：模型辅助 · 请核对含义、语法和使用场合后保存。' : '来源：用户提供 · 保存前请确认参考表达适合自己的使用场合。';
+    ? '来源：AI 辅助翻译 · 请核对含义、语法和使用场合后保存。' : '来源：自己添加 · 保存前请确认含义和使用场合。';
   $('#expressionError').textContent = '';
   $('#expressionEditNote').hidden = !editingExpressionId;
   $('#expressionDialog').showModal();
@@ -54,7 +54,7 @@ function addCustomCardActions(node, item) {
   const record = state.customExpressions.find((entry) => entry.id === item.id);
   const note = document.createElement('p');
   note.className = 'practice-note custom-source';
-  note.textContent = `${record.provenance === 'model-assisted' ? '模型辅助 · 已由你确认' : '用户提供'}${record.source ? ` · ${record.source}` : ''}`;
+  note.textContent = `${record.provenance === 'model-assisted' ? 'AI 辅助翻译 · 已由你确认' : '自己添加'}${record.source ? ` · ${record.source}` : ''}`;
   node.querySelector('.card-actions').before(note);
   const actions = document.createElement('div');
   actions.className = 'custom-actions';
@@ -90,7 +90,7 @@ function previewProgressImport(restored) {
   pendingProgressImport = restored;
   const courseAnswers = ['word-parts', 'phonics'].reduce((sum, id) => sum + FoundationProgress.summary(restored.foundationProgress, id, FOUNDATION_CATALOG[id]).answered, 0);
   const pathwayLessons = Object.keys(restored.pathwayProgress.lessons).length;
-  $('#importSummary').textContent = `将载入 ${restored.learned.size} 条已学习标记、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 条表达练习事件、基础课程 ${courseAnswers} 题的当前答案（含专项输出、复习和测评），以及学习路线 ${pathwayLessons} 课记录（包含写作和口述文本）。`;
+  $('#importSummary').textContent = `准备导入：${restored.learned.size} 条已学习的表达、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 次表达练习记录；基础课程中已作答的 ${courseAnswers} 道题，以及写作、口语、复习和测评记录；学习路线中 ${pathwayLessons} 课的记录（含写作内容和口述要点）。`;
   $('#importError').textContent = '';
   $('#importDialog').showModal();
 }
@@ -148,7 +148,7 @@ function setupPersonalExpressions() {
       $('#levelFilter').value = 'all';
       renderAll();
       setView('library');
-      $('#personalNotice').textContent = '个人表达已保存，可以收藏或开始回忆。学习记录仍保存在当前浏览器。';
+      $('#personalNotice').textContent = '个人表达已保存，可以收藏或试着说一说。学习记录保存在当前浏览器。';
       $('#personalNotice').focus();
     } catch (error) { $('#expressionError').textContent = error.message; }
   });

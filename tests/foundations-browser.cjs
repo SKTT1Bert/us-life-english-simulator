@@ -118,7 +118,7 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
       const after = await stored();
       assert.deepEqual(after.foundationProgress.courses['word-parts'].records[lesson.id].answers, completedAnswers);
       assert.equal(await root.locator('progress').getAttribute('value'), '1');
-      assert.ok((await root.locator('.tutorial-quiz-summary').textContent()).includes('本课练习完成'));
+      assert.ok((await root.locator('.tutorial-quiz-summary').textContent()).includes('本课随堂题已完成'));
       assert.deepEqual(after.practiceHistory, before.practiceHistory);
       assert.deepEqual(after.reviewSchedule, before.reviewSchedule);
       assert.deepEqual(after.learned, before.learned);

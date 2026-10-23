@@ -963,7 +963,7 @@ function handleQuizAnswer(event) {
   });
   if (!isCorrect) btn.classList.add('wrong');
   $('#quizFeedback').textContent = isCorrect
-    ? '选择正确，已标记为已学习；主动回忆与延迟回忆另行记录。'
+    ? '答对了，已标记为已学习。之后可以试着不看选项说出来，再通过复习巩固。'
     : `答案是：${currentQuizAnswer.phrase}`;
   saveState();
   renderProgress();

@@ -44,7 +44,7 @@
         </button>
         <button class="nav-btn primary-nav-btn" type="button" data-view="quiz" data-nav-group="practice">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M4 20l5-1L20 8a2.1 2.1 0 0 0-5-5L4 14l-1 7 7-1"/></svg>
-          <span>练习<small>主动回忆，及时复习</small></span>
+          <span>练习<small>试着表达，复习巩固</small></span>
         </button>
         <button class="primary-nav-btn" type="button" data-nav-group="personal" aria-controls="personalNavigation">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>
@@ -54,7 +54,7 @@
       <div class="side-card">
         <span class="side-label">学习积累</span>
         <div class="side-total"><strong id="sideLearned">0</strong><span>条表达</span></div>
-        <span class="side-note">已学习 · 含旧版标记</span>
+        <span class="side-note">已学习 · 包含以往记录</span>
       </div>
     </aside>
 
@@ -74,8 +74,8 @@
         <div class="hero-card">
           <div>
             <span class="eyebrow">Today's Practice</span>
-            <h2>先回忆旧表达，再学习新表达</h2>
-            <p>每天 5–10 分钟：到期回忆 → 核对反馈 → 学习新表达。看懂、选对和隔天能说出，分别记录。</p>
+            <h2>温习学过的，再学一点新的</h2>
+            <p>每天 5–10 分钟：先试着说出学过的表达，再核对答案、学习新表达。看看哪些还记得，哪些需要再练。</p>
           </div>
           <div class="hero-stats">
             <div><strong id="totalCount">0</strong><span>总表达</span></div>
@@ -85,10 +85,10 @@
         </div>
         <div id="pathwayToday" class="pathway-today"></div>
         <section class="panel review-panel" aria-labelledby="reviewHeading">
-          <div class="review-heading"><h3 id="reviewHeading">到期复习 <span id="dueReviewCount">0</span></h3>
-            <button id="startReviewBtn" class="primary-btn" type="button">开始到期回忆</button></div>
+          <div class="review-heading"><h3 id="reviewHeading">待复习的表达 <span id="dueReviewCount">0</span></h3>
+            <button id="startReviewBtn" class="primary-btn" type="button">开始复习</button></div>
           <div id="dueReviewList"></div>
-          <p class="practice-note">每天先展示最多 3 条到期表达；剩余项目可在练习模式继续。无需一次清空积压。</p>
+          <p class="practice-note">这里先显示 3 条待复习的表达。想多练一点，可以到“练习”继续，按自己的节奏来。</p>
         </section>
         <div class="today-expression-heading">
           <h3>今天的新表达</h3>
@@ -125,7 +125,7 @@
           <textarea id="translatorOutput" class="search translator-text" rows="3" readonly></textarea>
           <div class="inline-actions"><button id="translatorCopy" class="small-btn" type="button" disabled>Copy / 复制</button>
           <button id="translatorSave" class="small-btn" type="button" disabled>编辑并保存为个人表达</button></div>
-          <p class="practice-note">翻译可能有误。请先编辑核对，再确认加入个人表达；保存不会计为回忆成功。</p>
+          <p class="practice-note">翻译结果仅供参考，请核对、修改后再保存。保存后还可以继续练习。</p>
         </section>
         </details>
         <div class="library-controls">
@@ -352,8 +352,8 @@
         <div class="practice-toolbar">
           <label for="practiceMode">练习模式 Practice mode</label>
           <select id="practiceMode" class="select">
-            <option value="recall">主动回忆 Recall · 到期优先</option>
-            <option value="choice">选择题 Recognition · 原有模式</option>
+            <option value="recall">看中文说英文 · 优先复习</option>
+            <option value="choice">选择题 · 选出合适的表达</option>
           </select>
         </div>
         <div id="recallPanel" class="quiz-card">
@@ -363,9 +363,9 @@
           <h2 id="recallPrompt">先尝试自己说出英文，再看参考答案</h2>
           <label class="field-label" for="recallResponse">输入英文，或先在心里／出声回答（可不输入）</label>
           <textarea id="recallResponse" class="recall-response" rows="3" placeholder="你的回答只在本题显示，不保存、不上传。"></textarea>
-          <label class="field-label" for="recallConfidence">作答前预测（可跳过）：你觉得自己能说出来吗？</label>
+          <label class="field-label" for="recallConfidence">回答前想一想：你有多大把握？（可跳过）</label>
           <select id="recallConfidence" class="select">
-            <option value="">跳过预测</option><option value="low">没把握</option>
+            <option value="">暂不选择</option><option value="low">没把握</option>
             <option value="medium">有些把握</option><option value="high">很有把握</option>
           </select>
           <div class="inline-actions practice-actions">
@@ -380,8 +380,8 @@
             <button class="small-btn" data-outcome="forgot" type="button">看答案才想起／没想起</button>
           </div>
           <p id="recallFeedback" class="feedback practice-feedback" role="status" aria-live="polite"></p>
-          <button id="nextRecallBtn" class="primary-btn" type="button">下一条（到期优先）</button>
-          <p class="practice-note">结果来自自评，不自动判定发音、语法或口语水平。间隔默认 1、3、7、14 天，是待调整的产品规则，不是论文证明的最佳安排。</p>
+          <button id="nextRecallBtn" class="primary-btn" type="button">练习下一条</button>
+          <p class="practice-note">请按自己刚才的表现选择结果，系统不会自动评判发音或语法。没想起来的表达会在 10 分钟后安排再练；之后根据表现，逐步间隔 1、3、7 或 14 天复习。</p>
         </div>
         <div id="choicePanel" class="quiz-card" hidden>
           <span class="eyebrow">Quick Quiz</span>
@@ -404,16 +404,16 @@
 
       <section id="view-progress" class="view">
         <div class="progress-grid">
-          <div class="metric-card"><strong id="learnedMetric">0</strong><span>已学习／旧版标记</span></div>
+          <div class="metric-card"><strong id="learnedMetric">0</strong><span>已学习的表达</span></div>
           <div class="metric-card"><strong id="favoriteMetric">0</strong><span>已收藏</span></div>
           <div class="metric-card"><strong id="completionMetric">0%</strong><span>学习覆盖率</span></div>
-          <div class="metric-card"><strong id="recalledMetric">0</strong><span>曾独立回忆（自评）</span></div>
-          <div class="metric-card"><strong id="delayedMetric">0</strong><span>曾延迟回忆成功（自评）</span></div>
+          <div class="metric-card"><strong id="recalledMetric">0</strong><span>能独立说出（自评）</span></div>
+          <div class="metric-card"><strong id="delayedMetric">0</strong><span>隔天仍能说出（自评）</span></div>
         </div>
         <div class="panel">
-          <h2>练习证据 Practice evidence</h2>
+          <h2>练习表现</h2>
           <div id="practiceBreakdown"></div>
-          <p class="practice-note">旧版标记与一次选择正确不等于长期掌握。比例基于最近最多 5,000 条新练习事件；条目累计成功次数另行保留。UTC 日界沿用旧版，显示时间采用设备时区。</p>
+          <p class="practice-note">“已学习”包含以往标记；能否记牢，还需要之后的复习来检验。以下比例统计最近最多 5,000 次练习，累计次数仍会保留。每日统计按世界协调时间（UTC）换日，具体时间按你的设备显示。</p>
           <h3>最近练习</h3><ul id="recentPractice" class="recent-practice"></ul>
         </div>
         <div class="panel">
@@ -422,7 +422,7 @@
         </div>
         <div class="panel">
           <h2>进度管理</h2>
-          <p>学习记录只存在你的浏览器 localStorage，不上传、不登录。</p>
+          <p>学习记录保存在当前浏览器，无需登录，也不会上传。更换设备、浏览器或网址时，请先导出进度，再到新页面导入。</p>
           <div class="inline-actions">
             <button id="resetBtn" class="danger-btn" type="button">清空本地进度</button>
             <button id="backupDownloadBtn" class="ghost-btn" type="button">下载操作前备份</button>
@@ -443,13 +443,13 @@
       <p id="customProvenance" class="practice-note"></p>
       <label class="field-label" for="customPhrase">英文表达 · 必填，最多 300 字符</label>
       <textarea id="customPhrase" class="search" rows="2" maxlength="300" required></textarea>
-      <label class="field-label" for="customMeaning">中文回忆提示 · 必填，最多 500 字符</label>
+      <label class="field-label" for="customMeaning">中文提示 · 必填，最多 500 字符</label>
       <textarea id="customMeaning" class="search" rows="2" maxlength="500" required placeholder="描述你想表达的意思或使用场合，练习时先只显示这段提示。"></textarea>
       <label class="field-label" for="customExample">英文例句 · 可选，最多 1000 字符</label>
       <textarea id="customExample" class="search" rows="2" maxlength="1000"></textarea>
       <label class="field-label" for="customSource">来源或备注 · 可选，最多 500 字符</label>
       <input id="customSource" class="search" type="text" maxlength="500" placeholder="例如：今天的课堂、生活对话" />
-      <p id="expressionEditNote" class="practice-note" hidden>修改英文或中文提示后会重新安排首次回忆；以往练习仍保留，但不代表新内容的掌握程度。</p>
+      <p id="expressionEditNote" class="practice-note" hidden>修改英文或中文提示后，会从新内容开始练习。以往的练习记录仍会保留。</p>
       <label class="confirmation-label"><input id="customConfirmed" type="checkbox" required /><span>我已核对英文和中文提示，确认将这条表达作为自己的学习参考保存在当前浏览器。</span></label>
       <p id="expressionError" class="form-error" role="alert"></p>
       <div class="dialog-actions"><button id="saveExpressionBtn" type="submit" class="primary-btn">确认保存</button><button id="cancelExpressionBtn" type="button" class="ghost-btn">取消</button></div>
@@ -476,7 +476,7 @@
       <div class="card-actions">
         <button class="small-btn speak-btn" type="button">朗读</button>
         <button class="small-btn learned-btn" type="button">标记已学习</button>
-        <button class="small-btn recall-btn" type="button">练习回忆</button>
+        <button class="small-btn recall-btn" type="button">试着说一说</button>
         <button class="small-btn fav-btn" type="button">收藏</button>
       </div>
     </article>
