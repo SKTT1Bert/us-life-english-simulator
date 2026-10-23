@@ -87,7 +87,7 @@
     }
     function renderReview() {
       const due = course.lessons.filter((lesson) => lesson.levelId === levelId && records()[lesson.id]?.dueAt && Date.parse(records()[lesson.id].dueAt) <= Date.now());
-      body.innerHTML = `<h3>复习巩固 · ${esc(stage().label)}</h3><p>先不看答案，写下你记得的内容，再对照要点检查。还没记住，明天再练；有些吃力，3 天后再练；回忆顺利，下次复习安排在 7 天后，之后逐步延长至 14 天、30 天。</p>${due.length ? '' : '<p class="foundation-empty-review">本阶段暂时没有待复习的课程。完成一课的随堂题、写作、口语练习和自评后，明天就会安排复习。</p>'}<div class="foundation-review-list"></div>`;
+      body.innerHTML = `<h3>复习巩固 · ${esc(stage().label)}</h3><p>先不看答案，写下你记得的内容，再对照要点检查。还没记住，明天再练；有些吃力，3 天后再练；能独立答出时，会根据复习次数安排在 7、14 或 30 天后再练。</p>${due.length ? '' : '<p class="foundation-empty-review">本阶段暂时没有待复习的课程。完成一课的随堂题、写作、口语练习和自评后，明天就会安排复习。</p>'}<div class="foundation-review-list"></div>`;
       for (const lesson of due) {
         const card = document.createElement('article'); card.className = 'foundation-review-card';
         card.innerHTML = `<h4>${esc(lesson.title)}</h4><p>${esc(lesson.review.prompt)}</p><label>我记得的内容（这里的文字不会保存）<textarea rows="3" maxlength="8000"></textarea></label><button type="button" class="small-btn foundation-reveal">查看参考要点</button><div class="foundation-review-answer" hidden>${paragraphs(lesson.review.answer)}<div class="pathway-modes">${[['again', '还没记住'], ['hard', '有些吃力'], ['good', '能独立答出']].map(([grade, label]) => `<button type="button" class="small-btn" data-review-grade="${grade}">${label}</button>`).join('')}</div></div><p class="foundation-review-error" role="status"></p><button type="button" class="ghost-btn foundation-review-lesson">返回本课</button>`;
