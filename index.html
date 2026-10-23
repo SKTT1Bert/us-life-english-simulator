@@ -155,7 +155,7 @@
           <div class="scenario-hero-copy">
             <span class="eyebrow">Scene Learning / 场景学习</span>
             <h2>看图认词，接着练一场真实对话</h2>
-            <p>先认识场景里的物品和表达，再选择今天要办的事。两种模式共用场所，带图场景可以直接切换练习。</p>
+            <p>从日常生活到出行办事，先看图认识物品和表达，再选择今天要办的事。每个场所都可以接着练对话。</p>
             <button id="scenarioBackBtn" class="ghost-btn scenario-back-btn" type="button">返回主页</button>
           </div>
           <div class="scenario-stats">
@@ -170,7 +170,19 @@
           <div><label class="field-label" for="placeSelect">选择生活场所 Choose a place</label><select id="placeSelect" class="select"></select></div>
           <p id="sceneAvailability" role="status"></p>
         </div>
-        <nav id="sceneGallery" class="scene-gallery" aria-label="有图场景选择"></nav>
+        <section class="scene-browser" aria-label="浏览场景课程">
+          <div class="scene-browser-heading">
+            <div><strong>找到今天想练的场景</strong><span id="sceneFilterCount" role="status"></span></div>
+            <label class="scene-search-label"><span class="visually-hidden">搜索场景或物品</span><input id="sceneSearch" class="search" type="search" placeholder="搜索场景或物品，如：银行、passport" autocomplete="off"></label>
+          </div>
+          <div id="sceneCategories" class="scene-categories" role="group" aria-label="场景分类"></div>
+          <div class="scene-browse-actions">
+            <span>选一个场景，开始学习</span>
+            <div><button id="sceneGalleryPrevious" type="button" class="small-btn" aria-label="向前浏览场景" aria-controls="sceneGallery">←</button><button id="sceneGalleryNext" type="button" class="small-btn" aria-label="向后浏览场景" aria-controls="sceneGallery">→</button><button id="sceneGalleryExpand" type="button" class="small-btn" aria-controls="sceneGallery" aria-expanded="false">展开全部场景</button></div>
+          </div>
+          <nav id="sceneGallery" class="scene-gallery" aria-label="场景选择"></nav>
+          <p id="sceneSearchEmpty" class="scene-search-empty" hidden>没有找到匹配的场景。试试其他关键词，或<button id="sceneFilterReset" type="button" class="small-btn">清除筛选</button>。</p>
+        </section>
         <div class="scene-mode-tabs" role="tablist" aria-label="场景学习模式">
           <button id="scene-tab-picture" class="scene-mode-tab" type="button" role="tab" data-scene-tab="picture" aria-controls="scene-panel-picture" aria-selected="true" tabindex="0">看图识词 <span>认物品 · 跟读 · 填空</span></button>
           <button id="scene-tab-dialogue" class="scene-mode-tab" type="button" role="tab" data-scene-tab="dialogue" aria-controls="scene-panel-dialogue" aria-selected="false" tabindex="-1">对话模拟 <span>选目标 · 多轮交流</span></button>
@@ -508,6 +520,9 @@
   <script src="pathway.js"></script>
   <script src="data/pictureLessons.js"></script>
   <script src="data/sceneLessons.js"></script>
+  <script src="data/sceneLessonsCivic.js"></script>
+  <script src="data/sceneLessonsCare.js"></script>
+  <script src="data/sceneLessonsServices.js"></script>
   <script src="pictureLearning.js"></script>
   <script src="sceneLearning.js"></script>
 </body>
