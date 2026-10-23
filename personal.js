@@ -3,16 +3,18 @@ let expressionProvenance = 'user';
 let pendingProgressImport = null;
 
 // Write before replacing the active state: a failed save leaves the old progress intact.
-function persistReplacement(candidate, backup = false) {
+function persistReplacement(candidate, backup = false, receiptId = null) {
   try {
+    if (window.DailyEnglishStorageGate?.canWrite === false) throw new Error('another-tab');
     if (stateWarning && !backup) throw new Error(stateWarning);
-    const payload = JSON.stringify(progressPayload(candidate));
     const previous = localStorage.getItem(STORAGE_KEY);
+    const payload = JSON.stringify(progressStoragePayload(candidate, previous, receiptId));
     if (previous !== null && (backup || JSON.parse(previous).schemaVersion !== 3)) localStorage.setItem(BACKUP_KEY, previous);
     localStorage.setItem(STORAGE_KEY, payload);
     Object.assign(state, candidate);
     stateWarning = '';
     $('#storageNotice').hidden = true;
+    notifyLearningSyncSaved();
     return true;
   } catch (error) {
     $('#storageNotice').textContent = stateWarning || '保存失败：浏览器存储已满或被禁用。原有进度未改变，请先导出备份。';
@@ -68,7 +70,7 @@ function addCustomCardActions(node, item) {
   remove.type = 'button';
   remove.textContent = '删除';
   remove.addEventListener('click', () => {
-    if (!confirm('删除这条个人表达？收藏和复习计划会移除，历史练习保留为“已删除表达”，不再保留原文。')) return;
+    if (!confirm('删除这条个人表达？收藏和复习计划会移除，历史练习保留为“已删除表达”。如果曾开启同步，保留的不同版本仍可能包含原文；已连接时，此次删除也会同步到其他设备。')) return;
     try {
       const candidate = freshProgressCopy();
       Object.assign(candidate, CustomExpressions.remove(candidate, item.id));
@@ -79,18 +81,19 @@ function addCustomCardActions(node, item) {
       if (!persistReplacement(candidate)) return;
       invalidatePersonalPractice();
       renderAll();
-      $('#personalNotice').textContent = '个人表达已删除。历史练习仅保留原来的编号与结果。';
+      $('#personalNotice').textContent = '个人表达已从学习与复习中移除。历史练习保留编号与结果；同步中已经保留的不同版本不会随之删除。';
     } catch (error) { alert(error.message); }
   });
   actions.append(edit, remove);
   node.append(actions);
 }
 
-function previewProgressImport(restored) {
+function previewProgressImport(restored, hasSyncArchive = false) {
   pendingProgressImport = restored;
   const courseAnswers = ['word-parts', 'phonics'].reduce((sum, id) => sum + FoundationProgress.summary(restored.foundationProgress, id, FOUNDATION_CATALOG[id]).answered, 0);
   const pathwayLessons = Object.keys(restored.pathwayProgress.lessons).length;
   $('#importSummary').textContent = `准备导入：${restored.learned.size} 条已学习的表达、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 次表达练习记录；基础课程中已作答的 ${courseAnswers} 道题，以及写作、口语、复习和测评记录；学习路线中 ${pathwayLessons} 课的记录（含写作内容和口述要点）。`;
+  if (hasSyncArchive) $('#importSummary').textContent += '文件还包含同步副本；本次导入只恢复上述页面记录，不恢复配对信息或历史版本库。请保留原文件中的副本，以便核对。';
   $('#importError').textContent = '';
   $('#importDialog').showModal();
 }
@@ -161,6 +164,10 @@ function setupPersonalExpressions() {
   $('#backupDownloadBtn').addEventListener('click', downloadLocalBackup);
   $('#confirmImportBtn').addEventListener('click', () => {
     if (!pendingProgressImport) return;
+    if (requiresSyncDisconnect()) {
+      $('#importError').textContent = '同步已经连接。请先取消导入，在“多设备同步”中断开此设备，再重新选择文件。已有记录未改变。';
+      return;
+    }
     if (!persistReplacement(pendingProgressImport, true)) {
       $('#importError').textContent = '浏览器未能保存导入内容。原有进度未改变，请导出备份后重试。';
       return;

@@ -17,13 +17,15 @@
 
 Version 1.2 | 2026-10-01 | HUDK 4054 Individual Assignment #2
 
+> **Optional encrypted sync (2026-10-23):** A private pairing code connects desktop and mobile browsers once; saved learning records then merge automatically while online. Existing local records remain supported. See [setup, encryption, record preservation and recovery](docs/private-sync.md). The home page also brings unresolved lesson mistakes together in “需要再练”; [official platform comparisons](docs/platform-research-2026-10-23.md) explain the choices. The coursework documentation below remains a historical proposal.
+
 > **Optional local translation:** The expression library includes Chinese to English translation through a local Hy-MT2 Q4 backend. GitHub Pages remains static. See [Windows setup, API, lazy loading, and validation](docs/local-translator.md). Model weights stay outside this repository.
 
 > **Runtime update (2026-10-22):** Navigation now groups related activities into fewer primary destinations. Practice & Review includes active recall, due-item review, and local per-attempt records; the expression library also supports confirmed personal expressions and local translation drafts. Runtime exports use schema v3; legacy progress remains supported. See [recall behavior and research limits](docs/learning-review.md) and [personal-expression fields, editing, and backup recovery](docs/personal-expressions.md). The coursework narrative/PDF and synthetic example below remain historical v1.2 documentation; the CSV dictionary has been updated for the runtime. Old learned marks and saved references are not evidence of delayed recall.
 
 > **Foundation courses:** Word building and phonics each now offer 48 lessons across Pre-A1, A1, A2, B1, B2 and C1, with three explained questions and distinct output/recall tasks per lesson. Each course includes six independent stage checks (36 questions), scheduled review, saved output drafts and links into the integrated route. Course records are included in exports through the optional schema-v3 `foundationProgress` field (record version 2, with migration of earlier answers). See [coverage, record semantics, and compatibility](docs/foundations.md). The visual update uses lightweight CSS backgrounds and supports reduced motion.
 
-> **Zero-to-C1 pathway:** Six stages now add 48 integrated lessons, 192 lesson questions, six independent stage checks (48 questions), writing/speaking tasks, and scheduled active review. Existing foundation courses remain linked. Pathway drafts and submitted work stay local and are included through optional schema-v3 `pathwayProgress`. See [curriculum scope, assessment limits and recovery](docs/zero-to-c1.md).
+> **Zero-to-C1 pathway:** Six stages now add 48 integrated lessons, 192 lesson questions, six independent stage checks (48 questions), writing/speaking tasks, and scheduled active review. Existing foundation courses remain linked. Pathway drafts and submitted work stay local by default (optional encrypted sync is described above) and are included through optional schema-v3 `pathwayProgress`. See [curriculum scope, assessment limits and recovery](docs/zero-to-c1.md).
 
 > Status: The app runs on GitHub Pages and can export progress as JSON. This package documents that format for a proposed pilot. The example is synthetic; participant data collection is planned.
 

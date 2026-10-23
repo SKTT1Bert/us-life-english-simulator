@@ -59,4 +59,4 @@ async function navigate(page, view) {
   await page.locator(`[data-view="${view}"]`).click();
 }
 
-module.exports = { startApp, navigate, storageKey };
+module.exports = { startApp, navigate, storageKey, appFile };
