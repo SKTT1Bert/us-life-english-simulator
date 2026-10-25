@@ -35,6 +35,8 @@ jobs:
         run: node tests/pathway-browser.cjs
       - name: Foundation stage outputs, reviews and assessments
         run: node tests/foundation-study-browser.cjs
+      - name: Daily plans, diagnostic routing, sentence listening and learning reports
+        run: node tests/learning-studio-browser.cjs
       - name: One writer per browser and safe tab handover
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation

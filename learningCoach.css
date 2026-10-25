@@ -1,0 +1,59 @@
+.learning-coach { margin: 24px 0; padding: 26px; border: 1px solid var(--border); border-radius: 24px; background: var(--panel); color: var(--text); overflow-wrap: anywhere; }
+.learning-coach h2 { margin: 8px 0; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.45; letter-spacing: -.04em; }
+.learning-coach h3 { margin: 0 0 10px; line-height: 1.5; }
+.learning-coach p { line-height: 1.75; }
+.coach-top { display: flex; gap: 24px; justify-content: space-between; align-items: center; }
+.coach-eyebrow { font-size: 11px; letter-spacing: .13em; color: var(--primary); font-weight: 800; }
+.coach-subtitle { margin: 0; color: var(--muted); font-size: 14px; max-width: 68ch; }
+.coach-budget { flex: 0 0 auto; display: flex; flex-direction: column; text-align: center; padding: 13px 20px; border-radius: 18px; background: var(--soft); }
+.coach-budget strong { font-size: 32px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.coach-budget span { margin-top: 7px; font-size: 12px; color: var(--muted); }
+.coach-preferences { display: grid; grid-template-columns: 1.1fr 1fr 1.2fr auto; align-items: end; gap: 12px; margin-top: 24px; }
+.coach-field { display: flex; flex-direction: column; min-width: 0; gap: 8px; font-size: 12px; font-weight: 650; color: var(--muted); }
+.coach-field select { min-height: 44px; width: 100%; min-width: 0; padding: 10px 28px 10px 12px; border: 1px solid var(--border); border-radius: 12px; color: var(--text); background: var(--bg); font-size: 14px; }
+.coach-preferences button { min-height: 44px; white-space: nowrap; }
+.coach-plan-info { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; margin: 14px 0 20px; }
+.coach-plan-info p { margin: 0; color: var(--muted); font-size: 12px; flex: 1 1 300px; }
+.coach-link { padding: 7px 0; background: none; border: none; color: var(--primary); text-align: left; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.coach-tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.coach-task { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; }
+.coach-step { align-self: start; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--soft); font-size: 13px; color: var(--primary); font-weight: 750; }
+.coach-task h3 { font-size: 16px; margin: 6px 0 4px; }
+.coach-task-label { color: var(--primary); font-size: 11px; font-weight: 700; }
+.coach-task p { margin: 3px 0; font-size: 13px; }
+.coach-task p.coach-reason { color: var(--muted); font-size: 12px; }
+.coach-task button { min-height: 44px; white-space: nowrap; }
+.coach-status { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+.coach-status:empty { display: none; }
+.coach-empty { padding: 16px; border-radius: 12px; background: var(--soft); }
+.coach-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+.coach-metric { min-width: 0; padding: 18px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg); }
+.coach-metric strong { display: block; font-size: 28px; font-variant-numeric: tabular-nums; }
+.coach-metric span { display: block; margin-top: 8px; font-size: 13px; font-weight: 700; }
+.coach-metric p { color: var(--muted); margin: 6px 0 0; font-size: 11px; }
+.coach-section { margin-top: 28px; }
+.coach-small { color: var(--muted); font-size: 12px; }
+.coach-week { list-style: none; padding: 12px 0; margin: 16px 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
+.coach-week li { display: flex; flex-direction: column; text-align: center; gap: 7px; min-width: 0; font-size: 12px; }
+.coach-week li strong { font-variant-numeric: tabular-nums; font-size: 13px; }
+.coach-bar-area { height: 85px; display: flex; align-items: end; justify-content: center; border-bottom: 1px solid var(--border); }
+.coach-bar { display: block; width: min(100%, 48px); background: var(--primary); border-radius: 6px 6px 0 0; min-height: 0; opacity: .85; }
+.coach-week li > span { color: var(--muted); }
+.coach-course-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.coach-course { border: 1px solid var(--border); padding: 18px; border-radius: 16px; min-width: 0; }
+.coach-course h4 { margin: 0 0 12px; font-size: 15px; }
+.coach-course p { font-size: 13px; margin: 8px 0 0; }
+.coach-course p.coach-small { font-size: 12px; }
+.coach-course-count { font-weight: 700; }
+.coach-course progress { width: 100%; height: 8px; margin: 12px 0 4px; accent-color: var(--primary); }
+.coach-skill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.coach-skill { padding: 20px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border); min-width: 0; }
+.coach-skill h3 { font-size: 16px; }
+.coach-skill p { font-size: 13px; }
+.coach-skill .coach-small { font-size: 12px; }
+.coach-skill button { min-height: 44px; white-space: normal; }
+.coach-next { display: block; text-align: left; color: var(--text); background: var(--soft); border: 1px solid var(--border); padding: 14px 16px; border-radius: 12px; min-height: 44px; width: 100%; margin: 10px 0; line-height: 1.6; }
+.learning-coach :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+@media (max-width: 1000px) { .coach-preferences { grid-template-columns: 1fr 1fr; } .coach-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .learning-coach { padding: 20px; } .coach-top { align-items: start; gap: 12px; } .coach-budget { padding: 12px; } .coach-budget strong { font-size: 26px; } .coach-course-grid, .coach-skill-grid { grid-template-columns: minmax(0, 1fr); } .coach-task { grid-template-columns: 24px minmax(0, 1fr); gap: 10px; padding: 14px; } .coach-task > button { grid-column: 2; justify-self: start; } .coach-field select { font-size: 16px; } }
+@media (max-width: 400px) { .learning-coach { padding: 16px 12px; border-radius: 18px; } .coach-top { flex-direction: column; } .coach-budget { flex-direction: row; align-items: center; gap: 10px; } .coach-budget span { margin: 0; } .coach-preferences { grid-template-columns: minmax(0, 1fr); } .coach-metric { padding: 12px; } .coach-metric strong { font-size: 24px; } .coach-week { gap: 5px; } .coach-week li { font-size: 10px; } }

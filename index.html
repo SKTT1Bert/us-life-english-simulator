@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Daily English Lab - 美国日常生活与股票期权专业英语模拟器。" />
+  <meta name="description" content="Daily English Lab：从零基础到 C1 的分阶段课程，配合今日计划、逐句精听、复习测评与加密进度同步。" />
   <title>Daily English Lab · US Life English Simulator</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="personal.css" />
@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="practiceHub.css" />
   <link rel="stylesheet" href="syncUI.css" />
   <link rel="stylesheet" href="syncGate.css" />
+  <link rel="stylesheet" href="learningCoach.css" />
+  <link rel="stylesheet" href="learningDiagnostic.css" />
+  <link rel="stylesheet" href="listeningLab.css" />
   <script src="syncGate.js"></script>
 </head>
 <body>
@@ -72,15 +75,21 @@
         <button class="nav-btn context-nav-btn" type="button" data-view="market">市场英语</button>
       </nav>
       <nav id="personalNavigation" class="context-navigation" aria-label="我的学习" hidden>
+        <button class="nav-btn context-nav-btn" type="button" data-view="report">学习报告</button>
+        <button class="nav-btn context-nav-btn" type="button" data-view="diagnostic">起点诊断</button>
         <button class="nav-btn context-nav-btn" type="button" data-view="progress">学习进度</button>
         <button class="nav-btn context-nav-btn" type="button" data-view="favorites">收藏</button>
+      </nav>
+      <nav id="practiceNavigation" class="context-navigation" aria-label="练习方式" hidden>
+        <button class="nav-btn context-nav-btn" type="button" data-view="quiz">表达复习</button>
+        <button class="nav-btn context-nav-btn" type="button" data-view="listening">精听与跟读</button>
       </nav>
       <section id="view-today" class="view active">
         <div class="hero-card">
           <div>
             <span class="eyebrow">Today's Practice</span>
             <h2>温习学过的，再学一点新的</h2>
-            <p>每天 5–10 分钟：先试着说出学过的表达，再核对答案、学习新表达。看看哪些还记得，哪些需要再练。</p>
+            <p>选择今天能投入的时间，先复习与补练，再学一点新的。按自己的节奏，把听懂、读懂和说出来连在一起。</p>
           </div>
           <div class="hero-stats">
             <div><strong id="totalCount">0</strong><span>总表达</span></div>
@@ -88,6 +97,7 @@
             <div><strong id="todayDone">0/5</strong><span>今日新表达</span></div>
           </div>
         </div>
+        <div id="learningCoachToday"></div>
         <div id="pathwayToday" class="pathway-today"></div>
         <div id="practiceHub"></div>
         <section class="panel review-panel" aria-labelledby="reviewHeading">
@@ -105,6 +115,9 @@
       </section>
 
       <section id="view-pathway" class="view" aria-label="零基础到 C1 学习路线"></section>
+      <section id="view-diagnostic" class="view" aria-label="学习起点诊断"></section>
+      <section id="view-listening" class="view" aria-label="精听与跟读"></section>
+      <section id="view-report" class="view" aria-label="学习报告"><div id="learningCoachReport"></div></section>
 
       <section id="view-library" class="view">
         <div class="library-heading">
@@ -513,6 +526,11 @@
   <script src="data/pathwayStarter.js"></script>
   <script src="data/pathwayAdvanced.js"></script>
   <script src="data/learningPath.js"></script>
+  <script src="data/learningDiagnostic.js"></script>
+  <script src="learningDiagnostic.js"></script>
+  <script src="listeningLab.js"></script>
+  <script src="learningStudioProgress.js"></script>
+  <script src="learningCoach.js"></script>
   <script src="pathwayProgress.js"></script>
   <script src="review.js"></script>
   <script src="customExpressions.js"></script>
@@ -537,6 +555,7 @@
   <script src="data/sceneLessonsServices.js"></script>
   <script src="pictureLearning.js"></script>
   <script src="sceneLearning.js"></script>
+  <script src="learningStudioApp.js"></script>
   <script src="syncApp.js"></script>
 </body>
 </html>

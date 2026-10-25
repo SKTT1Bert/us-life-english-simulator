@@ -8,6 +8,7 @@ const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
 const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [], stages: { 'word-parts': window.WORD_PARTS_STAGES || [], phonics: window.PHONICS_STAGES || [] } };
 const PATHWAY_CATALOG = window.LEARNING_PATH || [];
+const STUDIO_CATALOG = { diagnostic: window.LEARNING_DIAGNOSTIC || [], listening: window.ListeningLab?.catalog(PATHWAY_CATALOG) || [] };
 let stateWarning = '';
 
 const state = loadState();
@@ -79,6 +80,7 @@ function parseProgress(saved) {
     dailyPlan: saved.dailyPlan || null, ...review, ...custom, schemaVersion: 3,
     foundationProgress: FoundationProgress.restore(saved.foundationProgress, FOUNDATION_CATALOG),
     pathwayProgress: PathwayProgress.restore(saved.pathwayProgress, PATHWAY_CATALOG),
+    learningStudio: LearningStudioProgress.restore(saved.learningStudio, STUDIO_CATALOG),
   };
 }
 
@@ -117,6 +119,7 @@ function progressPayload(source = state) {
     deletedCustomExpressions: state.deletedCustomExpressions,
     foundationProgress: state.foundationProgress,
     pathwayProgress: state.pathwayProgress,
+    learningStudio: state.learningStudio,
   };
 }
 
@@ -1035,6 +1038,7 @@ function applyTheme() {
 }
 
 function exportProgress() {
+  if (window.LearningDiagnostic?.hasPendingWork?.() || window.ListeningLab?.hasPendingWork?.()) alert('当前诊断或精听还有未提交的内容。本次导出包含已保存的记录；请先提交，或另外保留未完成的内容。');
   if (window.flushFoundationDrafts?.() === false) alert('部分基础课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   if (window.flushPathwayDraft?.() === false) alert('部分课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   let syncEnvelope = null;
@@ -1090,6 +1094,7 @@ function renderAll() {
   window.refreshFoundations?.();
   window.refreshPathway?.();
   window.refreshPracticeHub?.(state, { pathway: PATHWAY_CATALOG, foundation: FOUNDATION_CATALOG });
+  window.refreshLearningStudio?.();
 }
 
 
@@ -1110,6 +1115,7 @@ function bindEvents() {
     if (!persistReplacement(parseProgress({ theme: state.theme }), true)) return;
     window.resetPathwaySession?.();
     window.resetFoundationSession?.();
+    window.resetLearningStudioSession?.();
     activeRecall = null;
     currentQuizAnswer = null;
     quizAnswered = false;

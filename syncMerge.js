@@ -61,12 +61,14 @@
     const allowed = (SETS.includes(kind) && parts.length === 2) || (['theme', 'dailyPlan', 'pathwayNavigation'].includes(kind) && parts.length === 1)
       || (['review', 'practice', 'expression', 'tombstone', 'pathwayLesson', 'foundationNavigation'].includes(kind) && parts.length === 2)
       || (['session', 'pathwayAssessment', 'foundationLesson'].includes(kind) && parts.length === 3)
-      || (kind === 'foundationAssessment' && parts.length === 4);
+      || (kind === 'foundationAssessment' && parts.length === 4)
+      || (['studioDiagnostic', 'studioListening'].includes(kind) && parts.length === 2)
+      || (kind === 'studioPreference' && parts.length === 2 && ['minutes', 'levelId', 'goal', 'updatedAt'].includes(second));
     if (!allowed || (kind.startsWith('foundation') && !COURSES.includes(second))) fail('同步记录类型无效。');
     return parts;
   }
-  const permanent = (key) => ['practice', 'tombstone', 'pathwayAssessment', 'foundationAssessment'].includes(pathOf(key)[0]);
-  const sensitive = (key) => ['pathwayLesson', 'foundationLesson', 'expression', 'review'].includes(pathOf(key)[0]);
+  const permanent = (key) => ['practice', 'tombstone', 'pathwayAssessment', 'foundationAssessment', 'studioDiagnostic', 'studioListening', 'studioPreference'].includes(pathOf(key)[0]);
+  const sensitive = (key) => ['pathwayLesson', 'foundationLesson', 'expression', 'review', 'studioDiagnostic', 'studioListening'].includes(pathOf(key)[0]);
   function flatten(payload) {
     bounded(payload);
     if (!object(payload) || payload.schemaVersion !== 3 || payload.foundationProgress?.version !== 2 || payload.pathwayProgress?.version !== 1) fail('请先升级并验证学习记录，再启用同步。');
@@ -87,6 +89,15 @@
     for (const event of payload.practiceHistory || []) put(['practice', event.id], event);
     for (const item of payload.customExpressions || []) put(['expression', item.id], item);
     for (const item of payload.deletedCustomExpressions || []) put(['tombstone', item.id], item);
+    const studio = payload.learningStudio;
+    if (studio !== undefined) {
+      if (!object(studio) || studio.version !== 1 || !object(studio.preferences) || !Array.isArray(studio.diagnostics) || !Array.isArray(studio.listeningAttempts)) fail('学习计划与精听记录格式不正确。');
+      // An untouched new device must not overwrite preferences already chosen
+      // elsewhere. Fields replicate independently; attempts are immutable events.
+      if (studio.preferences.updatedAt !== null) for (const field of ['minutes', 'levelId', 'goal', 'updatedAt']) put(['studioPreference', field], studio.preferences[field]);
+      for (const attempt of studio.diagnostics) put(['studioDiagnostic', attempt.id], attempt);
+      for (const attempt of studio.listeningAttempts) put(['studioListening', attempt.id], attempt);
+    }
     const assessments = (prefix, history) => {
       for (const [stage, attempts] of Object.entries(history || {})) {
         const occurrences = {};
@@ -270,6 +281,13 @@
       const version = pick(envelope.entries[key]);
       if (version.deleted) continue;
       const value = copy(version.value), [kind, second, third] = pathOf(key);
+      if (kind.startsWith('studio')) {
+        output.learningStudio ||= { version: 1, preferences: { minutes: 10, levelId: 'pre-a1', goal: 'everyday', updatedAt: null }, diagnostics: [], listeningAttempts: [] };
+        if (kind === 'studioPreference') output.learningStudio.preferences[second] = value;
+        else if (kind === 'studioDiagnostic') output.learningStudio.diagnostics.push(value);
+        else if (kind === 'studioListening') output.learningStudio.listeningAttempts.push(value);
+        continue;
+      }
       if (SETS.includes(kind)) output[kind].push(second);
       else if (kind === 'session') (output.sessions[second] ||= []).push(third);
       else if (kind === 'theme' || kind === 'dailyPlan') output[kind] = value;
@@ -303,6 +321,10 @@
     if (output.dailyPlan) output.dailyPlan.ids = output.dailyPlan.ids.filter((id) => !deleted.has(id));
     const chronological = (field) => (left, right) => lexical(String(left[field]), String(right[field])) || lexical(canonical(left), canonical(right));
     output.practiceHistory.sort(chronological('at'));
+    if (output.learningStudio) {
+      output.learningStudio.diagnostics.sort(chronological('submittedAt'));
+      output.learningStudio.listeningAttempts.sort(chronological('answeredAt'));
+    }
     output.practiceHistory = output.practiceHistory.slice(-5000);
     for (const histories of [output.pathwayProgress.assessments, ...COURSES.map((id) => output.foundationProgress.courses[id].assessments)]) {
       for (const stage of Object.keys(histories)) histories[stage] = histories[stage].sort(chronological('submittedAt')).slice(-10);
@@ -332,7 +354,7 @@
     // Full event history remains in the envelope even when legacy UI limits only
     // show its latest 10 assessments / 5000 expression attempts.
     validate(envelope);
-    return Object.entries(envelope.entries).filter(([key]) => ['practice', 'pathwayAssessment', 'foundationAssessment'].includes(pathOf(key)[0]))
+    return Object.entries(envelope.entries).filter(([key]) => ['practice', 'pathwayAssessment', 'foundationAssessment', 'studioDiagnostic', 'studioListening'].includes(pathOf(key)[0]))
       .sort(([left], [right]) => lexical(left, right)).flatMap(([key, versions]) => versions.filter((version) => !version.deleted).map((version) => ({ path: pathOf(key), value: copy(version.value) })));
   }
   const api = Object.freeze({ VERSION, MAX_BYTES, create, capture, merge, materialize, importSnapshot, validate, conflicts, retainedRecords });

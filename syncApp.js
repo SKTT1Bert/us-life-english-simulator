@@ -18,7 +18,8 @@
     if (root.document.querySelector('dialog[open]')) return false;
     const active = root.document.activeElement;
     if (active?.matches('input,textarea,select,[contenteditable="true"]') && !active.closest('#syncPanel')) return false;
-    return !root.hasPendingFoundationWork?.() && !root.hasPendingPathwayWork?.();
+    return !root.hasPendingFoundationWork?.() && !root.hasPendingPathwayWork?.()
+      && !root.LearningDiagnostic?.hasPendingWork?.() && !root.ListeningLab?.hasPendingWork?.() && !root.LearningCoach?.hasPendingWork?.();
   }
   function beforeRead() {
     try {
@@ -39,6 +40,8 @@
       // Its backup also makes the prior local record available outside sync.
       if (!persistReplacement(candidate, true, receiptId)) return false;
       root.resetFoundationSession?.(); root.resetPathwaySession?.();
+      root.LearningDiagnostic?.resetSession?.(); root.ListeningLab?.resetSession?.();
+      root.LearningCoach?.resetSession?.();
       invalidatePersonalPractice(); resetScenario(); resetMarketScenario(); renderMarketQuiz();
       applyTheme(); renderAll();
       return true;

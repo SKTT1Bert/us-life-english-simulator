@@ -258,6 +258,43 @@ const PRIVATE_TYPING = 'PRIVATE_PHONE_ACTIVE_EDITOR_947';
       assert.deepEqual(exported.learned, before.learned);
     });
 
+    await run('new plans, diagnostics and listening evidence sync while unsaved settings and tests remain protected', async () => {
+      await showToday(desktop); await showToday(phone);
+      const oldPhone = await current(phone);
+      await phone.locator('#coachMinutes').selectOption('5');
+      await desktop.evaluate(() => {
+        const next = freshProgressCopy();
+        let studio = LearningStudioProgress.apply(next.learningStudio, { type: 'preferences', patch: { minutes: 20, goal: 'academic' } }, STUDIO_CATALOG);
+        studio = LearningStudioProgress.apply(studio, { type: 'diagnostic', answers: LEARNING_DIAGNOSTIC.map((q) => q.answer) }, STUDIO_CATALOG);
+        const item = STUDIO_CATALOG.listening[0], sentence = item.segments[0];
+        studio = LearningStudioProgress.apply(studio, { type: 'listening', attempt: { lessonId: item.lessonId, segmentId: sentence.id,
+          matchedTokens: sentence.tokenCount, tokenCount: sentence.tokenCount, exact: true, revealed: false, shadow: 'independent', listenCount: 1 } }, STUDIO_CATALOG);
+        next.learningStudio = studio; if (!persistReplacement(next)) throw new Error('Fixture save failed');
+        dailyEnglishSync.stop();
+      });
+      await sync(desktop); await openPanel(phone);
+      assert.equal((await sync(phone)).pendingApply, true);
+      assert.deepEqual((await current(phone)).learningStudio, oldPhone.learningStudio);
+      await showToday(phone);
+      assert.equal(await phone.locator('#coachMinutes').inputValue(), '5');
+      await phone.evaluate(() => setView('diagnostic'));
+      await phone.getByRole('button', { name: '开始起点诊断', exact: true }).click();
+      await phone.locator('input[name="learning-diagnostic-answer"]').nth(1).check();
+      await showToday(phone);
+      await phone.getByRole('button', { name: '放弃设置修改', exact: true }).click();
+      assert.equal((await sync(phone)).pendingApply, true);
+      await phone.evaluate(() => setView('diagnostic'));
+      assert.equal(await phone.locator('input[name="learning-diagnostic-answer"]').nth(1).isChecked(), true);
+      await phone.getByRole('button', { name: '放弃本次未提交答案', exact: true }).click();
+      await showToday(phone); await sync(phone); await sync(desktop);
+      const expected = (await current(desktop)).learningStudio;
+      assert.deepEqual((await current(phone)).learningStudio, expected);
+      assert.equal(expected.preferences.minutes, 20);
+      assert.equal(expected.diagnostics.length, 1); assert.equal(expected.listeningAttempts.length, 1);
+      assert.deepEqual((await current(phone)).quiz, oldPhone.quiz);
+      assert.deepEqual((await current(phone)).learned, oldPhone.learned);
+    });
+
     await run('disconnect preserves records and reconnect merges known offline deltas without double counting', async () => {
       await openPanel(desktop); await desktop.locator('#syncDisconnectBtn').click(); await desktop.locator('#syncConfirmDisconnectBtn').click(); await waitIdle(desktop);
       assert.equal(await desktop.evaluate(() => dailyEnglishSync.status().connected), false);
