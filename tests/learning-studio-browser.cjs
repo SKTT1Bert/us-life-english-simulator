@@ -216,10 +216,22 @@ if (DEPLOYED_APP) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1', 'Produc
       const restored = await createPage(); await upload(restored, exported);
       assert.deepEqual((await saved(restored)).learningStudio, exported.learningStudio);
       const bad = structuredClone(exported); bad.learningStudio.listeningAttempts[0].segmentId = 'unknown';
-      const before = await saved(restored); await upload(restored, bad, false);
-      await restored.waitForFunction(() => !document.getElementById('importDialog').open);
-      assert.ok(restored.dialogMessages.some((message) => message.includes('导入失败')));
-      assert.deepEqual(await saved(restored), before);
+      const before = await saved(restored);
+      // Exercise asynchronous import explicitly: a closed preview dialog alone
+      // is not evidence that FileReader has finished rejecting the new file.
+      await restored.evaluate(() => {
+        const readAsText = FileReader.prototype.readAsText;
+        window.__restoreStudioFileReader = () => { FileReader.prototype.readAsText = readAsText; delete window.__restoreStudioFileReader; };
+        FileReader.prototype.readAsText = function (...args) { setTimeout(() => readAsText.apply(this, args), 50); };
+      });
+      try {
+        const rejected = restored.waitForEvent('dialog', { predicate: (dialog) => dialog.type() === 'alert' && dialog.message().includes('导入失败') });
+        await upload(restored, bad, false);
+        const error = await rejected;
+        assert.match(error.message(), /导入失败.*原有进度未改变/);
+        assert.equal(await restored.locator('#importDialog').isVisible(), false);
+        assert.deepEqual(await saved(restored), before);
+      } finally { await restored.evaluate(() => window.__restoreStudioFileReader()); }
       await restored.close();
     });
     await run('an unsubmitted preference draft defers incoming sync; discarding it applies cloud choices and preserves records', async () => {
