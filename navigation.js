@@ -9,6 +9,9 @@
     scenarios: 'learn',
     market: 'learn',
     quiz: 'practice',
+    listening: 'practice',
+    diagnostic: 'personal',
+    report: 'personal',
     favorites: 'personal',
     progress: 'personal',
   };
@@ -17,6 +20,7 @@
   const contextMenus = {
     learn: document.getElementById('learnNavigation'),
     personal: document.getElementById('personalNavigation'),
+    practice: document.getElementById('practiceNavigation'),
   };
 
   // Called by setView so links inside lessons and practice also update the shell.

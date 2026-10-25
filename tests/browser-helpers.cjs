@@ -55,8 +55,9 @@ async function startApp() {
 
 async function navigate(page, view) {
   if (['library', 'foundations', 'scenarios', 'market', 'pathway'].includes(view)) await page.locator('[data-nav-group="learn"]').click();
-  if (['progress', 'favorites'].includes(view)) await page.locator('[data-nav-group="personal"]').click();
-  await page.locator(`[data-view="${view}"]`).click();
+  if (['progress', 'favorites', 'report', 'diagnostic'].includes(view)) await page.locator('[data-nav-group="personal"]').click();
+  if (['quiz', 'listening'].includes(view)) await page.locator('[data-nav-group="practice"]').click();
+  await page.locator(`[data-view="${view}"]`).first().click();
 }
 
 module.exports = { startApp, navigate, storageKey, appFile };
