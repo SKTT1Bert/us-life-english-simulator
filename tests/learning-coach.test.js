@@ -1,5 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
 const Coach = require('../learningCoach.js');
 const now = '2026-10-25T10:00:00.000Z';
 const before = '2026-10-24T10:00:00.000Z';
@@ -54,6 +57,41 @@ test('learning goal changes recommendations within selected stage and does not u
   assert.equal(first('academic'), 'b1-argument');
   assert.equal(first('work'), 'b1-email');
   assert.ok(['everyday', 'academic', 'work'].every((goal) => first(goal) !== 'c1-research'));
+});
+for (const levelId of ['pre-a1', 'a1']) test(`${levelId}: real beginner lessons retain prerequisite order for every goal and listening advances with the next lesson`, () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../data/pathwayStarter.js'), 'utf8'), context);
+  const level = context.window.PATHWAY_STARTER.find((entry) => entry.id === levelId);
+  const real = { pathway: [level], foundation: {}, expressions: [] };
+  for (const goal of ['everyday', 'academic', 'work']) {
+    const state = progress(10, goal); state.learningStudio.preferences.levelId = levelId;
+    const taskIds = () => {
+      const plan = Coach.buildPlan(state, real, now);
+      return { learn: plan.tasks.find((task) => task.kind === 'learn'), listen: plan.tasks.find((task) => task.kind === 'listen') };
+    };
+    let tasks = taskIds();
+    assert.equal(tasks.learn.action.lessonId, level.lessons[0].id, `${goal}: first prerequisite`);
+    assert.equal(tasks.listen.action.lessonId, level.lessons[0].id);
+    assert.match(tasks.learn.reason, /课程顺序/);
+    const first = level.lessons[0];
+    state.pathwayProgress.lessons[first.id] = record(first.questions.map((question) => question.answer));
+    tasks = taskIds();
+    assert.equal(tasks.learn.action.lessonId, level.lessons[1].id, `${goal}: next unfinished prerequisite`);
+    assert.equal(tasks.listen.action.lessonId, level.lessons[1].id, `${goal}: audio follows new lesson instead of completed first lesson`);
+    const resumed = level.lessons[2];
+    state.pathwayProgress.lessons[resumed.id] = record(resumed.questions.map(() => null), { writing: '', speaking: '', checks: [false, false, false], dueAt: null });
+    tasks = taskIds();
+    assert.equal(tasks.learn.action.lessonId, resumed.id, `${goal}: resume existing unfinished work`);
+    assert.equal(tasks.listen.action.lessonId, resumed.id);
+  }
+});
+test('listening retains a usable fallback when the next lesson has no listening material', () => {
+  const state = progress(); state.learningStudio.preferences.levelId = 'a1';
+  const first = lesson('a1-first', '基础起步', 'a1'); delete first.listening;
+  const next = lesson('a1-second', '时间和日常交流', 'a1');
+  const plan = Coach.buildPlan(state, { pathway: [{ id: 'a1', lessons: [first, next] }], foundation: {}, expressions: [] }, now);
+  assert.equal(plan.tasks.find((task) => task.kind === 'learn').action.lessonId, first.id);
+  assert.equal(plan.tasks.find((task) => task.kind === 'listen').action.lessonId, next.id);
 });
 test('an existing incomplete lesson takes precedence over a new goal match and incomplete output is still required', () => {
   const state = progress(10, 'academic');

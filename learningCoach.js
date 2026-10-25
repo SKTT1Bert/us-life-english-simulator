@@ -58,7 +58,9 @@
   }
   function ranked(items, goal) {
     return [...items].sort((a, b) => Number(Boolean(b.record)) - Number(Boolean(a.record))
-      || goalScore(b, goal) - goalScore(a, goal));
+      // Foundational stages depend on the earlier lessons. Once any unfinished
+      // work is resumed, keep their published order rather than keyword-ranking.
+      || (['pre-a1', 'a1'].includes(a.levelId) && a.levelId === b.levelId ? 0 : goalScore(b, goal) - goalScore(a, goal)));
   }
   function latestListening(attempts) {
     const latest = new Map();
@@ -96,11 +98,14 @@
     if (next) courseTask(next, 'learn', next.objectiveComplete ? '把理解变成自己的表达' : next.record ? '接着完成一小步' : '开始一段新的学习',
       next.objectiveComplete ? `${next.lesson.title}：先写 2–3 句，或准备一段口述要点。`
         : `${next.lesson.title}：先读一个知识点，再尝试一道题。`,
-      next.record ? '优先接续已有记录，不必重新开始。' : `${label(prefs.levelId)} 阶段中，优先选择与“${GOALS[prefs.goal]}”相关的内容。`, 3);
+      next.record ? '优先接续已有记录，不必重新开始。' : ['pre-a1', 'a1'].includes(prefs.levelId)
+        ? `按 ${label(prefs.levelId)} 课程顺序逐步打基础，先学前置内容。`
+        : `${label(prefs.levelId)} 阶段中，优先选择与“${GOALS[prefs.goal]}”相关的内容。`, 3);
     const selectedPathway = ranked(selected.filter((item) => item.courseId === 'pathway' && item.lesson.listening?.text), prefs.goal);
     const weak = latestListening(progress.learningStudio?.listeningAttempts).filter((attempt) => selectedPathway.some((item) => item.lesson.id === attempt.lessonId)
       && (attempt.exact !== true || attempt.revealed || !attempt.listenCount));
-    const listeningLesson = selectedPathway.find((item) => weak.some((attempt) => attempt.lessonId === item.lesson.id)) || selectedPathway[0];
+    const listeningLesson = selectedPathway.find((item) => weak.some((attempt) => attempt.lessonId === item.lesson.id))
+      || selectedPathway.find((item) => item.lesson.id === next?.lesson.id) || selectedPathway[0];
     const weakSentence = weak.find((attempt) => attempt.lessonId === listeningLesson?.lesson.id);
     if (listeningLesson) candidates.push({ id: `listen:${listeningLesson.lesson.id}`, kind: 'listen', title: weak.length ? '重听一句还不稳的句子' : '听清一句，再跟着说',
       detail: `${listeningLesson.lesson.title}：不看原文听一句，听写核对后，再跟读一次。`,
