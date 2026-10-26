@@ -3,3 +3,4 @@
 /vendor/transformers/** -text linguist-vendored
 /assets/voice-model/** -text linguist-generated
 /assets/human-audio/*.mp3 binary
+/assets/ai-audio/**/*.mp3 binary

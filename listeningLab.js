@@ -77,7 +77,12 @@
       title: clip.title, listeningTitle: clip.title, focus: clip.focus, human: clip,
       segments: [{ id: `${clip.id}-s1`, text: clip.text, tokenCount: tokens(clip.text).length, audio: clip.src }] }));
   }
-  const allCatalog = (pathway, clips) => [...catalog(pathway), ...humanCatalog(clips)];
+  function syntheticCatalog(clips) {
+    return list(clips).map(clip => ({ lessonId: clip.id, levelId: clip.levelId, levelLabel: clip.levelId === 'pre-a1' ? 'Pre-A1' : clip.levelId.toUpperCase(),
+      title: clip.title, listeningTitle: clip.title, focus: clip.focus, synthetic: clip,
+      segments: [{ id: `${clip.id}-s1`, text: clip.text, tokenCount: tokens(clip.text).length, clipId: clip.id }] }));
+  }
+  const allCatalog = (pathway, clips, synthetic) => [...catalog(pathway), ...humanCatalog(clips), ...syntheticCatalog(synthetic)];
   function latestAttempts(attempts) {
     const found = new Map();
     for (const item of list(attempts)) {
@@ -95,7 +100,7 @@
     return { total: segments.length, attempted: records.length, independent: records.filter((record) => !needsPractice(record)).length,
       needsPractice: records.filter(needsPractice).length };
   }
-  const api = { sentences, tokens, evaluate, catalog, humanCatalog, allCatalog, latestAttempts, needsPractice, summary };
+  const api = { sentences, tokens, evaluate, catalog, humanCatalog, syntheticCatalog, allCatalog, latestAttempts, needsPractice, summary };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (!root?.document) return;
   root.ListeningLab = api;
@@ -109,13 +114,13 @@
   api.mount = function (target, options) {
     if (!target) throw new Error('精听练习缺少页面容器。');
     mounted?.destroy?.();
-    const all = list(options.catalog)[0]?.segments ? options.catalog : allCatalog(options.catalog, root.HUMAN_AUDIO);
+    const all = list(options.catalog)[0]?.segments ? options.catalog : allCatalog(options.catalog, root.HUMAN_AUDIO, root.AI_AUDIO?.clips);
     if (!all.length) { target.textContent = '精听材料暂时未加载，请刷新页面重试。'; return null; }
     const doc = root.document, drafts = new Map();
     const initial = options.getProgress()?.preferences?.levelId;
     let levelId = all.some((item) => item.levelId === initial) ? initial : all[0].levelId;
     let source = all.some(item => item.human) ? 'human' : 'course';
-    const inSource = item => source === 'human' ? Boolean(item.human) : !item.human;
+    const inSource = item => source === 'human' ? Boolean(item.human) : source === 'ai' ? Boolean(item.synthetic) : !item.human && !item.synthetic;
     let lessonId = all.find((item) => item.levelId === levelId && inSource(item)).lessonId;
     let segmentId = all.find((item) => item.lessonId === lessonId).segments[0].id;
     let difficultOnly = false, rate = 1, speechRun = 0, speaking = false, speechTimeout = null;
@@ -143,15 +148,17 @@
     function speak(parts) {
       stop(); root.stopPathwaySpeech?.(); root.stopFoundationSpeech?.(); root.stopFoundationStudySpeech?.();
       root.stopSkillWorkshopAudio?.();
-      if (parts[0]?.audio) {
+      if (parts[0]?.audio || parts[0]?.clipId) {
         const run = ++speechRun, part = parts[0];
-        const player = new root.Audio(part.audio); audio = player; player.playbackRate = rate;
+        const clip = part.clipId ? root.AudioVoices.resolve(root.AudioVoices.find(part.clipId)) : null;
+        const description = clip ? `AI 合成 · ${clip.speaker}` : '真人录音';
+        const player = new root.Audio(clip?.src || part.audio); audio = player; player.playbackRate = rate;
         let counted = false;
-        status('正在加载真人录音…');
+        status(`正在加载${description}…`);
         speechTimeout = root.setTimeout(() => { if (run === speechRun) { stop(); status('录音加载超时，请检查网络后重试。'); } }, 20000);
-        player.onplaying = () => { if (run !== speechRun) return; clearTimeout(speechTimeout); if (!counted) { const draft = draftFor(part.id); draft.listenCount = Math.min(999, draft.listenCount + 1); counted = true; } status('正在播放真人录音…'); };
-        player.onended = () => { if (run === speechRun) { clearTimeout(speechTimeout); status('真人录音播放结束。可以重听或录下自己的表达。'); } };
-        player.onerror = () => { if (run === speechRun) { stop(); status('真人录音未能播放，请重试。也可以查看原文继续阅读练习。'); } };
+        player.onplaying = () => { if (run !== speechRun) return; clearTimeout(speechTimeout); if (!counted) { const draft = draftFor(part.id); draft.listenCount = Math.min(999, draft.listenCount + 1); counted = true; } status(`正在播放${description}…`); };
+        player.onended = () => { if (run === speechRun) { clearTimeout(speechTimeout); status(`${description}播放结束。可以重听或录下自己的表达。`); } };
+        player.onerror = () => { if (run === speechRun) { stop(); status(`${description}未能播放，请重试。也可以查看原文继续阅读练习。`); } };
         player.play().catch(() => { if (run === speechRun) { stop(); status('录音播放未启动，请再次点击播放。'); } });
         return;
       }
@@ -189,24 +196,25 @@
     function choose(nextLessonId, nextSegmentId) {
       stop(); savedNotice = '';
       const item = all.find((entry) => entry.lessonId === nextLessonId); if (!item) return false;
-      lessonId = item.lessonId; levelId = item.levelId; source = item.human ? 'human' : 'course';
+      lessonId = item.lessonId; levelId = item.levelId; source = item.human ? 'human' : item.synthetic ? 'ai' : 'course';
       segmentId = item.segments.some((part) => part.id === nextSegmentId) ? nextSegmentId : item.segments[0].id;
       render(); return true;
     }
     function render() {
       stop();
       progressSnapshot = JSON.stringify(options.getProgress());
-      const current = lesson(), records = latest();
+      const current = lesson(), records = latest(), unit = current.synthetic ? '段' : '句';
       const rootNode = element('div', 'listening-lab');
       const header = element('header', 'listening-lab-header');
       header.append(element('span', 'eyebrow', 'LISTEN · NOTICE · SAY IT'), element('h2', '', '逐句精听与跟读'),
         element('p', '', '先听大意，再写下听到的内容，最后开口跟读。记录哪里还没听清，比反复播放整篇更有针对性。'));
-      const boundary = element('p', 'listening-boundary', `${all.filter(x => x.human).length} 段真人录音 + ${all.filter(x => !x.human).length} 篇课程朗读材料。真人素材保留原录音与授权信息；课程材料使用设备语音。阶段是练习建议，听写核对不等于发音评分。`);
+      const boundary = element('p', 'listening-boundary', `${all.filter(x => x.human).length} 段真人录音、${all.filter(x => x.synthetic).length} 段 AI 材料，以及 ${all.filter(x => !x.human && !x.synthetic).length} 篇设备朗读材料。AI 材料可换声线，练习记录按同一段内容保留。阶段是练习建议，听写核对不等于发音评分。`);
       header.append(boundary); rootNode.append(header);
       const filters = element('div', 'listening-filters');
       const sourceLabel = element('label', '', '声音来源'), sourceSelect = element('select'); sourceSelect.id = 'listeningSource';
-      for (const [id, label] of [['human', '真人录音'], ['course', '课程材料 · 设备朗读']]) {
+      for (const [id, label] of [['human', '真人录音'], ['ai', 'AI 合成 · 多种声线'], ['course', '课程材料 · 设备朗读']]) {
         if (id === 'human' && !all.some(x => x.human)) continue;
+        if (id === 'ai' && !all.some(x => x.synthetic)) continue;
         const option = element('option', '', label); option.value = id; option.selected = source === id; sourceSelect.append(option);
       }
       sourceSelect.addEventListener('change', () => { source = sourceSelect.value; difficultOnly = false; choose(all.find(x => x.levelId === levelId && inSource(x)).lessonId); }); sourceLabel.append(sourceSelect); filters.append(sourceLabel);
@@ -221,12 +229,18 @@
         const option = element('option', '', `${item.title}${count ? ` · ${count} 句待练` : ''}`); option.value = item.lessonId; option.selected = item.lessonId === lessonId; lessonSelect.append(option);
       }
       lessonSelect.addEventListener('change', () => choose(lessonSelect.value)); lessonLabel.append(lessonSelect); filters.append(levelLabel, lessonLabel); rootNode.append(filters);
+      if (current.synthetic) {
+        const voiceLabel = element('label', '', 'AI 声线'), voiceSelect = element('select'); voiceSelect.id = 'listeningVoice';
+        for (const voice of root.AudioVoices.voices) { const option = element('option', '', voice.label); option.value = voice.id; option.selected = root.AudioVoices.current().id === voice.id; voiceSelect.append(option); }
+        voiceSelect.addEventListener('change', () => { stop(); const saved = root.AudioVoices.choose(voiceSelect.value); status(`已切换为${root.AudioVoices.current().label}。${saved ? '选择已在本机记住。' : '本次选择可用，但浏览器未能记住偏好。'}输入和已有练习记录已保留。`); });
+        voiceLabel.append(voiceSelect); filters.append(voiceLabel);
+      }
       const info = summary([current], options.getProgress()?.listeningAttempts);
       const panel = element('section', 'listening-workspace');
       panel.append(element('span', 'eyebrow', current.levelLabel), element('h3', '', current.listeningTitle), element('p', '', current.focus),
-        element('p', 'listening-evidence', `已练 ${info.attempted}/${info.total} 句 · ${info.needsPractice} 句建议再练。统计依据每句最近一次已保存的练习，不代表能力等级。`));
+        element('p', 'listening-evidence', `已练 ${info.attempted}/${info.total} ${unit} · ${info.needsPractice} ${unit}建议再练。统计依据每${unit}最近一次已保存的练习，不代表能力等级。`));
       const controls = element('div', 'listening-audio-controls');
-      controls.append(button('播放全文', () => speak(current.segments)), button('播放这一句', () => speak([segment()]), 'primary-btn'), button('停止朗读', () => { stop(); status('已停止朗读。'); }));
+      controls.append(button('播放全文', () => speak(current.segments)), button(`播放这一${unit}`, () => speak([segment()]), 'primary-btn'), button('停止朗读', () => { stop(); status('已停止朗读。'); }));
       const rateLabel = element('label', '', '速度'), rateSelect = element('select'); rateSelect.id = 'listeningRate';
       for (const value of [0.7, 1, 1.2]) { const option = element('option', '', `${value}×`); option.value = String(value); option.selected = rate === value; rateSelect.append(option); }
       rateSelect.addEventListener('change', () => { rate = Number(rateSelect.value); stop(); status('速度已调整，下次播放生效。'); }); rateLabel.append(rateSelect); controls.append(rateLabel);
@@ -237,6 +251,11 @@
           const link = element('a', '', text); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; credits.append(link, doc.createTextNode(' · '));
         }
         panel.append(credits, button('录音并查看口语反馈', () => { stop(); root.openSkillWorkshop?.(current.human.id); }, 'secondary-btn'));
+      }
+      if (current.synthetic) {
+        const credits = element('p', 'listening-evidence', 'AI 合成音频 · 原创练习文本 · 通用声线。点击播放才加载音频，无需在手机上运行语音生成模型。');
+        const link = element('a', '', '声音来源与说明'); link.href = 'https://github.com/SKTT1Bert/us-life-english-simulator/blob/main/AI-AUDIO-CREDITS.md'; link.target = '_blank'; link.rel = 'noopener noreferrer'; credits.append(doc.createTextNode(' '), link);
+        panel.append(credits, button('录音并查看口语反馈', () => { stop(); root.openSkillWorkshop?.(current.synthetic.id); }, 'secondary-btn'));
       }
       const reviewFilter = element('label', 'listening-review-filter');
       const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.id = 'listeningDifficultOnly'; checkbox.checked = difficultOnly;
@@ -265,7 +284,8 @@
     }
     function renderSentence(panel, current, visible) {
       const part = segment(), draft = draftFor(), position = current.segments.findIndex((item) => item.id === segmentId) + 1;
-      const title = element('h4', '', `第 ${position} 句 · 听写与跟读`); title.id = 'listeningSentenceTitle'; panel.append(title);
+      const unit = current.synthetic ? '段' : '句';
+      const title = element('h4', '', `第 ${position} ${unit} · 听写与跟读`); title.id = 'listeningSentenceTitle'; panel.append(title);
       const reveal = button(draft.revealed ? '原文已展开（本次使用了辅助）' : '查看原文（记为使用辅助）', () => {
         draft.revealed = true; draft.referenceSeen = true; draft.dirty = true; draft.saved = false;
         if (draft.result) draft.result.revealed = true; render();
@@ -319,7 +339,7 @@
       const history = list(options.getProgress()?.listeningAttempts).filter((item) => item.segmentId === segmentId)
         .sort((a, b) => `${b.answeredAt}|${b.id}`.localeCompare(`${a.answeredAt}|${a.id}`)).slice(0, 5);
       if (history.length) {
-        const section = element('section', 'listening-history'); section.append(element('h4', '', '这一句最近的练习'));
+        const section = element('section', 'listening-history'); section.append(element('h4', '', `这一${unit}最近的练习`));
         const entries = element('ul');
         for (const item of history) entries.append(element('li', '', `${new Date(item.answeredAt).toLocaleString()} · ${item.exact ? '听写词语与顺序一致' : `${item.matchedTokens}/${item.tokenCount} 个原词匹配，仍有差异`} · ${item.revealed ? '使用原文辅助' : '核对前未展开原文'} · ${shadowLabels[item.shadow]}（自评）`));
         section.append(entries); panel.append(section);
