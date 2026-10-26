@@ -1,0 +1,14 @@
+#speechSettingsDialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 28px; border: 1px solid var(--border); border-radius: 24px; color: var(--text); background: var(--panel); box-shadow: 0 24px 80px #101c3440; }
+#speechSettingsDialog::backdrop { background: #13203980; backdrop-filter: blur(4px); }
+#speechSettingsDialog h2 { margin: 8px 0 12px; }
+#speechSettingsDialog p { line-height: 1.7; }
+#speechSettingsDialog label { display: block; margin: 20px 0 8px; font-weight: 700; }
+#speechSettingsDialog select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; color: var(--text); background: var(--bg); font: inherit; }
+.speech-settings-close { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.speech-help { font-size: 13px; color: var(--muted); }
+.speech-settings-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.global-speech-bar { max-width: 1320px; margin: 0 auto 10px; padding: 10px 24px; font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+.global-speech-bar p { margin: 0; flex: 1; }
+.global-speech-bar button { flex-shrink: 0; }
+#speechSettingsStatus { margin-bottom: 0; font-size: 13px; }
+@media(max-width: 600px) { #speechSettingsDialog { padding: 20px; } #openSpeechSettings { max-width: 100%; white-space: normal; } }

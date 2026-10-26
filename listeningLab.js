@@ -123,8 +123,8 @@
     const inSource = item => source === 'human' ? Boolean(item.human) : source === 'ai' ? Boolean(item.synthetic) : !item.human && !item.synthetic;
     let lessonId = all.find((item) => item.levelId === levelId && inSource(item)).lessonId;
     let segmentId = all.find((item) => item.lessonId === lessonId).segments[0].id;
-    let difficultOnly = false, rate = 1, speechRun = 0, speaking = false, speechTimeout = null;
-    let statusNode = null, savedNotice = '', progressSnapshot = '', audio = null;
+    let difficultOnly = false, rate = 1;
+    let statusNode = null, savedNotice = '', progressSnapshot = '';
     const lesson = () => all.find((item) => item.lessonId === lessonId);
     const segment = () => lesson().segments.find((item) => item.id === segmentId) || lesson().segments[0];
     const latest = () => latestAttempts(options.getProgress()?.listeningAttempts);
@@ -140,54 +140,15 @@
       const node = element('button', className, label); node.type = 'button'; node.addEventListener('click', action); return node;
     }
     function status(text) { if (statusNode) statusNode.textContent = text; }
-    function stop() {
-      speechRun++; clearTimeout(speechTimeout); speechTimeout = null;
-      if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); audio = null; }
-      if (speaking) root.speechSynthesis?.cancel(); speaking = false;
-    }
+    function stop() { root.EnglishSpeech.stop('listening'); }
     function speak(parts) {
-      stop(); root.stopPathwaySpeech?.(); root.stopFoundationSpeech?.(); root.stopFoundationStudySpeech?.();
-      root.stopSkillWorkshopAudio?.();
+      const options = { owner: 'listening', rate, onStatus: status, onStart: index => {
+        const draft = draftFor(parts[index].id); draft.listenCount = Math.min(999, draft.listenCount + 1);
+      } };
       if (parts[0]?.audio || parts[0]?.clipId) {
-        const run = ++speechRun, part = parts[0];
-        const clip = part.clipId ? root.AudioVoices.resolve(root.AudioVoices.find(part.clipId)) : null;
-        const description = clip ? `AI 合成 · ${clip.speaker}` : '真人录音';
-        const player = new root.Audio(clip?.src || part.audio); audio = player; player.playbackRate = rate;
-        let counted = false;
-        status(`正在加载${description}…`);
-        speechTimeout = root.setTimeout(() => { if (run === speechRun) { stop(); status('录音加载超时，请检查网络后重试。'); } }, 20000);
-        player.onplaying = () => { if (run !== speechRun) return; clearTimeout(speechTimeout); if (!counted) { const draft = draftFor(part.id); draft.listenCount = Math.min(999, draft.listenCount + 1); counted = true; } status(`正在播放${description}…`); };
-        player.onended = () => { if (run === speechRun) { clearTimeout(speechTimeout); status(`${description}播放结束。可以重听或录下自己的表达。`); } };
-        player.onerror = () => { if (run === speechRun) { stop(); status(`${description}未能播放，请重试。也可以查看原文继续阅读练习。`); } };
-        player.play().catch(() => { if (run === speechRun) { stop(); status('录音播放未启动，请再次点击播放。'); } });
-        return;
-      }
-      if (!root.speechSynthesis || !root.SpeechSynthesisUtterance) { status('当前设备不支持朗读。可以点击“查看原文”，先做阅读与跟读；换用支持英文朗读的浏览器后再听写。'); return; }
-      const voices = root.speechSynthesis.getVoices?.() || [];
-      const voice = voices.find((entry) => /^en[-_]US$/i.test(entry.lang)) || voices.find((entry) => /^en(?:[-_]|$)/i.test(entry.lang));
-      if (!voice) { status('尚未找到英文朗读声音。请稍后重试，或在设备设置中安装英文语音；也可查看原文继续练习。'); return; }
-      const run = ++speechRun;
-      let index = 0;
-      function next() {
-        if (run !== speechRun || index >= parts.length) { if (run === speechRun) { speaking = false; status('播放结束。可以重听、核对，或试着跟读。'); } return; }
-        const part = parts[index++], utterance = new root.SpeechSynthesisUtterance(part.text);
-        utterance.voice = voice; utterance.lang = voice.lang; utterance.rate = rate;
-        speaking = true; status('正在准备设备朗读…');
-        clearTimeout(speechTimeout);
-        speechTimeout = root.setTimeout(() => { if (run === speechRun) { stop(); status('朗读没有正常启动，请重试或查看原文。'); } }, 12000);
-        utterance.onstart = () => {
-          if (run !== speechRun) return; clearTimeout(speechTimeout);
-          status(parts.length === 1 ? '正在播放这一句…' : `正在播放全文：第 ${index}/${parts.length} 句。`);
-          const draft = draftFor(part.id); draft.listenCount = Math.min(999, draft.listenCount + 1);
-        };
-        utterance.onend = () => { if (run === speechRun) { clearTimeout(speechTimeout); next(); } };
-        utterance.onerror = (event) => {
-          if (run !== speechRun) return;
-          stop(); status(['canceled', 'interrupted'].includes(event.error) ? '已停止朗读。' : '朗读暂时失败。请重试，或查看原文继续练习。');
-        };
-        try { root.speechSynthesis.speak(utterance); } catch { stop(); status('朗读暂时不可用，请查看原文继续练习。'); }
-      }
-      next();
+        const part = parts[0], clip = part.clipId ? root.AudioVoices.find(part.clipId) : { src: part.audio };
+        root.EnglishSpeech.playClip(clip, options);
+      } else root.EnglishSpeech.play(parts.map(part => part.text), options);
     }
     function activeSegments() {
       const records = latest();
@@ -208,11 +169,11 @@
       const header = element('header', 'listening-lab-header');
       header.append(element('span', 'eyebrow', 'LISTEN · NOTICE · SAY IT'), element('h2', '', '逐句精听与跟读'),
         element('p', '', '先听大意，再写下听到的内容，最后开口跟读。记录哪里还没听清，比反复播放整篇更有针对性。'));
-      const boundary = element('p', 'listening-boundary', `${all.filter(x => x.human).length} 段真人录音、${all.filter(x => x.synthetic).length} 段 AI 材料，以及 ${all.filter(x => !x.human && !x.synthetic).length} 篇设备朗读材料。AI 材料可换声线，练习记录按同一段内容保留。阶段是练习建议，听写核对不等于发音评分。`);
+      const boundary = element('p', 'listening-boundary', `${all.filter(x => x.human).length} 段真人录音、${all.filter(x => x.synthetic).length} 段 AI 材料，以及 ${all.filter(x => !x.human && !x.synthetic).length} 篇课程材料。课程和 AI 材料都可换声线，练习记录按同一段内容保留。阶段是练习建议，听写核对不等于发音评分。`);
       header.append(boundary); rootNode.append(header);
       const filters = element('div', 'listening-filters');
       const sourceLabel = element('label', '', '声音来源'), sourceSelect = element('select'); sourceSelect.id = 'listeningSource';
-      for (const [id, label] of [['human', '真人录音'], ['ai', 'AI 合成 · 多种声线'], ['course', '课程材料 · 设备朗读']]) {
+      for (const [id, label] of [['human', '真人录音'], ['ai', 'AI 合成 · 多种声线'], ['course', '课程材料 · 统一声线']]) {
         if (id === 'human' && !all.some(x => x.human)) continue;
         if (id === 'ai' && !all.some(x => x.synthetic)) continue;
         const option = element('option', '', label); option.value = id; option.selected = source === id; sourceSelect.append(option);
@@ -229,10 +190,10 @@
         const option = element('option', '', `${item.title}${count ? ` · ${count} 句待练` : ''}`); option.value = item.lessonId; option.selected = item.lessonId === lessonId; lessonSelect.append(option);
       }
       lessonSelect.addEventListener('change', () => choose(lessonSelect.value)); lessonLabel.append(lessonSelect); filters.append(levelLabel, lessonLabel); rootNode.append(filters);
-      if (current.synthetic) {
-        const voiceLabel = element('label', '', 'AI 声线'), voiceSelect = element('select'); voiceSelect.id = 'listeningVoice';
+      if (!current.human) {
+        const voiceLabel = element('label', '', 'AI 声线'), voiceSelect = element('select'); voiceSelect.id = 'listeningVoice'; voiceSelect.dataset.audioVoice = '';
         for (const voice of root.AudioVoices.voices) { const option = element('option', '', voice.label); option.value = voice.id; option.selected = root.AudioVoices.current().id === voice.id; voiceSelect.append(option); }
-        voiceSelect.addEventListener('change', () => { stop(); const saved = root.AudioVoices.choose(voiceSelect.value); status(`已切换为${root.AudioVoices.current().label}。${saved ? '选择已在本机记住。' : '本次选择可用，但浏览器未能记住偏好。'}输入和已有练习记录已保留。`); });
+        voiceSelect.addEventListener('change', () => { stop(); root.EnglishSpeech.setMode('ai'); const saved = root.AudioVoices.choose(voiceSelect.value); status(`已切换为${root.AudioVoices.current().label}。${saved ? '选择已在本机记住。' : '本次选择可用，但浏览器未能记住偏好。'}输入和已有练习记录已保留。`); });
         voiceLabel.append(voiceSelect); filters.append(voiceLabel);
       }
       const info = summary([current], options.getProgress()?.listeningAttempts);

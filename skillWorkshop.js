@@ -5,7 +5,7 @@
   const btn = (text, action, cls = 'secondary-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', action); return b; };
   const label = (text, field) => { const l = el('label', 'skill-field', text); l.append(field); return l; };
   const select = (id, options, value, change) => {
-    const s = el('select'); s.id = id;
+    const s = el('select'); s.id = id; if (id === 'skillVoice') s.dataset.audioVoice = '';
     for (const [v,t] of options) { const o = el('option', '', t); o.value = v; o.selected = v === value; s.append(o); }
     s.addEventListener('change', () => change(s.value)); return s;
   };
@@ -19,7 +19,7 @@
     const tasks = options.catalog.tasks, forms = options.catalog.forms, drafts = new Map(), exams = new Map();
     let taskId = tasks.find(t => t.levelId === options.level() && t.mode === 'writing')?.id || tasks[0].id;
     let pane = 'writing', formId = forms.find(f => f.levelId === options.level())?.id || forms[0].id;
-    let pendingRequest = null, activeRecorder = null, player = null, runId = 0, notice = '', reviewOnly = false, requestCleanup = null;
+    let pendingRequest = null, activeRecorder = null, runId = 0, notice = '', reviewOnly = false, requestCleanup = null;
     const task = () => tasks.find(t => t.id === taskId), form = () => forms.find(f => f.id === formId);
     const draft = () => {
       if (!drafts.has(taskId)) drafts.set(taskId, { text: '', original: null, source: 'typed', duration: null, feedback: null, feedbackText: '', rubric: task().rubric.map(() => null), parentId: null, dirty: false, audio: null });
@@ -30,7 +30,7 @@
       return exams.get(formId);
     };
     const pending = () => [...drafts.values(), ...exams.values()].some(d => d.dirty) || Boolean(pendingRequest || activeRecorder?.active);
-    function stopAudio() { if (player) { player.pause(); player.removeAttribute('src'); player.load(); player = null; } target.querySelectorAll('audio').forEach(a => a.pause()); }
+    function stopAudio() { root.EnglishSpeech.stop('workshop'); target.querySelectorAll('audio').forEach(a => a.pause()); }
     function cancel() { runId++; pendingRequest?.cancel(); pendingRequest = null; requestCleanup?.(); requestCleanup = null; activeRecorder?.cancel(); stopAudio(); }
     function reset() { cancel(); activeRecorder?.dispose(); for(const d of [...drafts.values(),...exams.values()]) if(d.audio?.url) URL.revokeObjectURL(d.audio.url); drafts.clear(); exams.clear(); notice = ''; render(); }
     function open(id, initial) {
@@ -42,15 +42,8 @@
     }
     root.openSkillWorkshop = open; root.stopSkillWorkshopAudio = stopAudio;
     function play(clip, status, onPlaying) {
-      stopAudio(); root.ListeningLab?.stop(); root.speechSynthesis?.cancel();
-      clip = root.AudioVoices.resolve(clip);
-      const description = clip.synthetic ? `AI 合成 · ${clip.speaker}` : '真人录音';
-      const sound = new Audio(clip.src); player = sound; let counted = false;
-      status.textContent = `正在加载${description}…`;
-      sound.onplaying = () => { if (player !== sound) return; status.textContent = `正在播放${description}…`; if (!counted) { counted = true; onPlaying?.(); } };
-      sound.onended = () => { if (player === sound) status.textContent = '播放结束，可以重听。'; };
-      sound.onerror = () => { if (player === sound) status.textContent = '录音未能加载，请检查网络后重试。'; };
-      sound.play().catch(() => { if (player === sound) status.textContent = '播放未启动，请再次点击。'; });
+      stopAudio();
+      root.EnglishSpeech.playClip(clip, { owner: 'workshop', onStatus: text => { status.textContent = text; }, onStart: onPlaying });
     }
     function renderChecks(container, titles, values, change) {
       titles.forEach((text,i) => {
@@ -127,7 +120,7 @@
       if (currentTask.audioId) {
         const clip=root.AudioVoices.find(currentTask.audioId), sample=el('div','skill-example');
         if (clip.synthetic) {
-          sample.append(label('AI 示范声线',select('skillVoice',root.AudioVoices.voices.map(v=>[v.id,v.label]),root.AudioVoices.current().id,v=>{stopAudio();const saved=root.AudioVoices.choose(v);status.textContent=`已切换为${root.AudioVoices.current().label}。${saved?'选择已在本机记住。':'本次选择可用，但浏览器未能记住偏好。'}你的文字和练习记录已保留。`;})));
+          sample.append(label('AI 示范声线',select('skillVoice',root.AudioVoices.voices.map(v=>[v.id,v.label]),root.AudioVoices.current().id,v=>{stopAudio();root.EnglishSpeech.setMode('ai');const saved=root.AudioVoices.choose(v);status.textContent=`已切换为${root.AudioVoices.current().label}。${saved?'选择已在本机记住。':'本次选择可用，但浏览器未能记住偏好。'}你的文字和练习记录已保留。`;})));
         }
         sample.append(btn(clip.synthetic?'播放 AI 示范':'播放真人示范',()=>play(clip,status)),el('p','',clip.text),el('p','skill-note',clip.translation));
         const credit=el('a','skill-note',clip.synthetic?'AI 合成 · 通用声线 · 声音来源与说明':`录音：${clip.speaker} · CC BY-SA 4.0 · Tatoeba`);credit.href=clip.synthetic?'https://github.com/SKTT1Bert/us-life-english-simulator/blob/main/AI-AUDIO-CREDITS.md':clip.sourceUrl;credit.target='_blank';credit.rel='noopener noreferrer';sample.append(credit);panel.append(sample);

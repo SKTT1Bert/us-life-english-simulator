@@ -38,6 +38,7 @@ if (DEPLOYED_APP) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1', 'Produc
       if (body.expectedRevision !== existing.revision) return send(409, { error: 'revision_conflict' });
       existing.document = body.document; existing.revision++; return send(200, { revision: existing.revision });
     });
+    await context.addInitScript(() => localStorage.setItem('daily-english-speech-mode-v1', 'device'));
     const page = await context.newPage(); page.on('pageerror', (error) => errors.push(error.message));
     const dialogs = []; let dismissNext = false;
     page.on('dialog', async (dialog) => { dialogs.push(dialog.message()); if (dismissNext) { dismissNext = false; await dialog.dismiss(); } else await dialog.accept(); });

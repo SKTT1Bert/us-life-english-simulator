@@ -19,7 +19,7 @@ const run = async (name, action) => { await action(); checks.push(name); console
     const host = page.locator('#view-picture-words');
     const select = async id => page.locator('#placeSelect').selectOption(id);
     const baseline = await page.evaluate(() => JSON.stringify({runs:state.scenarios.runs,quiz:state.quiz,history:state.practiceHistory}));
-    await page.evaluate(() => {window.sceneSpeech=[]; speechSynthesis.cancel=()=>{};speechSynthesis.speak=u=>{window.sceneSpeech.push(u.text);u.onend?.();};});
+    await page.evaluate(() => {EnglishSpeech.setMode('device');window.SpeechSynthesisUtterance=function(text){this.text=text;};speechSynthesis.getVoices=()=>[{lang:'en-US'}];window.sceneSpeech=[]; speechSynthesis.cancel=()=>{};speechSynthesis.speak=u=>{window.sceneSpeech.push(u.text);u.onend?.();};});
 
     await run('all dialogue places have a complete picture course and shared illustration', async () => {
       assert.equal(lessons.length,22);

@@ -6,8 +6,7 @@
     { id: 'phonics', title: '自然拼读', english: 'Phonics', description: '从字母与发音的对应关系开始，逐步练习多音节词、句子停顿、学术听力和课堂讨论。发音标注以美式英语为主。', goal: '认字母组合 · 练习拼读 · 听音跟读', parts: ['/k/', '/æ/', '/t/'], labels: ['c', 'a', 't'], example: 'cat', meaning: '/kæt/ · 猫', lessons: FOUNDATION_CATALOG.phonics, other: 'word-parts', otherLabel: '去词根词缀' }
   ];
   const tabs = [...document.querySelectorAll('[data-course]')];
-  let speechRun = 0, speaking = false;
-  window.stopFoundationSpeech = () => { speechRun += 1; if (speaking) window.speechSynthesis?.cancel(); speaking = false; };
+  window.stopFoundationSpeech = () => window.EnglishSpeech.stop('foundation-example');
   function selectCourse(id, focus = false) {
     window.flushFoundationDrafts?.(); window.stopFoundationStudySpeech?.();
     window.stopFoundationSpeech();
@@ -81,7 +80,7 @@
       const answers = state.foundationProgress.courses[course.id].records[lesson.id]?.answers || [];
       questionIndex = Math.max(0, engine.questions(lesson).findIndex((_, i) => answers[i] == null));
       article.innerHTML = `<div class="tutorial-article-heading"><div><span class="eyebrow">Lesson ${String(index + 1).padStart(2, '0')} / ${course.lessons.length} · ${escapeHTML(lesson.stage || '基础')}</span><h3 id="${course.id}-lesson-title" tabindex="-1">${escapeHTML(lesson.title)}</h3></div><span class="badge">${escapeHTML(lesson.duration)}</span></div><p class="tutorial-intro">${escapeHTML(lesson.intro)}</p><ul class="tutorial-goals" aria-label="本课目标">${(lesson.goals || []).map((goal) => `<li>${escapeHTML(goal)}</li>`).join('')}</ul>
-        <div class="tutorial-body"><section class="tutorial-explanation" aria-label="本课讲解"><ol class="tutorial-steps">${lesson.steps.map((step) => `<li><h4>${escapeHTML(step.title)}</h4><p>${escapeHTML(step.text)}</p></li>`).join('')}</ol><div class="tutorial-tip"><strong>学习小提示</strong><p>${escapeHTML(lesson.tip)}</p></div></section><section class="tutorial-examples" aria-label="例词拆解"><h4>拆开看，再读一遍</h4>${lesson.examples.map((ex, i) => `<div class="tutorial-example"><div class="tutorial-example-heading"><div><strong lang="en">${escapeHTML(ex.word)}</strong><span>${escapeHTML(ex.meaning)}</span></div><button type="button" class="small-btn" data-speak-example="${i}" aria-label="朗读单词 ${escapeHTML(ex.word)}">朗读</button></div><p class="tutorial-breakdown" lang="en">${escapeHTML(ex.breakdown)}</p><p class="tutorial-example-note">${escapeHTML(ex.note)}</p></div>`).join('')}<p class="tutorial-audio-note">点击“朗读”可听完整单词、短语或句子。这里使用设备合成语音，不是单个发音的录音示范，也不会评价你的发音。</p><p class="tutorial-speech-status" role="status"></p></section></div>
+        <div class="tutorial-body"><section class="tutorial-explanation" aria-label="本课讲解"><ol class="tutorial-steps">${lesson.steps.map((step) => `<li><h4>${escapeHTML(step.title)}</h4><p>${escapeHTML(step.text)}</p></li>`).join('')}</ol><div class="tutorial-tip"><strong>学习小提示</strong><p>${escapeHTML(lesson.tip)}</p></div></section><section class="tutorial-examples" aria-label="例词拆解"><h4>拆开看，再读一遍</h4>${lesson.examples.map((ex, i) => `<div class="tutorial-example"><div class="tutorial-example-heading"><div><strong lang="en">${escapeHTML(ex.word)}</strong><span>${escapeHTML(ex.meaning)}</span></div><button type="button" class="small-btn" data-speak-example="${i}" aria-label="朗读单词 ${escapeHTML(ex.word)}">朗读</button></div><p class="tutorial-breakdown" lang="en">${escapeHTML(ex.breakdown)}</p><p class="tutorial-example-note">${escapeHTML(ex.note)}</p></div>`).join('')}<p class="tutorial-audio-note">点击“朗读”可听完整单词、短语或句子。声线在页面顶部的“朗读设置”统一切换。示范为完整例词，不是单个音素录音；英式声线可能与课内美式音标不同；英式短例词会先说 Listen and repeat（听音跟读），再读例词。</p><p class="tutorial-speech-status" role="status"></p></section></div>
         <section class="tutorial-practice" aria-labelledby="${course.id}-quiz-title"></section><details class="tutorial-sources"><summary>本课参考与延伸阅读</summary><ul></ul></details><div class="tutorial-footer"><button type="button" class="ghost-btn tutorial-previous" ${index === 0 ? 'disabled' : ''}>← 上一课</button><span>${index + 1} / ${course.lessons.length}</span><button type="button" class="primary-btn tutorial-next">${endOfStage ? '进入本阶段测评 →' : '下一课 →'}</button></div>`;
       for (const source of lesson.sources || []) {
         try {
@@ -123,15 +122,7 @@
     function focusQuestion() { article.querySelector('[id$="-quiz-title"]').focus({ preventScroll: true }); }
     function read(text) {
       const status = article.querySelector('.tutorial-speech-status');
-      if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { status.textContent = '当前浏览器不支持朗读，可以参考发音标注，或查看本课提供的词典链接。'; return; }
-      window.stopFoundationStudySpeech?.(); window.stopPathwaySpeech?.();
-      window.stopFoundationSpeech(); const run = ++speechRun, utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US'; utterance.rate = .8;
-      const voice = window.speechSynthesis.getVoices?.().find((item) => /^en[-_]US$/i.test(item.lang)); if (voice) utterance.voice = voice;
-      speaking = true; status.textContent = `正在准备朗读：${text}`;
-      utterance.onend = () => { if (run === speechRun) { speaking = false; status.textContent = '朗读结束，试着跟读一遍。'; } };
-      utterance.onerror = (event) => { if (run === speechRun) { speaking = false; if (!['interrupted', 'canceled'].includes(event.error)) status.textContent = '暂时无法朗读，请检查设备的英语语音设置，或查看本课提供的词典链接。'; } };
-      window.speechSynthesis.speak(utterance);
+      window.EnglishSpeech.play(text, { owner: 'foundation-example', example: true, rate: .8, onStatus: message => { status.textContent = message; } });
     }
     study = window.createFoundationStudy({ course, root, save, selectLesson, renderDashboard });
     const refresh = () => {

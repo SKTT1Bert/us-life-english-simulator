@@ -11,6 +11,7 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
   try {
     const context = await app.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.addInitScript(() => {
+      localStorage.setItem('daily-english-speech-mode-v1', 'device');
       window.__speech = { canceled: 0, utterances: [] };
       window.SpeechSynthesisUtterance = function (text) { this.text = text; };
       Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { getVoices: () => [{ lang: 'en-US' }], cancel: () => { window.__speech.canceled++; }, speak: (utterance) => { window.__speech.utterances.push(utterance); utterance.onstart?.(); } } });
