@@ -112,7 +112,11 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
       await navigate(page, 'today');
       const input = 'A long test sentence with a completely new phrase checks cancellation before playback begins.';
       const before = await page.evaluate(() => speechAudit.starts.length);
-      await page.evaluate(text => { EnglishSpeech.play(text); EnglishSpeech.stop(); }, input);
+      const jobs = await page.evaluate(() => speechAudit.inputs.length), stopped = await page.evaluate(() => speechAudit.stopped);
+      await page.evaluate(text => EnglishSpeech.play(text), input);
+      await page.waitForFunction(n => speechAudit.inputs.length > n, jobs);
+      await page.evaluate(() => EnglishSpeech.stop());
+      assert.ok(await page.evaluate(n => speechAudit.stopped > n, stopped), 'an in-flight worker was terminated');
       await page.waitForTimeout(100); assert.equal(await page.evaluate(() => speechAudit.starts.length), before);
       await page.evaluate(() => {
         window.longSpeechDone = false; window.longSpeechError = '';
