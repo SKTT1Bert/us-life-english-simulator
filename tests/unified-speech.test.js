@@ -3,7 +3,15 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
-const { splitText } = require('../englishSpeech.js');
+const { splitText, exampleText } = require('../englishSpeech.js');
+
+test('short British examples receive a disclosed teaching cue without changing other text', () => {
+  assert.equal(exampleText('cat', 'bf_emma'), 'Listen and repeat. cat.');
+  assert.equal(exampleText('helpful.', 'bf_emma'), 'Listen and repeat. helpful.');
+  assert.equal(exampleText('cat', 'af_nicole'), 'cat');
+  const sentence = 'The findings suggest a possible association.';
+  assert.equal(exampleText(sentence, 'bf_emma'), sentence);
+});
 
 test('speech chunking preserves long passages and bounds every model input without dropping the tail', () => {
   for (const text of ['cat', 'Hello! What is your name?', 'An academic discussion needs careful evidence. '.repeat(180), 'extraordinary'.repeat(90), 'a '.repeat(900)]) {

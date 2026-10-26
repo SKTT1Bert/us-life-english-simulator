@@ -31,7 +31,7 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
         source.start = (...args) => {
           const samples = source.buffer.getChannelData(0); let energy = 0;
           for (const sample of samples) energy += sample * sample;
-          speechAudit.starts.push({ voice: AudioVoices.current().id, duration: source.buffer.duration, rms: Math.sqrt(energy / samples.length) });
+          speechAudit.starts.push({ voice: AudioVoices.current().id, rate: source.playbackRate.value, duration: source.buffer.duration, rms: Math.sqrt(energy / samples.length) });
           return start(...args);
         };
         return source;
@@ -68,8 +68,10 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
           await changeVoice(voice);
           await played(() => page.locator(`#view-${course} [data-speak-example="0"]`).click());
           assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).voice), voice);
+          assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).speed), .8);
+          assert.equal(await page.evaluate(() => speechAudit.starts.at(-1).rate), 1, 'slower speech does not lower the voice pitch by resampling');
           const expected = await page.evaluate(id => FOUNDATION_CATALOG[id][0].examples[0].speak, course);
-          assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).text), expected);
+          assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).text), voice === 'bf_emma' ? `Listen and repeat. ${expected}.` : expected);
           await page.evaluate(() => EnglishSpeech.stop());
         }
         assert.deepEqual(await snapshot(), before);

@@ -21,8 +21,8 @@
     if (EnglishSpeech.mode() === 'ai') EnglishSpeech.playClip(AudioVoices.clips[0], options);
     else EnglishSpeech.play(AudioVoices.clips[0].text, options);
   });
-  document.getElementById('stopGlobalSpeech').addEventListener('click', () => { EnglishSpeech.stop(); status.textContent = '已停止播放。'; globalStatus.textContent = '已停止播放。'; });
-  document.getElementById('cancelSpeechPlayback').addEventListener('click', () => EnglishSpeech.stop());
+  document.getElementById('stopGlobalSpeech').addEventListener('click', () => { EnglishSpeech.stop(undefined, true); status.textContent = '已停止播放。'; globalStatus.textContent = '已停止播放。'; });
+  document.getElementById('cancelSpeechPlayback').addEventListener('click', () => EnglishSpeech.stop(undefined, true));
   dialog.addEventListener('close', () => EnglishSpeech.stop('preview'));
   window.addEventListener('daily-english-voice', refresh);
   window.addEventListener('daily-english-speech-mode', refresh);

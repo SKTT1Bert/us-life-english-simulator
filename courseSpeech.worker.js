@@ -17,6 +17,8 @@ self.onmessage = async ({ data }) => {
   try {
     if (!['af_nicole', 'af_heart', 'am_michael', 'bf_emma'].includes(data.voice)) throw Error('Unknown voice');
     if (typeof data.text !== 'string' || !data.text.trim() || data.text.length > 420) throw Error('Invalid speech segment');
+    const speed = data.speed === undefined ? 1 : data.speed;
+    if (!Number.isFinite(speed) || speed < 0.5 || speed > 1.5) throw Error('Invalid speech speed');
     if (!engine) {
       const [model, tokenizer, config] = await Promise.all([
         StyleTextToSpeech2Model.from_pretrained('kokoro', { dtype: 'q8', device: 'wasm', progress_callback: p => {
@@ -26,7 +28,7 @@ self.onmessage = async ({ data }) => {
       engine = new KokoroTTS(model, new PreTrainedTokenizer(tokenizer, config));
     }
     self.postMessage({ id: data.id, generating: true });
-    const result = await engine.generate(data.text, { voice: data.voice, speed: data.voice === 'af_nicole' ? 0.96 : 1 });
+    const result = await engine.generate(data.text, { voice: data.voice, speed: speed * (data.voice === 'af_nicole' ? 0.96 : 1) });
     self.postMessage({ id: data.id, samples: result.audio, sampleRate: result.sampling_rate }, [result.audio.buffer]);
   } catch (error) {
     console.error('Local course speech unavailable:', error.message);

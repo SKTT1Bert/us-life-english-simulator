@@ -1,6 +1,12 @@
 (function (root) {
   'use strict';
   const MODE_KEY = 'daily-english-speech-mode-v1';
+  function exampleText(text, voiceId) {
+    const value = String(text || '').trim(), words = value.match(/[a-z]+(?:['’-][a-z]+)*/gi) || [];
+    // Very short British examples need context to avoid unstable isolated sounds.
+    return voiceId === 'bf_emma' && words.length > 0 && words.length <= 3 && value.length <= 40
+      ? `Listen and repeat. ${value.replace(/[.!?]+$/, '')}.` : value;
+  }
   const splitText = text => {
     const value = String(text || '').replace(/\s+/g, ' ').trim(), chunks = [];
     let rest = value;
@@ -14,7 +20,7 @@
     if (rest) chunks.push(rest);
     return chunks;
   };
-  if (typeof module === 'object' && module.exports) { module.exports = { splitText }; return; }
+  if (typeof module === 'object' && module.exports) { module.exports = { splitText, exampleText }; return; }
   let mode = 'ai', active = null, serial = 0, worker = null, pending = null, idleTimer = null, context = null;
   let cacheBytes = 0;
   const cache = new Map();
@@ -28,17 +34,18 @@
     worker?.terminate(); worker = null;
     if (pending) { const request = pending; pending = null; clearTimeout(request.timer); request.reject(new Error('cancelled')); }
   }
-  function stop(owner) {
+  function stop(owner, notifyLocal = false) {
     if (!active || (owner && active.owner !== owner)) return;
     const previous = active; active = null; serial++;
     previous.cleanup?.();
     if (pending) disposeWorker();
     previous.options.onCancel?.();
+    if (notifyLocal) previous.options.onStatus?.('已停止朗读。');
     emit('已停止朗读。');
   }
   function setMode(value) {
     if (!['ai', 'device'].includes(value)) throw Error('Unknown speech mode');
-    stop(); mode = value;
+    stop(undefined, true); mode = value;
     let saved = true; try { root.localStorage.setItem(MODE_KEY, value); } catch { saved = false; }
     root.dispatchEvent(new CustomEvent('daily-english-speech-mode', { detail: { mode, saved } }));
     return saved;
@@ -51,8 +58,8 @@
     }
     cache.set(key, result); cacheBytes += bytes;
   }
-  function generate(text, voice, run) {
-    const key = `${voice}\n${text}`;
+  function generate(text, voice, run, speed) {
+    const key = `${voice}\n${speed}\n${text}`;
     if (cache.has(key)) { const result = cache.get(key); cache.delete(key); cache.set(key, result); return Promise.resolve(result); }
     clearTimeout(idleTimer);
     return new Promise((resolve, reject) => {
@@ -74,7 +81,7 @@
       const id = ++serial;
       const timer = setTimeout(() => { if (pending?.id !== id) return; pending = null; disposeWorker(); reject(new Error('AI 朗读准备超时，请重试，或在“朗读设置”中改用设备朗读。')); }, 120000);
       pending = { id, resolve, reject, timer, key, run, voice: root.AudioVoices.current() };
-      worker.postMessage({ id, text, voice });
+      worker.postMessage({ id, text, voice, speed });
     });
   }
   function start(options) {
@@ -111,7 +118,8 @@
   }
   function play(texts, options = {}) {
     const run = start(options), voice = root.AudioVoices.current();
-    const entries = (Array.isArray(texts) ? texts : [texts]).flatMap((text, index) => splitText(text).map(text => ({ text, index })));
+    const speed = Math.max(0.5, Math.min(1.5, Number(options.rate) || 1));
+    const entries = (Array.isArray(texts) ? texts : [texts]).flatMap((text, index) => splitText(options.example && mode === 'ai' ? exampleText(text, voice.id) : text).map(text => ({ text, index })));
     if (!entries.length) { fail(run, new Error('没有可朗读的英文内容。')); return; }
     if (entries.reduce((n, part) => n + part.text.length, 0) > 20000) { fail(run, new Error('这段文字太长，请分段朗读。')); return; }
     if (mode === 'device') {
@@ -147,11 +155,12 @@
         let last = -1;
         for (const item of entries) {
           if (active !== run) return;
-          const result = await generate(item.text, voice.id, run);
+          const result = await generate(item.text, voice.id, run, speed);
           if (active !== run) return;
           if (context.state !== 'running') throw Error('声音被浏览器暂停，请再次点击播放。');
           const buffer = context.createBuffer(1, result.samples.length, result.sampleRate); buffer.copyToChannel(result.samples, 0);
-          const source = context.createBufferSource(); source.buffer = buffer; source.playbackRate.value = options.rate || 1; source.connect(context.destination);
+          // Set speech tempo in the model; resampling playback would also shift pitch.
+          const source = context.createBufferSource(); source.buffer = buffer; source.connect(context.destination);
           await new Promise(resolve => {
             run.cleanup = () => { source.onended = null; try { source.stop(); } catch { /* Already ended. */ } source.disconnect(); resolve(); };
             source.onended = () => { source.disconnect(); run.cleanup = null; resolve(); };
@@ -165,7 +174,7 @@
     } catch (error) { fail(run, error); }
   }
   root.EnglishSpeech = { play, playClip, stop, setMode, mode: () => mode, isActive: () => Boolean(active), splitText };
-  root.addEventListener('daily-english-voice', () => { stop(); emit(`已切换为${root.AudioVoices.current().label}，下次朗读生效。`); });
+  root.addEventListener('daily-english-voice', () => { stop(undefined, true); emit(`已切换为${root.AudioVoices.current().label}，下次朗读生效。`); });
   root.addEventListener('daily-english-view', () => stop());
   document.addEventListener('play', event => { if (event.target instanceof HTMLAudioElement) stop(); }, true);
   document.addEventListener('visibilitychange', () => { if (document.hidden) { stop(); disposeWorker(); } });
