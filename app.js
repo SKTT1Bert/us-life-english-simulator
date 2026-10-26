@@ -258,12 +258,7 @@ function sample(list) {
 }
 
 function speak(text) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-US';
-  utterance.rate = 0.86;
-  window.speechSynthesis.speak(utterance);
+  window.EnglishSpeech.play(text, { owner: 'expressions', rate: 0.86 });
 }
 
 function renderList(container, list, emptyText = '暂无内容') {

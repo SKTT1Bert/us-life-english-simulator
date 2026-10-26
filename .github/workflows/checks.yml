@@ -11,7 +11,7 @@ permissions:
 jobs:
   browser-and-unit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,6 +43,8 @@ jobs:
         run: node tests/skill-workshop-browser.cjs
       - name: Multiple AI voices, original audio and preserved progress
         run: node tests/ai-audio-browser.cjs
+      - name: Unified course voices with real local synthesis
+        run: node tests/unified-speech-browser.cjs
       - name: One writer per browser and safe tab handover
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation

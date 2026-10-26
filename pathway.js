@@ -4,7 +4,7 @@
   const root = document.getElementById('view-pathway');
   if (!catalog.length) return;
   let levelId = state.pathwayProgress.levelId, lessonId = state.pathwayProgress.lessonId, mode = 'lessons';
-  let saveTimer = null, pendingLesson = null, speechRun = 0, speaking = false;
+  let saveTimer = null, pendingLesson = null;
   let snapshot = JSON.stringify(state.pathwayProgress);
   const drafts = new Map(), checks = new Map();
   const esc = escapeHTML;
@@ -43,19 +43,9 @@
     window.flushPathwayDraft();
     if (window.hasPendingPathwayWork()) { event.preventDefault(); event.returnValue = ''; }
   });
-  window.stopPathwaySpeech = () => { speechRun += 1; if (speaking) window.speechSynthesis?.cancel(); speaking = false; };
+  window.stopPathwaySpeech = () => window.EnglishSpeech.stop('pathway');
   function speak(text, status, rate = 1) {
-    window.stopPathwaySpeech(); window.stopFoundationSpeech?.(); window.stopFoundationStudySpeech?.();
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { status.textContent = '设备不支持朗读，可以查看听力原文继续练习。'; return; }
-    const run = ++speechRun, utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US'; utterance.rate = rate;
-    const voice = window.speechSynthesis.getVoices?.().find((item) => /^en[-_]US$/i.test(item.lang));
-    if (voice) utterance.voice = voice;
-    speaking = true; status.textContent = '正在准备播放。';
-    utterance.onstart = () => { if (run === speechRun) status.textContent = '正在播放，可随时停止或重听。'; };
-    utterance.onend = () => { if (run === speechRun) { speaking = false; status.textContent = '播放结束。'; } };
-    utterance.onerror = (event) => { if (run === speechRun) { speaking = false; status.textContent = ['canceled', 'interrupted'].includes(event.error) ? '已停止。' : '暂时无法播放，可以查看听力原文继续练习。'; } };
-    try { window.speechSynthesis.speak(utterance); } catch { speaking = false; status.textContent = '暂时无法播放，请查看听力原文。'; }
+    window.EnglishSpeech.play(text, { owner: 'pathway', rate, onStatus: message => { status.textContent = message; } });
   }
   function sourceLinks(sources) {
     return sources.map((source) => {
@@ -64,7 +54,7 @@
     }).join('');
   }
   function audioMarkup(item, testing = false) {
-    return `<section class="pathway-listening"><h4>${esc(item.title)}</h4>${item.focus ? `<p>${esc(item.focus)}</p>` : ''}<div class="pathway-audio-controls"><button type="button" class="small-btn pathway-play">播放听力</button><button type="button" class="small-btn pathway-stop">停止</button><label>速度 <select class="pathway-rate" aria-label="播放速度"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.15">1.15×</option></select></label></div><p class="pathway-audio-status" role="status"></p><details class="pathway-transcript"><summary>查看听力原文${testing ? '（会记录为使用原文辅助）' : '并核对'}</summary><div lang="en">${paragraphs(item.text)}</div></details><small>本段使用设备朗读，声音与真人录音有所不同。${testing ? '建议先听两遍，再独立作答。' : '先听并记下关键词，再查看原文核对。'}</small></section>`;
+    return `<section class="pathway-listening"><h4>${esc(item.title)}</h4>${item.focus ? `<p>${esc(item.focus)}</p>` : ''}<div class="pathway-audio-controls"><button type="button" class="small-btn pathway-play">播放听力</button><button type="button" class="small-btn pathway-stop">停止</button><label>速度 <select class="pathway-rate" aria-label="播放速度"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.15">1.15×</option></select></label></div><p class="pathway-audio-status" role="status"></p><details class="pathway-transcript"><summary>查看听力原文${testing ? '（会记录为使用原文辅助）' : '并核对'}</summary><div lang="en">${paragraphs(item.text)}</div></details><small>本段使用全站朗读设置，可在页面顶部切换 AI 声线或设备朗读。${testing ? '建议先听两遍，再独立作答。' : '先听并记下关键词，再查看原文核对。'}</small></section>`;
   }
   function bindAudio(container, item, onTranscript) {
     const status = container.querySelector('.pathway-audio-status');

@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="learningDiagnostic.css" />
   <link rel="stylesheet" href="listeningLab.css" />
   <link rel="stylesheet" href="skillWorkshop.css" />
+  <link rel="stylesheet" href="speechSettings.css" />
   <script src="syncGate.js"></script>
 </head>
 <body>
@@ -33,11 +34,28 @@
       </div>
     </div>
     <div class="header-actions">
+      <button id="openSpeechSettings" class="ghost-btn" type="button" aria-haspopup="dialog">朗读设置</button>
       <button id="openSyncBtn" class="ghost-btn" type="button">多设备同步</button>
       <button id="themeToggle" class="ghost-btn" type="button">深色模式</button>
       <button id="exportBtn" class="ghost-btn" type="button">导出进度</button>
     </div>
   </header>
+
+  <div id="globalSpeechBar" class="global-speech-bar" hidden><p id="globalSpeechStatus" role="status"></p><button id="cancelSpeechPlayback" type="button" class="small-btn">停止当前声音</button></div>
+  <dialog id="speechSettingsDialog" aria-labelledby="speechSettingsTitle">
+    <form method="dialog" class="speech-settings-close"><button class="ghost-btn" aria-label="关闭朗读设置">关闭</button></form>
+    <span class="eyebrow">声音与你的学习节奏</span>
+    <h2 id="speechSettingsTitle">全站朗读设置</h2>
+    <p>课程、词根词缀、自然拼读、例句与跟读共用你的选择。</p>
+    <label for="globalVoice">AI 声线</label><select id="globalVoice" data-audio-voice></select>
+    <p id="voiceDescription" class="speech-help"></p>
+    <label for="speechMode">课程与例句的朗读方式</label>
+    <select id="speechMode"><option value="ai">AI 声线 · 在本机生成</option><option value="device">设备朗读 · 节省下载</option></select>
+    <p class="speech-help">AI 扩展朗读首次需下载约 110 MB 资源，建议使用 Wi-Fi。浏览器允许缓存时可复用资源；生成速度取决于设备。文字留在本机，练习记录保持不变。</p>
+    <p class="speech-help">设备朗读使用手机或电脑自带的声音。真人录音保留原声，24 段预制 AI 材料始终使用所选 AI 声线。自然拼读示范为完整例词；切换英式声线后，部分发音会与课内美式音标不同。</p>
+    <div class="speech-settings-actions"><button id="previewVoice" type="button" class="primary-btn">试听声音</button><button id="stopGlobalSpeech" type="button" class="small-btn">停止播放</button></div>
+    <p id="speechSettingsStatus" role="status"></p>
+  </dialog>
 
   <p id="storageNotice" class="practice-note" role="alert" hidden></p>
   <main class="layout">
@@ -533,6 +551,8 @@
   <script src="data/humanAudio.js"></script>
   <script src="data/aiAudio.js"></script>
   <script src="audioVoices.js"></script>
+  <script src="englishSpeech.js"></script>
+  <script src="speechSettings.js"></script>
   <script src="data/skillAssessments.js"></script>
   <script src="skillPractice.js"></script>
   <script src="skillProgress.js"></script>

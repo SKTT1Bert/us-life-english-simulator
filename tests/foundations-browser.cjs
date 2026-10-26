@@ -207,6 +207,7 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
     await run('missing speech support shows guidance without breaking lesson navigation', async () => {
       const silentContext = await app.newContext();
       await silentContext.addInitScript(() => {
+        localStorage.setItem('daily-english-speech-mode-v1', 'device');
         Object.defineProperty(window, 'speechSynthesis', { value: undefined, configurable: true });
         Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: undefined, configurable: true });
       });
@@ -227,6 +228,7 @@ const { startApp, navigate, storageKey } = require('./browser-helpers.cjs');
     await run('late speech callbacks cannot replace newer speech or lesson feedback', async () => {
       const voiceContext = await app.newContext();
       await voiceContext.addInitScript(() => {
+          localStorage.setItem('daily-english-speech-mode-v1', 'device');
         window.foundationUtterances = [];
         window.foundationSpeechCancellations = 0;
         Object.defineProperty(window, 'SpeechSynthesisUtterance', {

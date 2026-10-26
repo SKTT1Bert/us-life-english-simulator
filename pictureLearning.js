@@ -5,7 +5,7 @@
   window.PictureLearning = {
     showLesson(lesson) {
       if (!lesson) { host.replaceChildren(); return; }
-      window.speechSynthesis?.cancel();
+      window.EnglishSpeech.stop('picture');
       if (!cache.has(lesson.id)) cache.set(lesson.id, buildLesson(lesson));
       host.replaceChildren(cache.get(lesson.id));
     }
@@ -17,7 +17,7 @@
   const positions = lesson.positions || {};
   const mapped=lesson.words.filter(w=>positions[w.id]), words=new Map(lesson.words.map(w=>[w.id,w])), results=new Map();
   const num=id=>mapped.findIndex(w=>w.id===id)+1;
-  let answersShown=false,speechRun=0;
+  let answersShown=false;
   function highlighted(text,ids){
     const terms=ids.map(id=>words.get(id)?.word).filter(Boolean).sort((a,b)=>b.length-a.length).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
     if(!terms.length)return escapeHTML(text);
@@ -56,10 +56,10 @@
   function selectWord(id){
     const w=words.get(id);if(!w)return;root.querySelectorAll('[data-picture-word]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.pictureWord===id)));
     const s=lesson.sentences.find(s=>s.wordIds.includes(id)), detail=root.querySelector('.picture-word-card');
-    detail.innerHTML=`<span class="eyebrow">${num(id)?`图中单词 ${String(num(id)).padStart(2,'0')}`:'场景延伸词'}</span><h3 lang="en">${escapeHTML(w.word)}</h3><p class="picture-ipa" lang="en">${escapeHTML(w.ipa)}</p><p class="picture-word-meaning picture-translation">${escapeHTML(w.meaning)}</p><button type="button" class="primary-btn picture-speak-word" aria-label="朗读单词 ${escapeHTML(w.word)}">朗读单词</button><p class="picture-word-note picture-translation">${escapeHTML(w.note)}</p>${s?`<div class="picture-word-example"><span>放进句子里</span><p lang="en">${highlighted(s.text,s.wordIds)}</p><small class="picture-translation">${escapeHTML(s.translation)}</small><button class="small-btn picture-speak-example" type="button">朗读例句</button></div>`:''}<p class="picture-device-note">使用设备英语语音朗读，可在上方调整语速。</p>`;
+    detail.innerHTML=`<span class="eyebrow">${num(id)?`图中单词 ${String(num(id)).padStart(2,'0')}`:'场景延伸词'}</span><h3 lang="en">${escapeHTML(w.word)}</h3><p class="picture-ipa" lang="en">${escapeHTML(w.ipa)}</p><p class="picture-word-meaning picture-translation">${escapeHTML(w.meaning)}</p><button type="button" class="primary-btn picture-speak-word" aria-label="朗读单词 ${escapeHTML(w.word)}">朗读单词</button><p class="picture-word-note picture-translation">${escapeHTML(w.note)}</p>${s?`<div class="picture-word-example"><span>放进句子里</span><p lang="en">${highlighted(s.text,s.wordIds)}</p><small class="picture-translation">${escapeHTML(s.translation)}</small><button class="small-btn picture-speak-example" type="button">朗读例句</button></div>`:''}<p class="picture-device-note">使用全站朗读设置，可在页面顶部切换声线，在此调整语速。</p>`;
     detail.querySelector('.picture-speak-word').addEventListener('click',()=>read(w.word));detail.querySelector('.picture-speak-example')?.addEventListener('click',()=>read(s.text));
   }
-  function read(text){const status=root.querySelector('#pictureSpeechStatus');if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){status.textContent='当前浏览器不支持朗读，请结合音标和例句练习。';return;}const run=++speechRun;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(root.querySelector('#pictureSpeechRate').value);status.textContent=`正在准备朗读：${text}`;u.onend=()=>{if(run===speechRun)status.textContent='朗读结束，试着跟读一遍。';};u.onerror=e=>{if(run===speechRun&&!['canceled','interrupted'].includes(e.error))status.textContent='暂时无法朗读，请检查设备英语语音后重试。';};window.speechSynthesis.speak(u);}
+  function read(text) { const status = root.querySelector('#pictureSpeechStatus'); window.EnglishSpeech.play(text, { owner: 'picture', rate: Number(root.querySelector('#pictureSpeechRate').value), onStatus: message => { status.textContent = message; } }); }
   selectWord(lesson.words.find(word=>positions[word.id])?.id || lesson.words[0].id);
   return root;
   }
