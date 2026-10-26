@@ -5,7 +5,7 @@ const { once } = require('node:events');
 
 const root = path.resolve(__dirname, '..');
 const storageKey = 'daily-english-lab-state-v1';
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.mp3': 'audio/mpeg', '.json': 'application/json', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 
 function appFile(url) {
   const pathname = decodeURIComponent(new URL(url, 'http://localhost').pathname);
@@ -56,7 +56,7 @@ async function startApp() {
 async function navigate(page, view) {
   if (['library', 'foundations', 'scenarios', 'market', 'pathway'].includes(view)) await page.locator('[data-nav-group="learn"]').click();
   if (['progress', 'favorites', 'report', 'diagnostic'].includes(view)) await page.locator('[data-nav-group="personal"]').click();
-  if (['quiz', 'listening'].includes(view)) await page.locator('[data-nav-group="practice"]').click();
+  if (['quiz', 'listening', 'workshop'].includes(view)) await page.locator('[data-nav-group="practice"]').click();
   await page.locator(`[data-view="${view}"]`).first().click();
 }
 

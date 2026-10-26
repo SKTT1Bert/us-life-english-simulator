@@ -19,7 +19,7 @@
     const active = root.document.activeElement;
     if (active?.matches('input,textarea,select,[contenteditable="true"]') && !active.closest('#syncPanel')) return false;
     return !root.hasPendingFoundationWork?.() && !root.hasPendingPathwayWork?.()
-      && !root.LearningDiagnostic?.hasPendingWork?.() && !root.ListeningLab?.hasPendingWork?.() && !root.LearningCoach?.hasPendingWork?.();
+      && !root.LearningDiagnostic?.hasPendingWork?.() && !root.ListeningLab?.hasPendingWork?.() && !root.LearningCoach?.hasPendingWork?.() && !root.SkillWorkshop?.hasPendingWork?.();
   }
   function beforeRead() {
     try {

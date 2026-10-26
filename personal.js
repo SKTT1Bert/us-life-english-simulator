@@ -95,6 +95,7 @@ function previewProgressImport(restored, hasSyncArchive = false) {
   $('#importSummary').textContent = `准备导入：${restored.learned.size} 条已学习的表达、${restored.favorites.size} 条收藏、${restored.customExpressions.length} 条个人表达、${restored.practiceHistory.length} 次表达练习记录；基础课程中已作答的 ${courseAnswers} 道题，以及写作、口语、复习和测评记录；学习路线中 ${pathwayLessons} 课的记录（含写作内容和口述要点）。`;
   if (hasSyncArchive) $('#importSummary').textContent += '文件还包含同步副本；本次导入只恢复上述页面记录，不恢复配对信息或历史版本库。请保留原文件中的副本，以便核对。';
   $('#importSummary').textContent += `另含 ${restored.learningStudio.diagnostics.length} 次起点诊断、${restored.learningStudio.listeningAttempts.length} 次精听练习及今日计划设置。`;
+  $('#importSummary').textContent += `表达工坊另含 ${restored.skillWorkshop.attempts.length} 次口语/写作练习、${restored.skillWorkshop.assessments.length} 次阶段小测。`;
   $('#importError').textContent = '';
   $('#importDialog').showModal();
 }

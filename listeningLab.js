@@ -72,6 +72,12 @@
         listeningTitle: lesson.listening.title || lesson.title, focus: lesson.listening.focus || '先听大意，再逐句核对，最后试着说出来。', segments }] : [];
     }));
   }
+  function humanCatalog(clips) {
+    return list(clips).map(clip => ({ lessonId: clip.id, levelId: clip.levelId, levelLabel: clip.levelId === 'pre-a1' ? 'Pre-A1' : clip.levelId.toUpperCase(),
+      title: clip.title, listeningTitle: clip.title, focus: clip.focus, human: clip,
+      segments: [{ id: `${clip.id}-s1`, text: clip.text, tokenCount: tokens(clip.text).length, audio: clip.src }] }));
+  }
+  const allCatalog = (pathway, clips) => [...catalog(pathway), ...humanCatalog(clips)];
   function latestAttempts(attempts) {
     const found = new Map();
     for (const item of list(attempts)) {
@@ -89,7 +95,7 @@
     return { total: segments.length, attempted: records.length, independent: records.filter((record) => !needsPractice(record)).length,
       needsPractice: records.filter(needsPractice).length };
   }
-  const api = { sentences, tokens, evaluate, catalog, latestAttempts, needsPractice, summary };
+  const api = { sentences, tokens, evaluate, catalog, humanCatalog, allCatalog, latestAttempts, needsPractice, summary };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (!root?.document) return;
   root.ListeningLab = api;
@@ -103,15 +109,17 @@
   api.mount = function (target, options) {
     if (!target) throw new Error('精听练习缺少页面容器。');
     mounted?.destroy?.();
-    const all = list(options.catalog)[0]?.segments ? options.catalog : catalog(options.catalog);
+    const all = list(options.catalog)[0]?.segments ? options.catalog : allCatalog(options.catalog, root.HUMAN_AUDIO);
     if (!all.length) { target.textContent = '精听材料暂时未加载，请刷新页面重试。'; return null; }
     const doc = root.document, drafts = new Map();
     const initial = options.getProgress()?.preferences?.levelId;
     let levelId = all.some((item) => item.levelId === initial) ? initial : all[0].levelId;
-    let lessonId = all.find((item) => item.levelId === levelId).lessonId;
+    let source = all.some(item => item.human) ? 'human' : 'course';
+    const inSource = item => source === 'human' ? Boolean(item.human) : !item.human;
+    let lessonId = all.find((item) => item.levelId === levelId && inSource(item)).lessonId;
     let segmentId = all.find((item) => item.lessonId === lessonId).segments[0].id;
     let difficultOnly = false, rate = 1, speechRun = 0, speaking = false, speechTimeout = null;
-    let statusNode = null, savedNotice = '', progressSnapshot = '';
+    let statusNode = null, savedNotice = '', progressSnapshot = '', audio = null;
     const lesson = () => all.find((item) => item.lessonId === lessonId);
     const segment = () => lesson().segments.find((item) => item.id === segmentId) || lesson().segments[0];
     const latest = () => latestAttempts(options.getProgress()?.listeningAttempts);
@@ -129,10 +137,24 @@
     function status(text) { if (statusNode) statusNode.textContent = text; }
     function stop() {
       speechRun++; clearTimeout(speechTimeout); speechTimeout = null;
+      if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); audio = null; }
       if (speaking) root.speechSynthesis?.cancel(); speaking = false;
     }
     function speak(parts) {
       stop(); root.stopPathwaySpeech?.(); root.stopFoundationSpeech?.(); root.stopFoundationStudySpeech?.();
+      root.stopSkillWorkshopAudio?.();
+      if (parts[0]?.audio) {
+        const run = ++speechRun, part = parts[0];
+        const player = new root.Audio(part.audio); audio = player; player.playbackRate = rate;
+        let counted = false;
+        status('正在加载真人录音…');
+        speechTimeout = root.setTimeout(() => { if (run === speechRun) { stop(); status('录音加载超时，请检查网络后重试。'); } }, 20000);
+        player.onplaying = () => { if (run !== speechRun) return; clearTimeout(speechTimeout); if (!counted) { const draft = draftFor(part.id); draft.listenCount = Math.min(999, draft.listenCount + 1); counted = true; } status('正在播放真人录音…'); };
+        player.onended = () => { if (run === speechRun) { clearTimeout(speechTimeout); status('真人录音播放结束。可以重听或录下自己的表达。'); } };
+        player.onerror = () => { if (run === speechRun) { stop(); status('真人录音未能播放，请重试。也可以查看原文继续阅读练习。'); } };
+        player.play().catch(() => { if (run === speechRun) { stop(); status('录音播放未启动，请再次点击播放。'); } });
+        return;
+      }
       if (!root.speechSynthesis || !root.SpeechSynthesisUtterance) { status('当前设备不支持朗读。可以点击“查看原文”，先做阅读与跟读；换用支持英文朗读的浏览器后再听写。'); return; }
       const voices = root.speechSynthesis.getVoices?.() || [];
       const voice = voices.find((entry) => /^en[-_]US$/i.test(entry.lang)) || voices.find((entry) => /^en(?:[-_]|$)/i.test(entry.lang));
@@ -167,7 +189,7 @@
     function choose(nextLessonId, nextSegmentId) {
       stop(); savedNotice = '';
       const item = all.find((entry) => entry.lessonId === nextLessonId); if (!item) return false;
-      lessonId = item.lessonId; levelId = item.levelId;
+      lessonId = item.lessonId; levelId = item.levelId; source = item.human ? 'human' : 'course';
       segmentId = item.segments.some((part) => part.id === nextSegmentId) ? nextSegmentId : item.segments[0].id;
       render(); return true;
     }
@@ -179,16 +201,22 @@
       const header = element('header', 'listening-lab-header');
       header.append(element('span', 'eyebrow', 'LISTEN · NOTICE · SAY IT'), element('h2', '', '逐句精听与跟读'),
         element('p', '', '先听大意，再写下听到的内容，最后开口跟读。记录哪里还没听清，比反复播放整篇更有针对性。'));
-      const boundary = element('p', 'listening-boundary', `${all.length} 篇原创材料覆盖 Pre-A1–C1，使用设备朗读。这里核对听写与记录你的跟读自评，不提供真人音频或自动发音评分。`);
+      const boundary = element('p', 'listening-boundary', `${all.filter(x => x.human).length} 段真人录音 + ${all.filter(x => !x.human).length} 篇课程朗读材料。真人素材保留原录音与授权信息；课程材料使用设备语音。阶段是练习建议，听写核对不等于发音评分。`);
       header.append(boundary); rootNode.append(header);
       const filters = element('div', 'listening-filters');
+      const sourceLabel = element('label', '', '声音来源'), sourceSelect = element('select'); sourceSelect.id = 'listeningSource';
+      for (const [id, label] of [['human', '真人录音'], ['course', '课程材料 · 设备朗读']]) {
+        if (id === 'human' && !all.some(x => x.human)) continue;
+        const option = element('option', '', label); option.value = id; option.selected = source === id; sourceSelect.append(option);
+      }
+      sourceSelect.addEventListener('change', () => { source = sourceSelect.value; difficultOnly = false; choose(all.find(x => x.levelId === levelId && inSource(x)).lessonId); }); sourceLabel.append(sourceSelect); filters.append(sourceLabel);
       const levelLabel = element('label', '', '阶段'), levelSelect = element('select'); levelSelect.id = 'listeningLevel';
       for (const id of LEVELS.filter((id) => all.some((item) => item.levelId === id))) {
         const option = element('option', '', all.find((item) => item.levelId === id).levelLabel); option.value = id; option.selected = id === levelId; levelSelect.append(option);
       }
-      levelSelect.addEventListener('change', () => { difficultOnly = false; choose(all.find((item) => item.levelId === levelSelect.value).lessonId); }); levelLabel.append(levelSelect);
+      levelSelect.addEventListener('change', () => { difficultOnly = false; choose(all.find((item) => item.levelId === levelSelect.value && inSource(item)).lessonId); }); levelLabel.append(levelSelect);
       const lessonLabel = element('label', '', '材料'), lessonSelect = element('select'); lessonSelect.id = 'listeningLesson';
-      for (const item of all.filter((entry) => entry.levelId === levelId)) {
+      for (const item of all.filter((entry) => entry.levelId === levelId && inSource(entry))) {
         const count = summary([item], options.getProgress()?.listeningAttempts).needsPractice;
         const option = element('option', '', `${item.title}${count ? ` · ${count} 句待练` : ''}`); option.value = item.lessonId; option.selected = item.lessonId === lessonId; lessonSelect.append(option);
       }
@@ -203,6 +231,13 @@
       for (const value of [0.7, 1, 1.2]) { const option = element('option', '', `${value}×`); option.value = String(value); option.selected = rate === value; rateSelect.append(option); }
       rateSelect.addEventListener('change', () => { rate = Number(rateSelect.value); stop(); status('速度已调整，下次播放生效。'); }); rateLabel.append(rateSelect); controls.append(rateLabel);
       statusNode = element('p', 'listening-audio-status'); statusNode.setAttribute('role', 'status'); panel.append(controls, statusNode);
+      if (current.human) {
+        const credits = element('p', 'listening-evidence', `真人录音：${current.human.speaker} · `);
+        for (const [text, url] of [['Tatoeba 来源', current.human.sourceUrl], ['录音 CC BY-SA 4.0', current.human.audioLicenseUrl], ['原句 CC BY 2.0 FR', current.human.textLicenseUrl]]) {
+          const link = element('a', '', text); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; credits.append(link, doc.createTextNode(' · '));
+        }
+        panel.append(credits, button('录音并查看口语反馈', () => { stop(); root.openSkillWorkshop?.(current.human.id); }, 'secondary-btn'));
+      }
       const reviewFilter = element('label', 'listening-review-filter');
       const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.id = 'listeningDifficultOnly'; checkbox.checked = difficultOnly;
       checkbox.addEventListener('change', () => { difficultOnly = checkbox.checked; const filtered = activeSegments(); if (filtered.length && !filtered.some((item) => item.id === segmentId)) segmentId = filtered[0].id; render(); });

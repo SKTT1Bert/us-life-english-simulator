@@ -37,6 +37,10 @@ jobs:
         run: node tests/foundation-study-browser.cjs
       - name: Daily plans, diagnostic routing, sentence listening and learning reports
         run: node tests/learning-studio-browser.cjs
+      - name: Real human audio, local grammar and speech engines
+        run: node tests/skill-runtime-browser.cjs
+      - name: Speaking, writing, revisions and alternate assessments
+        run: node tests/skill-workshop-browser.cjs
       - name: One writer per browser and safe tab handover
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation

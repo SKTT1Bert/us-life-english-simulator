@@ -10,6 +10,7 @@
     market: 'learn',
     quiz: 'practice',
     listening: 'practice',
+    workshop: 'practice',
     diagnostic: 'personal',
     report: 'personal',
     favorites: 'personal',

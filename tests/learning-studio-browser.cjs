@@ -56,6 +56,7 @@ if (DEPLOYED_APP) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1', 'Produc
     if (['report', 'diagnostic', 'progress'].includes(name)) await page.locator('[data-nav-group="personal"]').click();
     else if (name === 'listening') await page.locator('[data-nav-group="practice"]').click();
     await page.locator(`[data-view="${name}"]`).first().click();
+    if (name === 'listening') await page.locator('#listeningSource').selectOption('course');
   };
   const upload = async (page, value, confirm = true) => {
     await view(page, 'progress');
