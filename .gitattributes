@@ -1,0 +1,5 @@
+# Preserve exact upstream bytes for reproducible runtime/model hashes on Windows.
+/vendor/harper/** -text linguist-vendored
+/vendor/transformers/** -text linguist-vendored
+/assets/voice-model/** -text linguist-generated
+/assets/human-audio/*.mp3 binary

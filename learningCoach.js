@@ -132,7 +132,7 @@
     const current = instant(now), all = lessons(progress, catalogs), currentDay = new Date(current).toISOString().slice(0, 10);
     const midnight = Date.parse(`${currentDay}T00:00:00.000Z`);
     const days = Array.from({ length: 7 }, (_, index) => ({ date: new Date(midnight - (6 - index) * DAY).toISOString().slice(0, 10),
-      expression: 0, listening: 0, courseSaves: 0, assessments: 0, diagnostic: 0, total: 0 }));
+      expression: 0, listening: 0, courseSaves: 0, assessments: 0, diagnostic: 0, workshop: 0, total: 0 }));
     const byDay = new Map(days.map((day) => [day.date, day]));
     function activity(at, kind) {
       const stamp = time(at);
@@ -146,6 +146,8 @@
     }
     for (const attempt of list(progress.learningStudio?.listeningAttempts)) activity(attempt.answeredAt, 'listening');
     for (const attempt of list(progress.learningStudio?.diagnostics)) activity(attempt.submittedAt, 'diagnostic');
+    for (const attempt of list(progress.skillWorkshop?.attempts)) activity(attempt.at, 'workshop');
+    for (const attempt of list(progress.skillWorkshop?.assessments)) activity(attempt.at, 'assessments');
     for (const item of all) if (item.record) activity(item.record.updatedAt, 'courseSaves');
     for (const collection of [progress.pathwayProgress?.assessments, ...['word-parts', 'phonics'].map((id) => progress.foundationProgress?.courses?.[id]?.assessments)]) {
       for (const attempts of Object.values(collection || {})) for (const attempt of list(attempts)) activity(attempt.submittedAt, 'assessments');
@@ -273,7 +275,7 @@
         const item = element('li'), barArea = element('div', 'coach-bar-area'), bar = element('span', 'coach-bar');
         bar.style.height = `${Math.max(day.total ? 6 : 0, day.total / peak * 100)}%`; bar.setAttribute('aria-hidden', 'true');
         barArea.append(bar); item.append(element('strong', '', String(day.total)), barArea, element('span', '', day.date.slice(5)));
-        item.setAttribute('aria-label', `${day.date}：${day.expression} 次表达练习，${day.listening} 次精听记录，${day.courseSaves} 节课程的最近保存，${day.assessments} 次阶段测评，${day.diagnostic} 次起点诊断`);
+        item.setAttribute('aria-label', `${day.date}：${day.expression} 次表达练习，${day.listening} 次精听记录，${day.courseSaves} 节课程的最近保存，${day.assessments} 次阶段测评，${day.diagnostic} 次起点诊断，${day.workshop} 次口语写作练习`);
         chart.append(item);
       }
       history.append(chart, element('p', 'coach-small', '记录数包含表达练习、精听、测评和每节课的最近一次保存。课程未保存完整修改历史；此图不表示学习时长或全部活动次数。')); section.append(history);
@@ -289,6 +291,11 @@
       }
       courseSection.append(courses); section.append(courseSection);
       const skills = element('div', 'coach-skill-grid');
+      const workshop = element('article', 'coach-skill'), workshopProgress = options.getProgress().skillWorkshop;
+      workshop.append(element('h3', '', '口语与写作修改记录'),
+        element('p', '', `已保存 ${workshopProgress?.attempts?.length || 0} 次表达练习、${workshopProgress?.assessments?.length || 0} 次新版阶段小测。`),
+        element('p', 'coach-small', '写作检查、语音转写和任务自评分开展示。每次保存保留一个版本，方便回看修改过程。'),
+        button('去表达工坊 →', { type: 'workshop' })); skills.append(workshop);
       const listening = element('article', 'coach-skill'); listening.append(element('h3', '', '听辨与跟读'),
         element('p', '', data.listening.sentences ? `已保存 ${data.listening.attempts} 次句子练习，覆盖 ${data.listening.sentences} 个句子。` : '还没有精听记录。从一句开始，听写、核对，再跟读。'),
         element('p', '', `各句最近一次：${data.listening.unassisted} 句已播放、未看原文且听写全对，${data.listening.needsPractice} 句建议再练。`),

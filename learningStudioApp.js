@@ -21,9 +21,10 @@
     else if (action.type === 'listening') { setView('listening'); if (action.lessonId) listening?.openLesson(action.lessonId, action.segmentId); }
     else if (action.type === 'diagnostic') setView('diagnostic');
     else if (action.type === 'report') setView('report');
+    else if (action.type === 'workshop') setView('workshop');
   }
-  root.refreshLearningStudio = () => { coach?.refresh(); diagnostic?.refresh(); listening?.refresh(); };
-  root.resetLearningStudioSession = () => { coach?.resetSession(); diagnostic?.resetSession(); listening?.resetSession(); };
+  root.refreshLearningStudio = () => { coach?.refresh(); diagnostic?.refresh(); listening?.refresh(); root.SkillWorkshop?.refresh(); };
+  root.resetLearningStudioSession = () => { coach?.resetSession(); diagnostic?.resetSession(); listening?.resetSession(); root.SkillWorkshop?.resetSession(); };
   root.dailyEnglishStudioReady = (root.dailyEnglishAppReady || Promise.resolve()).then(() => {
     coach = root.LearningCoach.mount({
       today: document.getElementById('learningCoachToday'), report: document.getElementById('learningCoachReport'),
@@ -38,6 +39,16 @@
       }
     });
     listening = root.ListeningLab.mount(document.getElementById('view-listening'), { catalog: PATHWAY_CATALOG, getProgress: () => state.learningStudio, commit });
+    root.SkillWorkshop.mount(document.getElementById('view-workshop'), {
+      catalog: SKILL_CATALOG, pathway: PATHWAY_CATALOG, level: () => state.learningStudio.preferences.levelId,
+      progress: () => state.skillWorkshop,
+      commit: (kind, record) => {
+        const candidate = freshProgressCopy();
+        candidate.skillWorkshop = SkillProgress.append(state.skillWorkshop, kind, record, SKILL_CATALOG);
+        if (!persistReplacement(candidate)) return false;
+        coach?.refresh(); return true;
+      }
+    });
     root.addEventListener('daily-english-view', () => coach?.refresh());
     root.addEventListener('beforeunload', (event) => {
       if (root.LearningDiagnostic.hasPendingWork() || root.ListeningLab.hasPendingWork() || root.LearningCoach.hasPendingWork?.()) { event.preventDefault(); event.returnValue = ''; }

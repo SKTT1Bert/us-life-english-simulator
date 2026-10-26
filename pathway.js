@@ -105,6 +105,17 @@
     bindAudio(body.querySelector('.pathway-listening'), item.listening);
     renderPractice();
     const writing = body.querySelector('#pathwayWriting'), speakingInput = body.querySelector('#pathwaySpeaking');
+    const feedbackActions = document.createElement('div'); feedbackActions.className = 'pathway-save-row';
+    for (const [kind, label] of [['writing', '检查这段写作'], ['speaking', '录音与口语反馈']]) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'small-btn'; button.textContent = label;
+      button.addEventListener('click', () => {
+        if (window.flushPathwayDraft() === false) return;
+        const text = kind === 'writing' ? writing.value : speakingInput.value;
+        if (text.length > 6000) { alert('工坊每次检查最多 6000 个字符。这份课程草稿已保留，请分段复制到工坊练习。'); window.openSkillWorkshop?.(`${item.id}-${kind}`); }
+        else window.openSkillWorkshop?.(`${item.id}-${kind}`, text);
+      }); feedbackActions.append(button);
+    }
+    body.querySelector('.pathway-production').append(feedbackActions);
     writing.value = draft.writing; speakingInput.value = draft.speaking;
     body.querySelectorAll('[data-pathway-check]').forEach((input, index) => { input.checked = draft.checks[index]; });
     function capture(changedText = false) {

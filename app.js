@@ -8,7 +8,8 @@ const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
 const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [], stages: { 'word-parts': window.WORD_PARTS_STAGES || [], phonics: window.PHONICS_STAGES || [] } };
 const PATHWAY_CATALOG = window.LEARNING_PATH || [];
-const STUDIO_CATALOG = { diagnostic: window.LEARNING_DIAGNOSTIC || [], listening: window.ListeningLab?.catalog(PATHWAY_CATALOG) || [] };
+const STUDIO_CATALOG = { diagnostic: window.LEARNING_DIAGNOSTIC || [], listening: window.ListeningLab?.allCatalog(PATHWAY_CATALOG, window.HUMAN_AUDIO) || [] };
+const SKILL_CATALOG = { tasks: SkillPractice.catalog(PATHWAY_CATALOG, window.HUMAN_AUDIO, window.SKILL_ASSESSMENTS), forms: window.SKILL_ASSESSMENTS };
 let stateWarning = '';
 
 const state = loadState();
@@ -81,6 +82,7 @@ function parseProgress(saved) {
     foundationProgress: FoundationProgress.restore(saved.foundationProgress, FOUNDATION_CATALOG),
     pathwayProgress: PathwayProgress.restore(saved.pathwayProgress, PATHWAY_CATALOG),
     learningStudio: LearningStudioProgress.restore(saved.learningStudio, STUDIO_CATALOG),
+    skillWorkshop: SkillProgress.restore(saved.skillWorkshop, SKILL_CATALOG),
   };
 }
 
@@ -120,6 +122,7 @@ function progressPayload(source = state) {
     foundationProgress: state.foundationProgress,
     pathwayProgress: state.pathwayProgress,
     learningStudio: state.learningStudio,
+    skillWorkshop: state.skillWorkshop,
   };
 }
 
@@ -1038,7 +1041,7 @@ function applyTheme() {
 }
 
 function exportProgress() {
-  if (window.LearningDiagnostic?.hasPendingWork?.() || window.ListeningLab?.hasPendingWork?.()) alert('当前诊断或精听还有未提交的内容。本次导出包含已保存的记录；请先提交，或另外保留未完成的内容。');
+  if (window.LearningDiagnostic?.hasPendingWork?.() || window.ListeningLab?.hasPendingWork?.() || window.SkillWorkshop?.hasPendingWork?.()) alert('当前诊断、精听或表达工坊还有未提交的内容。本次导出包含已保存的记录；请先提交，或另外保留未完成的内容。录音只留在本页。');
   if (window.flushFoundationDrafts?.() === false) alert('部分基础课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   if (window.flushPathwayDraft?.() === false) alert('部分课程草稿尚未保存。本次导出包含最后成功保存的记录，请另外复制未保存的文本。');
   let syncEnvelope = null;

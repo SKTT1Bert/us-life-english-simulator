@@ -295,6 +295,24 @@ const PRIVATE_TYPING = 'PRIVATE_PHONE_ACTIVE_EDITOR_947';
       assert.deepEqual((await current(phone)).learned, oldPhone.learned);
     });
 
+    await run('writing revisions and multimedia assessments synchronize without overwriting an active draft', async () => {
+      await showToday(desktop); await showToday(phone);
+      await phone.evaluate(() => openSkillWorkshop(SKILL_CATALOG.tasks[0].id));
+      await phone.locator('#skillText').fill('UNSAVED_PRIVATE_WORKSHOP_DRAFT');
+      await showToday(phone);
+      await desktop.evaluate(() => {
+        const next=freshProgressCopy(),task=SKILL_CATALOG.tasks[0],form=SKILL_CATALOG.forms[0];
+        next.skillWorkshop=SkillProgress.append(next.skillWorkshop,'attempts',{taskId:task.id,source:'typed',original:'PRIVATE_WORKSHOP_ORIGINAL',text:'PRIVATE_WORKSHOP_REVISED',rubric:[true,false,null],feedback:{engine:'Harper 2.13.0',issues:[]},parentId:null,duration:null},SKILL_CATALOG);
+        next.skillWorkshop=SkillProgress.append(next.skillWorkshop,'assessments',{formId:form.id,answers:[0,1,null,null,null,null],listens:[1,1,0,0,0,0],writing:'PRIVATE_ASSESSMENT_WRITING',speaking:'',speakingSource:'typed',rubric:[true,null,null,null,null,null]},SKILL_CATALOG);
+        if(!persistReplacement(next))throw Error('Fixture save failed');dailyEnglishSync.stop();
+      });
+      await sync(desktop);assert.equal((await sync(phone)).pendingApply,true);
+      await phone.evaluate(()=>setView('workshop'));assert.equal(await phone.locator('#skillText').inputValue(),'UNSAVED_PRIVATE_WORKSHOP_DRAFT');
+      await phone.getByRole('button',{name:'保存这次练习',exact:true}).click();await showToday(phone);
+      await sync(phone);await sync(desktop);
+      for(const page of [desktop,phone]){const data=(await current(page)).skillWorkshop;assert.equal(data.attempts.length,2);assert.equal(data.assessments.length,1);assert.ok(data.attempts.some(a=>a.text==='PRIVATE_WORKSHOP_REVISED'&&a.original==='PRIVATE_WORKSHOP_ORIGINAL'));assert.ok(data.attempts.some(a=>a.text==='UNSAVED_PRIVATE_WORKSHOP_DRAFT'));}
+      const network=JSON.stringify(requests);for(const privateText of ['PRIVATE_WORKSHOP','PRIVATE_ASSESSMENT','UNSAVED_PRIVATE'])assert.equal(network.includes(privateText),false);
+    });
     await run('disconnect preserves records and reconnect merges known offline deltas without double counting', async () => {
       await openPanel(desktop); await desktop.locator('#syncDisconnectBtn').click(); await desktop.locator('#syncConfirmDisconnectBtn').click(); await waitIdle(desktop);
       assert.equal(await desktop.evaluate(() => dailyEnglishSync.status().connected), false);
