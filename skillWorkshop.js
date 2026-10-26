@@ -43,9 +43,11 @@
     root.openSkillWorkshop = open; root.stopSkillWorkshopAudio = stopAudio;
     function play(clip, status, onPlaying) {
       stopAudio(); root.ListeningLab?.stop(); root.speechSynthesis?.cancel();
+      clip = root.AudioVoices.resolve(clip);
+      const description = clip.synthetic ? `AI 合成 · ${clip.speaker}` : '真人录音';
       const sound = new Audio(clip.src); player = sound; let counted = false;
-      status.textContent = '正在加载真人录音…';
-      sound.onplaying = () => { if (player !== sound) return; status.textContent = '正在播放真人录音…'; if (!counted) { counted = true; onPlaying?.(); } };
+      status.textContent = `正在加载${description}…`;
+      sound.onplaying = () => { if (player !== sound) return; status.textContent = `正在播放${description}…`; if (!counted) { counted = true; onPlaying?.(); } };
       sound.onended = () => { if (player === sound) status.textContent = '播放结束，可以重听。'; };
       sound.onerror = () => { if (player === sound) status.textContent = '录音未能加载，请检查网络后重试。'; };
       sound.play().catch(() => { if (player === sound) status.textContent = '播放未启动，请再次点击。'; });
@@ -123,9 +125,12 @@
       input.addEventListener('input',()=>{ if(d.original===null && d.feedbackText) d.original=d.feedbackText; d.text=input.value; if(d.source==='transcribed')d.source='edited-transcript'; changed(); });
       const sourceNote = el('p','skill-note',`文字来源：${formats[d.source]}`), result = el('div');
       if (currentTask.audioId) {
-        const clip=root.HUMAN_AUDIO.find(c=>c.id===currentTask.audioId), sample=el('div','skill-example');
-        sample.append(btn('播放真人示范',()=>play(clip,status)),el('p','',clip.text),el('p','skill-note',clip.translation));
-        const credit=el('a','skill-note',`录音：${clip.speaker} · CC BY-SA 4.0 · Tatoeba`);credit.href=clip.sourceUrl;credit.target='_blank';credit.rel='noopener noreferrer';sample.append(credit);panel.append(sample);
+        const clip=root.AudioVoices.find(currentTask.audioId), sample=el('div','skill-example');
+        if (clip.synthetic) {
+          sample.append(label('AI 示范声线',select('skillVoice',root.AudioVoices.voices.map(v=>[v.id,v.label]),root.AudioVoices.current().id,v=>{stopAudio();const saved=root.AudioVoices.choose(v);status.textContent=`已切换为${root.AudioVoices.current().label}。${saved?'选择已在本机记住。':'本次选择可用，但浏览器未能记住偏好。'}你的文字和练习记录已保留。`;})));
+        }
+        sample.append(btn(clip.synthetic?'播放 AI 示范':'播放真人示范',()=>play(clip,status)),el('p','',clip.text),el('p','skill-note',clip.translation));
+        const credit=el('a','skill-note',clip.synthetic?'AI 合成 · 通用声线 · 声音来源与说明':`录音：${clip.speaker} · CC BY-SA 4.0 · Tatoeba`);credit.href=clip.synthetic?'https://github.com/SKTT1Bert/us-life-english-simulator/blob/main/AI-AUDIO-CREDITS.md':clip.sourceUrl;credit.target='_blank';credit.rel='noopener noreferrer';sample.append(credit);panel.append(sample);
       }
       if (mode==='speaking') speechControls(panel,()=>d.text,t=>{d.text=t;input.value=t;},d,changed,status);
       panel.append(label(mode==='writing'?'写下你的英文（最多 6000 个字符）':'你的口语转写，也可以直接输入',input),sourceNote);

@@ -9,7 +9,7 @@
       prompt: lesson.production[mode], rubric: [...lesson.production.rubric], model: lesson.production.model,
       reference: '', audioId: null,
     }))));
-    for (const clip of audio) tasks.push({ id: clip.id, lessonId: null, levelId: clip.levelId, mode: 'speaking', title: `真人跟读 · ${clip.title}`,
+    for (const clip of audio) tasks.push({ id: clip.id, lessonId: null, levelId: clip.levelId, mode: 'speaking', title: `${clip.synthetic ? 'AI 跟读' : '真人跟读'} · ${clip.title}`,
       prompt: '听示范后，录下自己的朗读。先核对转写是否准确，再比较原句与自己说出的词。',
       rubric: ['我听了示范并完整说出句子', '我对照录音确认了转写文字', '我留意了重读、停顿和语调'], model: clip.text, reference: clip.text, audioId: clip.id });
     for (const form of forms) for (const mode of ['writing', 'speaking']) tasks.push({ id: `${form.id}-${mode}`, lessonId: null, levelId: form.levelId,

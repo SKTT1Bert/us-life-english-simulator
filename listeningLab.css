@@ -3,7 +3,7 @@
 .listening-lab-header h2 { margin: .6rem 0; font-size: clamp(1.65rem, 3vw, 2.25rem); }
 .listening-lab-header p { line-height: 1.75; max-width: 76ch; }
 .listening-boundary, .listening-input-note, .listening-feedback-note, .listening-draft-note { color: var(--muted, #686878); font-size: .86rem; line-height: 1.7; }
-.listening-filters { display: grid; grid-template-columns: minmax(110px, .35fr) minmax(0, 1fr); gap: 1rem; }
+.listening-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .listening-filters label { display: grid; gap: .5rem; font-weight: 650; min-width: 0; }
 .listening-lab select { padding: .7rem .8rem; border: 1px solid var(--border, #dddbe8); border-radius: 12px; color: var(--text, #222638); background: var(--panel, #fff); font: inherit; max-width: 100%; min-width: 0; }
 .listening-workspace { border: 1px solid var(--border, #e6e3ef); border-radius: 24px; padding: clamp(1rem, 3vw, 1.8rem); background: var(--panel, #fff); min-width: 0; }
@@ -12,6 +12,7 @@
 .listening-evidence { color: var(--muted, #686878); font-size: .88rem; }
 .listening-audio-controls { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; margin: 1rem 0 .25rem; }
 .listening-audio-controls label { display: flex; gap: .5rem; align-items: center; }
+.listening-lab .secondary-btn { padding: .7rem 1rem; min-height: 44px; border: 1px solid var(--border, #dddbe8); border-radius: 12px; color: var(--text, #222638); background: var(--panel, #fff); font: inherit; cursor: pointer; }
 .listening-audio-status { min-height: 1.5em; color: var(--muted, #686878); font-size: .88rem; }
 .listening-review-filter { display: flex; align-items: center; gap: .55rem; padding: .7rem 0; }
 .listening-review-filter input, .listening-shadow input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--primary, #6255d8); }

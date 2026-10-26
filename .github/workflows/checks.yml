@@ -41,6 +41,8 @@ jobs:
         run: node tests/skill-runtime-browser.cjs
       - name: Speaking, writing, revisions and alternate assessments
         run: node tests/skill-workshop-browser.cjs
+      - name: Multiple AI voices, original audio and preserved progress
+        run: node tests/ai-audio-browser.cjs
       - name: One writer per browser and safe tab handover
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation

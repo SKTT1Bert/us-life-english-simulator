@@ -313,6 +313,31 @@ const PRIVATE_TYPING = 'PRIVATE_PHONE_ACTIVE_EDITOR_947';
       for(const page of [desktop,phone]){const data=(await current(page)).skillWorkshop;assert.equal(data.attempts.length,2);assert.equal(data.assessments.length,1);assert.ok(data.attempts.some(a=>a.text==='PRIVATE_WORKSHOP_REVISED'&&a.original==='PRIVATE_WORKSHOP_ORIGINAL'));assert.ok(data.attempts.some(a=>a.text==='UNSAVED_PRIVATE_WORKSHOP_DRAFT'));}
       const network=JSON.stringify(requests);for(const privateText of ['PRIVATE_WORKSHOP','PRIVATE_ASSESSMENT','UNSAVED_PRIVATE'])assert.equal(network.includes(privateText),false);
     });
+    await run('AI listening and speaking records merge across devices while voice preference stays local', async () => {
+      await showToday(desktop); await showToday(phone);
+      const beforeDesktop=await current(desktop),beforePhone=await current(phone);
+      await desktop.evaluate(()=>{
+        AudioVoices.choose('af_nicole');const next=freshProgressCopy(),clip=AI_AUDIO.clips[0];
+        const part=STUDIO_CATALOG.listening.find(x=>x.lessonId===clip.id).segments[0];
+        next.learningStudio=LearningStudioProgress.apply(next.learningStudio,{type:'listening',attempt:{lessonId:clip.id,segmentId:part.id,tokenCount:part.tokenCount,matchedTokens:part.tokenCount,exact:true,revealed:false,shadow:'independent',listenCount:1}},STUDIO_CATALOG);
+        if(!persistReplacement(next))throw Error('AI listening fixture save failed');dailyEnglishSync.stop();
+      });
+      await phone.evaluate(()=>{
+        AudioVoices.choose('bf_emma');const next=freshProgressCopy(),clip=AI_AUDIO.clips[0];
+        next.skillWorkshop=SkillProgress.append(next.skillWorkshop,'attempts',{taskId:clip.id,source:'typed',original:'',text:'PRIVATE_AI_VOICE_PRACTICE',rubric:[true,false,null],feedback:null,parentId:null,duration:null},SKILL_CATALOG);
+        if(!persistReplacement(next))throw Error('AI speaking fixture save failed');dailyEnglishSync.stop();
+      });
+      await sync(desktop);await sync(phone);await sync(desktop);
+      for(const page of [desktop,phone]){
+        const value=await current(page);assert.equal(value.learningStudio.listeningAttempts.length,beforeDesktop.learningStudio.listeningAttempts.length+1);
+        assert.equal(value.skillWorkshop.attempts.length,beforePhone.skillWorkshop.attempts.length+1);
+        assert.ok(value.learningStudio.listeningAttempts.some(a=>a.lessonId==='ai-pre-a1-hello-v1'));
+        assert.ok(value.skillWorkshop.attempts.some(a=>a.taskId==='ai-pre-a1-hello-v1'));
+        assert.deepEqual(value.learned,beforeDesktop.learned);assert.deepEqual(value.quiz,beforeDesktop.quiz);
+      }
+      assert.equal(await desktop.evaluate(()=>AudioVoices.current().id),'af_nicole');assert.equal(await phone.evaluate(()=>AudioVoices.current().id),'bf_emma');
+      assert.equal(JSON.stringify(requests).includes('PRIVATE_AI_VOICE_PRACTICE'),false);
+    });
     await run('disconnect preserves records and reconnect merges known offline deltas without double counting', async () => {
       await openPanel(desktop); await desktop.locator('#syncDisconnectBtn').click(); await desktop.locator('#syncConfirmDisconnectBtn').click(); await waitIdle(desktop);
       assert.equal(await desktop.evaluate(() => dailyEnglishSync.status().connected), false);

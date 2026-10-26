@@ -8,8 +8,8 @@ const ReviewEngine = window.ReviewEngine;
 const CustomExpressions = window.CustomExpressions;
 const FOUNDATION_CATALOG = { 'word-parts': window.WORD_PARTS_LESSONS || [], phonics: window.PHONICS_LESSONS || [], stages: { 'word-parts': window.WORD_PARTS_STAGES || [], phonics: window.PHONICS_STAGES || [] } };
 const PATHWAY_CATALOG = window.LEARNING_PATH || [];
-const STUDIO_CATALOG = { diagnostic: window.LEARNING_DIAGNOSTIC || [], listening: window.ListeningLab?.allCatalog(PATHWAY_CATALOG, window.HUMAN_AUDIO) || [] };
-const SKILL_CATALOG = { tasks: SkillPractice.catalog(PATHWAY_CATALOG, window.HUMAN_AUDIO, window.SKILL_ASSESSMENTS), forms: window.SKILL_ASSESSMENTS };
+const STUDIO_CATALOG = { diagnostic: window.LEARNING_DIAGNOSTIC || [], listening: window.ListeningLab?.allCatalog(PATHWAY_CATALOG, window.HUMAN_AUDIO, window.AI_AUDIO?.clips) || [] };
+const SKILL_CATALOG = { tasks: SkillPractice.catalog(PATHWAY_CATALOG, [...window.HUMAN_AUDIO, ...window.AI_AUDIO.clips], window.SKILL_ASSESSMENTS), forms: window.SKILL_ASSESSMENTS };
 let stateWarning = '';
 
 const state = loadState();
