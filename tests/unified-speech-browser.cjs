@@ -13,6 +13,9 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
   try {
     const context = await app.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.addInitScript(() => {
+      // This suite verifies the explicit expanded-AI mode. The separate
+      // fast-audio suite checks the fresh-browser download choice.
+      localStorage.setItem('daily-english-ai-download-v1', 'allowed');
       window.speechAudit = { inputs: [], starts: [], stopped: 0 };
       const OriginalWorker = window.Worker;
       window.Worker = function (url, options) {
@@ -63,6 +66,7 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
       await navigate(page, 'foundations');
       for (const course of ['word-parts', 'phonics']) {
         await page.locator(`[data-course="${course}"]`).click();
+        await page.locator(`#view-${course} [data-foundation-level="a1"]`).click();
         const before = await snapshot();
         for (const voice of ['af_nicole', 'af_heart', 'am_michael', 'bf_emma']) {
           await changeVoice(voice);
@@ -70,7 +74,7 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
           assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).voice), voice);
           assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).speed), .8);
           assert.equal(await page.evaluate(() => speechAudit.starts.at(-1).rate), 1, 'slower speech does not lower the voice pitch by resampling');
-          const expected = await page.evaluate(id => FOUNDATION_CATALOG[id][0].examples[0].speak, course);
+          const expected = await page.evaluate(id => FOUNDATION_CATALOG[id].find(lesson => lesson.levelId === 'a1').examples[0].speak, course);
           assert.equal(await page.evaluate(() => speechAudit.inputs.at(-1).text), voice === 'bf_emma' ? `Listen and repeat. ${expected}.` : expected);
           await page.evaluate(() => EnglishSpeech.stop());
         }
@@ -83,9 +87,9 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
     });
     await run('original pathway, expression, picture example and foundation assessment buttons use the chosen voice', async () => {
       await changeVoice('af_heart');
-      await navigate(page, 'pathway'); await played(() => page.locator('.pathway-play').first().click()); await page.evaluate(() => EnglishSpeech.stop());
+      await navigate(page, 'pathway'); await page.locator('[data-pathway-level="a1"]').click(); await played(() => page.locator('.pathway-play').first().click()); await page.evaluate(() => EnglishSpeech.stop());
       await navigate(page, 'today'); await played(() => page.locator('.speak-btn').first().click()); await page.evaluate(() => EnglishSpeech.stop());
-      await navigate(page, 'scenarios'); await played(() => page.locator('.picture-speak-example').first().click()); await page.evaluate(() => EnglishSpeech.stop());
+      await navigate(page, 'scenarios'); await page.locator('#placeSelect').selectOption('bank'); await played(() => page.locator('.picture-speak-example').first().click()); await page.evaluate(() => EnglishSpeech.stop());
       await navigate(page, 'foundations'); await page.locator('[data-course="word-parts"]').click();
       await page.locator('#view-word-parts [data-foundation-mode="assessment"]').click();
       const before = await snapshot(); await played(() => page.locator('#view-word-parts .foundation-listen').click());
@@ -94,6 +98,7 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
     });
     await run('course listening counts actual starts and unified voice changes preserve current dictation and speaking drafts', async () => {
       await navigate(page, 'listening'); await page.locator('#listeningSource').selectOption('course');
+      await page.locator('#listeningLevel').selectOption('a1');
       await page.locator('#listeningInput').fill('This draft stays.');
       await played(() => page.getByRole('button', { name: '播放这一句', exact: true }).click());
       await changeVoice('am_michael');
@@ -146,7 +151,8 @@ if (production) assert.notEqual(process.env.TEST_OFFLINE_FIXTURE, '1');
     await run('a failed resource gives a recoverable error and an explicit device option', async () => {
       const broken = await app.newContext(), p = await broken.newPage();
       await p.route('**/assets/tts-model/**', route => route.abort());
-      await p.goto(base); await navigate(p, 'foundations'); await p.locator('#view-word-parts [data-speak-example="0"]').click();
+      await p.goto(base); await p.evaluate(() => EnglishSpeech.setExpanded(true)); await navigate(p, 'foundations');
+      await p.locator('#view-word-parts [data-foundation-level="a1"]').click(); await p.locator('#view-word-parts [data-speak-example="0"]').click();
       await p.waitForFunction(() => document.querySelector('#view-word-parts .tutorial-speech-status').textContent.includes('暂时不可用'), null, { timeout: 120000 });
       assert.equal(await p.evaluate(() => EnglishSpeech.mode()), 'ai', 'no silent fallback to a different voice');
       await p.locator('#openSpeechSettings').click(); await p.locator('#speechMode').selectOption('device'); await p.keyboard.press('Escape');

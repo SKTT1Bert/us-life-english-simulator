@@ -9,3 +9,4 @@ local-translator-config.bat
 models/
 *.gguf
 *.safetensors
+tools/course-audio-build-progress.json
