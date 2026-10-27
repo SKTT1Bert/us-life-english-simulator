@@ -45,6 +45,8 @@ jobs:
         run: node tests/ai-audio-browser.cjs
       - name: Unified course voices with real local synthesis
         run: node tests/unified-speech-browser.cjs
+      - name: Fast beginner audio, download choice and preserved learning records
+        run: node tests/fast-audio-browser.cjs
       - name: One writer per browser and safe tab handover
         run: node tests/sync-gate-browser.cjs
       - name: Encrypted pairing, offline merge and preservation
